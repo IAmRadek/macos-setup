@@ -91,6 +91,7 @@
 
   # Changes CapsLock to Control
   system.keyboard = {
+    enableKeyMapping = true;
     remapCapsLockToControl = true;
   };
 

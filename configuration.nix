@@ -92,7 +92,7 @@
             persistent-others = [ ];
           };
           finder = {
-            AppleShowAllFiles = true
+            AppleShowAllFiles = true;
           };
           NSGlobalDomain = {
               AppleInterfaceStyle = "Dark";

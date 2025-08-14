@@ -9,7 +9,8 @@ default: build
 	sudo rm /etc/nix/nix.conf
 
 /run/current-system/sw/bin/darwin-rebuild:
-	sudo nix run nix-darwin/nix-darwin-25.05#darwin-rebuild -- switch
+	/nix/var/nix/profiles/default/bin/nix-build https://github.com/nix-darwin/nix-darwin/archive/master.tar.gz -A installer
+	yes | ./result/bin/darwin-installer
 
 /opt/homebrew/bin/brew:
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install.sh

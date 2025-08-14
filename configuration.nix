@@ -18,7 +18,7 @@
     go
     jq
     watch
-    1password-cli
+    _1password-cli
   ];
 
   # GUI Applications

@@ -28,7 +28,7 @@
       # GUI Apps
       casks = [
         # Browsers
-        # "google-chrome"
+        "google-chrome"
         # "firefox"
 
         # Development
@@ -38,7 +38,7 @@
 
         # Utilities
         # "rectangle"  # Window management
-        # "raycast"    # Launcher
+        "raycast"    # Launcher
         "1password"
 
         # Communication
@@ -77,26 +77,33 @@
     };
   };
 
-  system.defaults.dock = {
-    autohide = true;
-    show-recents = false;
-    # Only these stay in Dock — everything else disappears
-    persistent-apps = [
-      "/System/Applications/Safari.app"
-      "${pkgs.alacritty}/Applications/Alacritty.app"
-    ];
-    persistent-others = [ ];
-  };
 
 
-  # Changes CapsLock to Control
-  system.keyboard = {
-    enableKeyMapping = true;
-    remapCapsLockToControl = true;
-  };
+  system = {
+      defaults = {
+          dock = {
+            autohide = true;
+            show-recents = false;
+            # Only these stay in Dock — everything else disappears
+            persistent-apps = [
+              "/System/Applications/Safari.app"
+              "${pkgs.alacritty}/Applications/Alacritty.app"
+            ];
+            persistent-others = [ ];
+      };
+      finder = {
+        AppleShowAllFiles = true
+      }
+      NSGlobalDomain = {
+          AppleInterfaceStyle = "Dark";
+      };
+    };
 
-  system.defaults.NSGlobalDomain = {
-    AppleInterfaceStyle = "Dark";
+    # Changes CapsLock to Control
+    keyboard = {
+      enableKeyMapping = true;
+      remapCapsLockToControl = true;
+    };
   };
 
   # Fix nixbld group GID mismatch

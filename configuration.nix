@@ -90,20 +90,20 @@
               "${pkgs.alacritty}/Applications/Alacritty.app"
             ];
             persistent-others = [ ];
+          };
+          finder = {
+            AppleShowAllFiles = true
+          };
+          NSGlobalDomain = {
+              AppleInterfaceStyle = "Dark";
+          };
       };
-      finder = {
-        AppleShowAllFiles = true
-      };
-      NSGlobalDomain = {
-          AppleInterfaceStyle = "Dark";
-      };
-    };
 
-    # Changes CapsLock to Control
-    keyboard = {
-      enableKeyMapping = true;
-      remapCapsLockToControl = true;
-    };
+      # Changes CapsLock to Control
+      keyboard = {
+        enableKeyMapping = true;
+        remapCapsLockToControl = true;
+      };
   };
 
   # Fix nixbld group GID mismatch

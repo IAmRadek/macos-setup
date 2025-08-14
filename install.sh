@@ -127,6 +127,53 @@ install_setup() {
     print_success "Installation completed successfully!"
 }
 
+wait_for_1password() {
+    print_info "Opening 1Password and waiting for sync..."
+
+    # Try to open 1Password
+    if open -a "1Password" 2>/dev/null; then
+        print_info "1Password opened successfully"
+
+        # Wait for 1Password to be ready
+        print_info "Waiting for 1Password to complete initial sync..."
+
+        # Check if 1Password is running and responsive
+        max_wait=60
+        waited=0
+
+        while [[ $waited -lt $max_wait ]]; do
+            # Check if 1Password process is running
+            if pgrep -x "1Password" > /dev/null; then
+                # Check if 1Password is responsive (menu bar app)
+                if osascript -e 'tell application "System Events" to exists process "1Password"' 2>/dev/null | grep -q "true"; then
+                    print_success "1Password is running and ready"
+
+                    # Give it a few more seconds to complete sync
+                    sleep 3
+                    return 0
+                fi
+            fi
+
+            sleep 2
+            waited=$((waited + 2))
+            echo -n "."
+        done
+
+        print_warning "1Password may still be syncing - please ensure it's fully ready before continuing"
+    else
+        print_warning "Could not open 1Password automatically"
+        print_info "Please manually open 1Password and ensure it's synced before continuing"
+    fi
+
+    # Give user a chance to manually handle 1Password
+    if [[ -t 0 ]]; then
+        read -p "Press Enter when 1Password is ready and synced..." -r </dev/tty
+    else
+        print_info "Waiting 10 seconds for 1Password to initialize..."
+        sleep 10
+    fi
+}
+
 print_next_steps() {
     echo -e "\n${GREEN}================================${NC}"
     echo -e "${GREEN} Installation Complete!${NC}"
@@ -153,6 +200,7 @@ main() {
 
     clone_repository
     install_setup
+    wait_for_1password
     print_next_steps
 }
 

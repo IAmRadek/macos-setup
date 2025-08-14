@@ -18,6 +18,7 @@
     go
     jq
     watch
+    1password-cli
   ];
 
   # GUI Applications
@@ -86,8 +87,6 @@
       ];
     };
   };
-
-
 
   system = {
       defaults = {

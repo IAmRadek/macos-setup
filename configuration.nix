@@ -66,9 +66,13 @@
     };
 
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-      "google-chrome"
-  ];
+  nixpkgs.config.allowUnfreePredicate = let
+    whitelist = map lib.getName [
+      pkgs.google-chrome
+    ];
+  in
+   pkg: builtins.elem (lib.getName pkg) whitelist;
+
 
   # Basic Nix configuration
   nix = {

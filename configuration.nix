@@ -93,7 +93,7 @@
       };
       finder = {
         AppleShowAllFiles = true
-      }
+      };
       NSGlobalDomain = {
           AppleInterfaceStyle = "Dark";
       };

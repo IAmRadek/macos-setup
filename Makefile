@@ -10,7 +10,7 @@ default: build
 
 /opt/homebrew/bin/brew:
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install.sh
-	NONINTERACTIVE=1 bash /tmp/brew-install.sh
+	bash /tmp/brew-install.sh
 
 bootstrap: /nix /opt/homebrew/bin/brew
 	@echo "Bootstrapping nix-darwin with flake..."

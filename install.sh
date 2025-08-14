@@ -59,6 +59,15 @@ check_make() {
     fi
 }
 
+check_admin() {
+    if ! groups | grep -q admin; then
+        print_error "Your user account is not an administrator."
+        print_error "This installation requires admin privileges to install Nix and Homebrew."
+        print_error "Please run this script with an administrator account."
+        exit 1
+    fi
+}
+
 clone_repository() {
     print_info "Cloning repository..."
 
@@ -96,7 +105,8 @@ install_setup() {
 
     print_info "Starting installation process..."
     print_warning "This will install Nix, nix-darwin, and Homebrew."
-    print_warning "You may be prompted for your password during installation."
+    print_warning "You WILL be prompted for your password multiple times during installation."
+    print_warning "This is normal and required for system-level changes."
 
     if [[ -t 0 ]]; then
         # Interactive mode - ask for confirmation
@@ -139,6 +149,7 @@ main() {
     check_macos
     check_git
     check_make
+    check_admin
 
     clone_repository
     install_setup

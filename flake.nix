@@ -13,7 +13,7 @@
 
   outputs = { self, nixpkgs, darwin }: {
     darwinConfigurations = {
-      "PersonalMacbookPro" = darwin.lib.darwinSystem {
+      "rd" = darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           ./configuration.nix

@@ -88,6 +88,14 @@
     persistent-others = [ ];
   };
 
+  # Changes CapsLock to Control
+  system.defaults.NSGlobalDomain = {
+    "com.apple.keyboard.modifierMapping.262145" = {
+      HIDKeyboardModifierMappingDst = 2;
+      HIDKeyboardModifierMappingSrc = 0;
+    };
+  };
+
   # Fix nixbld group GID mismatch
   ids.gids.nixbld = 350;
 

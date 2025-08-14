@@ -1,34 +1,86 @@
-# Automated macOS workstation set up
+# Minimal macOS Nix Setup
 
-## Features
+A simplified Nix Darwin configuration that provides the most basic Nix setup for macOS.
 
-- Install [Nix](https://nixos.org/download.html#nix-install-macos), [nix-darwin](https://github.com/LnL7/nix-darwin), [home-manager](https://github.com/nix-community/home-manager) and [Homebrew](https://brew.sh)
-- Install CLI and GUI apps
-- Change system settings
-- Install [my dotfiles](https://github.com/khuedoan/dotfiles)
+## What This Does
+
+This configuration sets up:
+- Nix package manager with flakes enabled
+- Nix-darwin for macOS system management
+- Basic zsh integration
+- **Nothing else** - this is intentionally minimal
+
+## Installation
+
+1. Clone this repository:
+   ```bash
+   git clone <your-repo-url> ~/macos-setup
+   cd ~/macos-setup
+   ```
+
+2. Run the setup:
+   ```bash
+   make
+   ```
+
+   This will:
+   - Install Nix
+   - Install nix-darwin
+   - Install Homebrew (required by nix-darwin)
+   - Apply the configuration
+
+3. Restart your terminal or source your shell profile.
+
+## File Structure
+
+- `flake.nix` - Defines inputs (nixpkgs, nix-darwin) and the system configuration
+- `configuration.nix` - Main system configuration (currently minimal)
+- `hosts/mbp.nix` - Host-specific configuration (currently just user setup)
+- `Makefile` - Installation and build automation
 
 ## Usage
 
-- Change the hostname and username in `./flake.nix` and `./hosts/*.nix`
-- Go to **Settings -> Security & Privacy -> Privacy -> Full Disk Access** and allow the Terminal app
+After installation, you can:
 
-```sh
-git clone https://github.com/khuedoan/macos-setup macos-setup
-cd macos-setup
-make
+- Install packages temporarily: `nix-shell -p <package-name>`
+- Search for packages: `nix search nixpkgs <term>`
+- Update the system: `darwin-rebuild switch --flake .`
+
+## Adding More Features
+
+To expand this setup, you can:
+
+1. **Add packages**: Edit `configuration.nix` and add packages to `environment.systemPackages`
+2. **Configure system settings**: Add macOS preferences to `system.defaults` in `configuration.nix`
+3. **Add Homebrew packages**: Add `homebrew` section to `configuration.nix`
+4. **Add services**: Configure services in the `services` section of `configuration.nix`
+
+## Example: Adding Basic Tools
+
+To add some common tools, edit `configuration.nix`:
+
+```nix
+environment.systemPackages = with pkgs; [
+  git
+  curl
+  tree
+  htop
+];
 ```
 
-Then reboot.
+Then run: `darwin-rebuild switch --flake .`
 
-## Testing
+## Updating
 
-1. Install [UTM](https://getutm.app)
-2. Download [macOS IPSW recovery file](https://ipsw.me/product/Mac)
-3. Create a macOS VM in UTM using the downloaded IPSW file
-4. Run `xcode-select --install` in the new VM
-5. (Optional) Clone the VM to a new one for easy rollback ([UTM doesn't support snapshot yet](https://github.com/utmapp/UTM/issues/2688)) <!-- TODO -->
-6. Run [the above commands](#usage)
+To update all packages and flake inputs:
+```bash
+make update
+```
 
-## Acknowledgements
+## Host Configuration
 
-- [Setup nix, nix-darwin and home-manager from scratch on an M1 Macbook Pro](https://gist.github.com/jmatsushita/5c50ef14b4b96cb24ae5268dab613050)
+The hostname used for the configuration is "PersonalMacbookPro". If your hostname is different, either:
+1. Change your hostname: `sudo scutil --set HostName PersonalMacbookPro`
+2. Or update the `darwinConfigurations` name in `flake.nix` to match your hostname
+
+Check your hostname with: `hostname -s`

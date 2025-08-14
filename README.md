@@ -12,9 +12,35 @@ This configuration sets up:
 
 ## Installation
 
+### Quick Install (Recommended)
+
+Run this one-liner to automatically install everything:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh | bash
+```
+
+Or if you prefer wget:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh | bash
+```
+
+This script will:
+- Clone the repository to `~/macos-setup`
+- Install Nix
+- Install nix-darwin
+- Install Homebrew (required by nix-darwin)
+- Apply the configuration
+- Show you next steps
+
+### Manual Install
+
+If you prefer to do it manually:
+
 1. Clone this repository:
    ```bash
-   git clone <your-repo-url> ~/macos-setup
+   git clone https://github.com/IAmRadek/macos-setup.git ~/macos-setup
    cd ~/macos-setup
    ```
 
@@ -22,12 +48,6 @@ This configuration sets up:
    ```bash
    make
    ```
-
-   This will:
-   - Install Nix
-   - Install nix-darwin
-   - Install Homebrew (required by nix-darwin)
-   - Apply the configuration
 
 3. Restart your terminal or source your shell profile.
 

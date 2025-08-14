@@ -18,6 +18,9 @@
     };
   };
 
+  # Fix nixbld group GID mismatch
+  ids.gids.nixbld = 350;
+
   # Create /etc/zshrc that loads the nix-darwin environment
   programs = {
     zsh = {

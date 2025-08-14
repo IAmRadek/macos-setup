@@ -37,4 +37,4 @@ build: bootstrap
 update:
 	git pull
 	nix flake update
-	darwin-rebuild switch --flake .
+	sudo darwin-rebuild switch --flake .

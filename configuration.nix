@@ -1,6 +1,8 @@
 { config, pkgs, ... }:
 
 {
+  system.primaryUser = "rd";
+
   # Minimal system packages - just essential tools
   environment.systemPackages = with pkgs; [
     git
@@ -74,6 +76,18 @@
       ];
     };
   };
+
+  # system.defaults.dock = {
+  #   autohide = true;
+  #   show-recents = false;
+  #   # Only these stay in Dock — everything else disappears
+  #   persistent-apps = [
+  #     "/System/Applications/Safari.app"
+  #     "${pkgs.iterm2}/Applications/iTerm2.app"
+  #     "${pkgs.slack}/Applications/Slack.app"
+  #   ];
+  #   persistent-others = [ ];
+  # };
 
   # Fix nixbld group GID mismatch
   ids.gids.nixbld = 350;

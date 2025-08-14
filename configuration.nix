@@ -34,6 +34,7 @@
         # Development
         # "visual-studio-code"
         "alacritty"
+        "zed-editor"
         # "docker"  # Docker Desktop
 
         # Utilities
@@ -86,7 +87,8 @@
             show-recents = false;
             # Only these stay in Dock — everything else disappears
             persistent-apps = [
-              "/System/Applications/Safari.app"
+              "/System/Applications/Finder.app"
+              "${pkgs.google-chrome}/Applications/Google Chrome.app"
               "${pkgs.alacritty}/Applications/Alacritty.app"
             ];
             persistent-others = [ ];

@@ -77,17 +77,16 @@
     };
   };
 
-  # system.defaults.dock = {
-  #   autohide = true;
-  #   show-recents = false;
-  #   # Only these stay in Dock — everything else disappears
-  #   persistent-apps = [
-  #     "/System/Applications/Safari.app"
-  #     "${pkgs.iterm2}/Applications/iTerm2.app"
-  #     "${pkgs.slack}/Applications/Slack.app"
-  #   ];
-  #   persistent-others = [ ];
-  # };
+  system.defaults.dock = {
+    autohide = true;
+    show-recents = false;
+    # Only these stay in Dock — everything else disappears
+    persistent-apps = [
+      "/System/Applications/Safari.app"
+      "${pkgs.alacritty}/Applications/Alacritty.app"
+    ];
+    persistent-others = [ ];
+  };
 
   # Fix nixbld group GID mismatch
   ids.gids.nixbld = 350;

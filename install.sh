@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 REPO_URL="https://github.com/IAmRadek/macos-setup.git"
-INSTALL_DIR="$HOME/macos-setup"
+INSTALL_DIR="$HOME/Documents/macos-setup"
 
 # Helper functions
 print_info() {
@@ -64,13 +64,22 @@ clone_repository() {
 
     if [[ -d "$INSTALL_DIR" ]]; then
         print_warning "Directory $INSTALL_DIR already exists."
-        read -p "Do you want to remove it and clone fresh? (y/N): " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            print_info "Removing existing directory..."
-            rm -rf "$INSTALL_DIR"
+        if [[ -t 0 ]]; then
+            # Interactive mode - can read from user
+            read -p "Do you want to remove it and clone fresh? (y/N): " -n 1 -r </dev/tty
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                print_info "Removing existing directory..."
+                rm -rf "$INSTALL_DIR"
+            else
+                print_info "Using existing directory. Pulling latest changes..."
+                cd "$INSTALL_DIR"
+                git pull origin main || git pull origin master
+                return 0
+            fi
         else
-            print_info "Using existing directory. Pulling latest changes..."
+            # Non-interactive mode (piped) - automatically update
+            print_info "Non-interactive mode: Using existing directory. Pulling latest changes..."
             cd "$INSTALL_DIR"
             git pull origin main || git pull origin master
             return 0
@@ -89,11 +98,17 @@ install_setup() {
     print_warning "This will install Nix, nix-darwin, and Homebrew."
     print_warning "You may be prompted for your password during installation."
 
-    read -p "Do you want to continue? (Y/n): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
-        print_info "Installation cancelled."
-        exit 0
+    if [[ -t 0 ]]; then
+        # Interactive mode - ask for confirmation
+        read -p "Do you want to continue? (Y/n): " -n 1 -r </dev/tty
+        echo
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            print_info "Installation cancelled."
+            exit 0
+        fi
+    else
+        # Non-interactive mode (piped) - automatically continue
+        print_info "Non-interactive mode: Proceeding with installation..."
     fi
 
     print_info "Running make command..."

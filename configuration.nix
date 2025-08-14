@@ -70,6 +70,7 @@
   nixpkgs.config.allowUnfreePredicate = let
     whitelist = map lib.getName [
       pkgs.google-chrome
+      pkgs._1password
     ];
   in
    pkg: builtins.elem (lib.getName pkg) whitelist;

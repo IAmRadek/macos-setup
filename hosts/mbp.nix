@@ -236,16 +236,16 @@ in
           set -g status-interval 10
         '';
 
-        plugins = with pkgs; [
-          {
-            plugin = tmuxPlugins.tpm;
-            extraConfig = "set -g @plugin 'tmux-plugins/tpm'";
-          }
-          {
-            plugin = tmuxPlugins.sensible;
-            extraConfig = "set -g @plugin 'tmux-plugins/tmux-sensible'";
-          }
-        ];
+        # plugins = with pkgs; [
+        #   {
+        #     plugin = tmuxPlugins.tpm;
+        #     extraConfig = "set -g @plugin 'tmux-plugins/tpm'";
+        #   }
+        #   {
+        #     plugin = tmuxPlugins.sensible;
+        #     extraConfig = "set -g @plugin 'tmux-plugins/tmux-sensible'";
+        #   }
+        # ];
       };
 
       # Install custom tmux plugins

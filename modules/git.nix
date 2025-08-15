@@ -126,7 +126,7 @@ in
           ""
           "!${pkgs.gh}/bin/gh auth git-credential"
         ];
-      }
+      };
     };
   };
 }

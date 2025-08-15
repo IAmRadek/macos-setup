@@ -133,7 +133,7 @@ in
             "-A"
             "-s main"
             "-f"
-            "${config.xdg.configHome}/tmux/tmux.conf"
+            "${xdg.configHome}/tmux/tmux.conf"
           ];
         };
       };

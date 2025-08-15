@@ -218,6 +218,8 @@ in
           bind | split-window -h -c "#{pane_current_path}"
           unbind '"'
 
+          KUBE_TMUX_BINARY=${pkgs.kubectl}
+
           bind t new-window \; display "new window opened"
           bind w kill-window
 

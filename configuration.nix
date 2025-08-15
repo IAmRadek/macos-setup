@@ -133,11 +133,11 @@
       #   system-update = "cd ~/.nix-darwin && make update";
       # };
     };
+  };
 
-    ssh = {
+  home-manager.users.youruser = {
+    programs.ssh = {
       enable = true;
-
-      # SSH configuration with 1Password agent
       extraConfig = ''
         Host *
           IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"

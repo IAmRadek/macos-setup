@@ -77,7 +77,7 @@ in
       gpg = {
         "ssh" = {
           program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
-          allowedSignersFile = "${home}/.config/git/allowed_signers";
+          allowedSignersFile = "${config.xdg.configHome}/git/allowed_signers";
         };
       };
 
@@ -106,7 +106,7 @@ in
         "status.untracked"= "cyan";
       };
 
-      interactive.diffFilter = "delta --color-only";
+      interactive.diffFilter = "${pkgs.delta}/bin/delta --color-only";
 
       merge.conflictstyle = "diff3";
       diff.colorMoved = "default";

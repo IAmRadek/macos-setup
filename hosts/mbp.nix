@@ -199,6 +199,7 @@ in
           # set-option -g prefix C-a
           # bind-key C-a send-prefix
 
+          set -g @plugin 'IAmRadek/tmux-k8s-context-switcher'
 
           # Fix titlebar
           set -g set-titles on
@@ -206,7 +207,7 @@ in
 
           # Avoid date/time taking up space
           set -g status-right \'\'
-          set -g status-right '#[fg=yellow]%a %Y-%m-%d %H:%M'
+          set -g status-right '#(/bin/bash $HOME/.config/tmux/plugins/kube-tmux/kube.tmux 250 red cyan) #[fg=yellow]%a %Y-%m-%d %H:%M'
           set -g status-right-length 250
           set -g status-right-style default
 
@@ -250,8 +251,15 @@ in
       home.file.".config/tmux/plugins/tmux-k8s-context-switcher".source = pkgs.fetchFromGitHub {
         owner = "IAmRadek";
         repo = "tmux-k8s-context-switcher";
-        rev = "master";
+        rev = "main";
         sha256 = "17hl1q0lm6nv1rj9frwbanvb3sa75pmd7hbh79f28q138llpbm22";
+      };
+
+      home.file.".config/tmux/plugins/kube-tmux".source = pkgs.fetchFromGitHub {
+        owner = "jonmosco";
+        repo = "kube-tmux";
+        rev = "master";
+        sha256 = "0wfsqlcs24jkm1szih0s5g0i17qj8laks0wbd9nnm77q92q77gb7";
       };
 
       programs.starship = {

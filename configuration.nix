@@ -85,7 +85,7 @@
       ];
       trusted-users = [
         "rd"
-      ]
+      ];
       allowed-users = [
         "@admin"
       ];

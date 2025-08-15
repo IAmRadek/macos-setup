@@ -202,6 +202,8 @@ in
           set -g set-titles on
           set -g set-titles-string "#T"
 
+          set -g status-left ""
+
           # Avoid date/time taking up space
           set -g status-right \'\'
           set -g status-right '#(/bin/bash $HOME/.config/tmux/plugins/kube-tmux/kube.tmux 250 red cyan) #[fg=yellow]%a %Y-%m-%d %H:%M'

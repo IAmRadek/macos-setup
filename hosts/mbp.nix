@@ -38,6 +38,7 @@ in
       home.activation = {
         createDevDirectories = lib.hm.dag.entryAfter ["writeBoundary"] ''
           $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/Development/github.com
+          $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/tmux/plugins
         '';
       };
 
@@ -176,6 +177,82 @@ in
         # Syntax highlighting
         include "${pkgs.nano}/share/nano/*.nanorc"
       '';
+
+      # Configure tmux
+      programs.tmux = {
+        enable = true;
+        historyLimit = 100000;
+        terminal = "screen-256color";
+        keyMode = "vi";
+        mouse = true;
+        escapeTime = 0;
+        baseIndex = 1;
+        prefix = "C-a";
+        shell = "${pkgs.zsh}/bin/zsh";
+
+        extraConfig = ''
+          set -ag terminal-overrides ",xterm-256color:RGB"
+          setw -g xterm-keys on
+
+          # # Change CTRL-B to more convenient CTRL-A
+          # unbind C-b
+          # set-option -g prefix C-a
+          # bind-key C-a send-prefix
+
+
+          # Fix titlebar
+          set -g set-titles on
+          set -g set-titles-string "#T"
+
+          # Avoid date/time taking up space
+          set -g status-right \'\'
+          set -g status-right '#[fg=yellow]%a %Y-%m-%d %H:%M'
+          set -g status-right-length 250
+          set -g status-right-style default
+
+          # Split current window horizontally
+          bind - split-window -v -c "#{pane_current_path}"
+          unbind %
+          # Split current window vertically
+          bind | split-window -h -c "#{pane_current_path}"
+          unbind '"'
+
+          bind t new-window \; display "new window opened"
+          bind w kill-window
+
+          # Start numbering panes at 1, not 0.
+          set -g pane-base-index 1
+
+          ######################
+          ### DESIGN CHANGES ###
+          ######################
+          set -g status-style "bg=default"
+          setw -g window-status-current-style fg=black,bg=white
+
+          set -g window-status-format '#I:#(pwd="#{pane_current_path}"; echo $${pwd###*/})#F'
+          set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo $${pwd###*/})#F'
+          set -g status-interval 10
+        '';
+
+        plugins = with pkgs; [
+          {
+            plugin = tmuxPlugins.tpm;
+            extraConfig = "set -g @plugin 'tmux-plugins/tpm'";
+          }
+          {
+            plugin = tmuxPlugins.sensible;
+            extraConfig = "set -g @plugin 'tmux-plugins/tmux-sensible'";
+          }
+        ];
+      };
+
+      # Install custom tmux plugins
+      home.file.".config/tmux/plugins/tmux-k8s-context-switcher".source = pkgs.fetchFromGitHub {
+        owner = "IAmRadek";
+        repo = "tmux-k8s-context-switcher";
+        rev = "master";
+        sha256 = "17hl1q0lm6nv1rj9frwbanvb3sa75pmd7hbh79f28q138llpbm22";
+      };
 
       programs.starship = {
         enable = true;

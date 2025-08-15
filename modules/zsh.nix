@@ -38,7 +38,7 @@
       zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
       zinit light Freed-Wu/fzf-tab-source
       zinit light mfaerevaag/wd
-      zinit light ianthehenry/zsh-autoquote
+      zinit light ianthehenry/zsh-autoquoter
 
       ZAQ_PREFIXES=('git commit -m' 'g commit -m' 'watch')
 

@@ -30,6 +30,13 @@ in
       home.stateVersion = "22.11";
       programs.home-manager.enable = true;
 
+      # Create Development directory structure
+      home.activation = {
+        createDevDirectories = lib.hm.dag.entryAfter ["writeBoundary"] ''
+          $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/Development/github.com
+        '';
+      };
+
       programs.ssh = {
         enable = true;
         extraConfig = ''

@@ -196,7 +196,7 @@ in
 
           set -g @plugin 'IAmRadek/tmux-k8s-context-switcher'
 
-          KUBE_TMUX_BINARY=${pkgs.kubectl}
+          KUBE_TMUX_BINARY=${pkgs.kubectl}/bin/kubectl
 
           # Fix titlebar
           set -g set-titles on

@@ -13,4 +13,5 @@ in
   # This assumes ./colima-tools.sh is in the same dir as this module
   home.file.".local/bin/colima-tools".source = ../tools/colima.sh;
   home.file.".local/bin/colima-tools".executable = true;
+  home.file.".zsh/completions/_colima-tools".source = ../tools/_colima-tools;
 }

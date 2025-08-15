@@ -18,7 +18,6 @@
 
       # Define zinit home directory
       ZINIT_HOME="$HOME/.zinit"
-      export PATH="$HOME/.local/bin:$PATH"
 
       # Check if zinit is installed, if not, install it
       if [[ ! -d "$ZINIT_HOME" ]]; then

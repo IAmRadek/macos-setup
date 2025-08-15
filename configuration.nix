@@ -24,7 +24,7 @@
     jq
     watch
     _1password-cli
-    git-delta
+    delta
   ];
 
   # GUI Applications

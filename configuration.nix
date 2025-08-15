@@ -127,7 +127,19 @@
   programs = {
     zsh = {
       enable = true;
+      shellAliases = {
+        system-update = "cd ~/.nix-darwin && make update";
+      };
     };
+  };
+
+  # SSH configuration with 1Password agent
+  programs.ssh = {
+    enable = true;
+    extraConfig = ''
+      Host *
+        IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    '';
   };
 
   # Used for backwards compatibility, please read the changelog before changing.

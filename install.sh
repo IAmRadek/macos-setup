@@ -11,7 +11,7 @@ NC='\033[0m' # No Color
 
 # Configuration
 REPO_URL="https://github.com/IAmRadek/macos-setup.git"
-INSTALL_DIR="$HOME/Documents/macos-setup"
+INSTALL_DIR="$HOME/.nix-darwin"
 
 # Helper functions
 print_info() {
@@ -132,8 +132,8 @@ initialize_1password_cli() {
 
     # Check if 1Password CLI is installed
     if ! command -v op &> /dev/null; then
-        print_info "1Password CLI (op) not found, installing via Homebrew..."
-        brew install 1password-cli
+        print_warning "1Password CLI (op) not found"
+        print_info "Please install 1Password CLI manually"
     fi
 
     # Try to open 1Password app
@@ -146,8 +146,9 @@ initialize_1password_cli() {
     print_info ""
     print_info "Steps:"
     print_info "1. Sign in to 1Password app if not already signed in"
-    print_info "2. Run: op signin"
-    print_info "3. Follow the prompts to authenticate"
+    print_info "2. Remember to enable CLI support in Settings"
+    print_info "3. Run: op signin"
+    print_info "4. Follow the prompts to authenticate"
     print_info ""
 
     # Interactive setup for op signin

@@ -76,28 +76,27 @@ in
           # Load zinit plugins
 
           # Essential plugins
-          # History-aware completion plugin
-          zinit light marlonrichert/zsh-hist                      # History-based completion
-
-          # Essential plugins
           zinit light zdharma-continuum/fast-syntax-highlighting  # Command syntax highlighting
           zinit light zsh-users/zsh-autosuggestions               # Inline command suggestions
           zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
+
+          # History substring search for better history navigation
+          zinit light zsh-users/zsh-history-substring-search
 
           # History search with up/down arrows
           zinit snippet OMZL::history.zsh
 
           # Configure autosuggestions with improved history awareness
-          bindkey '^I' hist-complete # Use hist-complete for TAB
           bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
-          ZSH_AUTOSUGGEST_STRATEGY=(history completion) # Use history and completion
+          bindkey '^I' autosuggest-accept  # Tab to accept suggestion
+          ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd) # Use history and completion
 
-          # Setup history-based completion
-          autoload -Uz add-zsh-hook
-          zle -N hist-complete
+          # Setup better history navigation
+          bindkey '^[[A' history-substring-search-up     # Up arrow
+          bindkey '^[[B' history-substring-search-down   # Down arrow
 
           # Prioritize history completion over regular completion
-          bindkey -M emacs '^R' hist-search
+          bindkey '^R' history-incremental-search-backward
 
           # Configure history for better suggestion quality
           HISTSIZE=50000
@@ -115,14 +114,9 @@ in
           zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
-          # Configure hist plugin for optimal history-based completion
-          zstyle ':hist:*' size 50000
-          zstyle ':hist:*' unique true
-          zstyle ':hist:*' reverse true
-
           # Completion order with history prioritized
-          zstyle ':completion:*' completer _expand_alias _hist_complete _complete _ignored
-          zstyle ':completion:*:complete:*:*:*' group-order aliases history-lines functions commands builtins
+          zstyle ':completion:*' completer _expand_alias _complete _ignored
+          zstyle ':completion:*:complete:*:*:*' group-order aliases functions commands builtins
 
           # Configure fzf-tab (improved tab completion)
           zstyle ':fzf-tab:*' fzf-command fzf
@@ -134,11 +128,7 @@ in
           zstyle ':completion:*' file-sort access
           zstyle ':completion:*' sort-order 'recent=50 frequency=30 alpha=1'
 
-          # History-based completion settings
-          zstyle ':hist-complete:*' hist-sort recent
-          zstyle ':hist-complete:*' hist-limit 100
-
-          # Configure fzf-tab for history awareness
+          # Configure fzf-tab for better completion
           zstyle ':fzf-tab:*' prefer-prefix true
           zstyle ':fzf-tab:*' continuous-trigger 'tab'
           zstyle ':fzf-tab:*' fzf-flags '--tiebreak=begin,index --history=$HOME/.fzf_history'
@@ -148,8 +138,9 @@ in
           zstyle ':completion:*' use-cache on
           zstyle ':completion:*' cache-path "$HOME/.zcompcache"
 
-          # Initialize history plugin for better completion performance
-          zsh-hist-init
+          # Initialize proper completion system
+          autoload -Uz compinit
+          compinit
 
           # Improved fzf-tab defaults for better completion
           zstyle ':completion:*:descriptions' format '[%d]'

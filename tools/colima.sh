@@ -22,10 +22,9 @@ _usage(){
 cat <<'EOF'
 Usage:
   colima-tools <subcommand> [args]
-  or create symlinks to call directly: up, status, stop, restart, ...
 
 Subcommands:
-  up            Start Colima (env-tunable)
+  start         Start Colima (env-tunable)
   stop          Stop
   restart       Restart
   status        Status (also prints Docker/K8s contexts)
@@ -44,7 +43,7 @@ EOF
 }
 
 # ----------------- functions -----------------
-up(){
+start(){
   need colima
   local args=(start --profile "$COLIMA_PROFILE" --cpu "$COLIMA_CPU" --memory "$COLIMA_MEM" --disk "$COLIMA_DISK" --vm-type "$COLIMA_VM")
   [[ -n "$COLIMA_ARCH" ]] && args+=(--arch "$COLIMA_ARCH")
@@ -98,13 +97,13 @@ dispatch(){
   local base="$(basename -- "${0}")"
   case "$base" in
     colima-tools) ;; # go to subcommand mode
-    up|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
+    start|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
       "$base" "$@"; return ;;
   esac
 
   local sub="${1:-}"
   case "$sub" in
-    up|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
+    start|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
       shift
       "$sub" "$@"
       ;;

@@ -94,9 +94,6 @@ in
 
           # Source zinit
           source "$ZINIT_HOME/bin/zinit.zsh"
-        '';
-
-        initExtra = ''
 
           # Load zinit plugins
 

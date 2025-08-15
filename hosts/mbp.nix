@@ -265,7 +265,7 @@ in
         enable = true;
         settings = {
           # Starship configuration
-          add_newline = true;
+          # add_newline = true;
 
           character = {
             success_symbol = "[➜](bold green)";

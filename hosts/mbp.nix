@@ -12,12 +12,7 @@ in
     starship
   ];
 
-  homebrew = {
-    # casks = [
-    # ];
-    # masApps = {
-    # };
-  };
+  homebrew = {};
 
   system = {
     # Changes CapsLock to Control

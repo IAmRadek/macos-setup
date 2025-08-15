@@ -53,7 +53,10 @@
       # "docker"  # Docker Desktop
 
       # Utilities
-      # "rectangle"  # Window management
+      # "rectangle"  # Window managemen
+      "languagetool-desktop"
+      "moom"
+      "macwhisper"
       "raycast" # Launcher
       "1password"
       "notion-calendar"

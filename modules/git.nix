@@ -74,9 +74,11 @@ in
       url."ssh://git@github.com".insteadOf = "https://github.com";
 
       gpg.format = "ssh";
-      'gpg "ssh"' = {
-        program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
-        allowedSignersFile = "${home}/.config/git/allowed_signers";
+      gpg = {
+        "ssh" = {
+          program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+          allowedSignersFile = "${home}/.config/git/allowed_signers";
+        };
       };
 
       commit.gpgsign = true;

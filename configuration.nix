@@ -41,7 +41,7 @@
       # Development
       "alacritty"
       "zed"
-      "google-cloud-sdk"
+      # "google-cloud-sdk"
       "jetbrains-toolbox"
       # "docker"  # Docker Desktop
 
@@ -143,10 +143,6 @@
   programs = {
     zsh = {
       enable = true;
-
-      # shellAliases = {
-      #   system-update = "cd ~/.nix-darwin && make update";
-      # };
     };
   };
 

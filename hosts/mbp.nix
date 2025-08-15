@@ -29,6 +29,12 @@ in
         '';
       };
 
+      programs.zsh = {
+        shellAliases = {
+          system-update = "cd ~/.nix-darwin && make update";
+        };
+      }
+
       programs.alacritty = {
         enable = true;
 
@@ -137,7 +143,7 @@ in
             };
           };
 
-          shell = {
+          terminal.shell = {
             program = "${pkgs.tmux}/bin/tmux";
             args = [
               "new"

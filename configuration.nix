@@ -25,6 +25,7 @@
     watch
     _1password-cli
     delta
+    languagetool
   ];
 
   # GUI Applications
@@ -50,7 +51,6 @@
       "raycast" # Launcher
       "1password"
       "notion-calendar"
-      "languagetool"
       "postman"
 
       # Communication

@@ -79,6 +79,7 @@ in
           zinit light zdharma-continuum/fast-syntax-highlighting  # Command syntax highlighting
           zinit light zsh-users/zsh-autosuggestions               # Inline command suggestions
           zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
+          zinit light Freed-Wu/fzf-tab-source
 
           # History substring search for better history navigation
           zinit light zsh-users/zsh-history-substring-search
@@ -135,7 +136,6 @@ in
           zstyle ':completion:*:descriptions' format '[%d]'
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01'
           zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
-          zstyle ':fzf-tab:complete:k:*' fzf-preview 'SYSTEMD_COLORS=1 k $word'
 
           # Ensure compinit is properly initialized for zinit
           autoload -Uz compinit

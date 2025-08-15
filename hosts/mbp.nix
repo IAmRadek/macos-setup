@@ -38,6 +38,8 @@ in
       };
 
       programs.zsh = {
+        enable = true;
+
         shellAliases = {
           system-update = "cd ~/.nix-darwin && make update";
         };

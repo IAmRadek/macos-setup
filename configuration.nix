@@ -126,9 +126,9 @@
   # Fix nixbld group GID mismatch
   ids.gids.nixbld = 350;
 
-  environment.systemPath = [
-    config.homebrew.brewPrefix # TODO https://github.com/LnL7/nix-darwin/issues/596
-  ];
+  # environment.systemPath = [
+  #   config.homebrew.brewPrefix # TODO https://github.com/LnL7/nix-darwin/issues/596
+  # ];
 
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono

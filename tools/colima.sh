@@ -6,7 +6,7 @@ set -euo pipefail
 : "${COLIMA_PROFILE:=default}"
 : "${COLIMA_CPU:=4}"
 : "${COLIMA_MEM:=6}"       # GB
-: "${COLIMA_DISK:=60}"     # GB
+: "${COLIMA_DISK:=5}"      # GB
 : "${COLIMA_VM:=vz}"       # vz|qemu
 : "${COLIMA_K8S:=0}"       # 1 to enable
 : "${COLIMA_GPU:=0}"       # 1 to enable (vz aarch64)

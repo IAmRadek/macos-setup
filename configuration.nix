@@ -11,6 +11,7 @@
   # Minimal system packages - just essential tools
   environment.systemPackages = with pkgs; [
     git
+    git-town
     gh
     curl
     tmux
@@ -22,7 +23,11 @@
     nodejs
     python3
 
+    dust
+    duf
+
     go
+    gotest
     golangci-lint
     govulncheck
 
@@ -30,7 +35,6 @@
     watch
     _1password-cli
     delta
-    languagetool
     nano
   ];
 
@@ -62,6 +66,7 @@
       "1password"
       "notion-calendar"
       "postman"
+      "elgato-stream-deck"
 
       # Communication
       # "slack"

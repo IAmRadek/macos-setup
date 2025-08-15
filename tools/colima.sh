@@ -34,8 +34,6 @@ Subcommands:
   ssh           SSH into the VM
   images        List images by size
   ports         Show forwarded ports
-  snap_save [name]   Save snapshot
-  snap_load <name>   Restore snapshot
 
 Env knobs: COLIMA_PROFILE, COLIMA_CPU, COLIMA_MEM, COLIMA_DISK, COLIMA_VM,
            COLIMA_K8S=1, COLIMA_GPU=1, COLIMA_ARCH, COLIMA_DNS, COLIMA_DOCKER_MIRROR
@@ -97,13 +95,13 @@ dispatch(){
   local base="$(basename -- "${0}")"
   case "$base" in
     colima-tools) ;; # go to subcommand mode
-    start|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
+    start|stop|restart|status|logs|prune|nuke|ssh|images|ports)
       "$base" "$@"; return ;;
   esac
 
   local sub="${1:-}"
   case "$sub" in
-    start|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
+    start|stop|restart|status|logs|prune|nuke|ssh|images|ports)
       shift
       "$sub" "$@"
       ;;

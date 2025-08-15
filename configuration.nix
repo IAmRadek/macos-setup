@@ -137,7 +137,7 @@
 
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
-  ]
+  ];
 
   # Create /etc/zshrc that loads the nix-darwin environment
   programs = {

@@ -11,6 +11,7 @@
   # Minimal system packages - just essential tools
   environment.systemPackages = with pkgs; [
     git
+    gh
     curl
     tmux
     fzf

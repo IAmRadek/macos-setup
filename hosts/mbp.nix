@@ -79,14 +79,23 @@ in
           zinit light zdharma-continuum/fast-syntax-highlighting  # Command syntax highlighting
           zinit light zsh-users/zsh-autosuggestions               # Inline command suggestions
           zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
+          zinit light z-shell/zsh-navigation-tools                # History management and more
 
           # History search with up/down arrows
           zinit snippet OMZL::history.zsh
 
           # Configure autosuggestions
+          # Don't bind TAB to accept suggestions as it can interfere with navigation
           # bindkey '^I' autosuggest-accept # Allow TAB to accept suggestions
           bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
-          ZSH_AUTOSUGGEST_STRATEGY=(history completion) # Use both history and completion for suggestions
+          ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd) # Use history, completion and previous commands
+
+          # Configure history for better suggestion quality
+          HISTSIZE=10000
+          SAVEHIST=10000
+          setopt SHARE_HISTORY          # share history between sessions
+          setopt EXTENDED_HISTORY        # add timestamps to history
+          setopt HIST_IGNORE_DUPS        # don't record duplicated commands
 
           # Enhance completion system
           zstyle ':completion:*' menu select # Use menu selection for completion
@@ -97,6 +106,15 @@ in
           zstyle ':fzf-tab:*' fzf-command fzf
           zstyle ':fzf-tab:*' switch-group ',' '.'
           zstyle ':fzf-tab:*' fzf-preview 'ls -la $realpath'
+
+          # Sort completion candidates by frequency of use
+          zstyle ':completion:*:complete:*' sort true
+          zstyle ':completion:*' file-sort access
+          zstyle ':completion:*' sort-order 'recent=1 frequency=1'
+
+          # Cache completion for better performance with frequency sorting
+          zstyle ':completion:*' use-cache on
+          zstyle ':completion:*' cache-path "$HOME/.zcompcache"
 
           # Improved fzf-tab defaults for better completion
           zstyle ':completion:*:descriptions' format '[%d]'

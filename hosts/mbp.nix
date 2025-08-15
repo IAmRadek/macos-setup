@@ -83,23 +83,15 @@ in
           # History substring search for better history navigation
           zinit light zsh-users/zsh-history-substring-search
 
-          # History search with up/down arrows
-          zinit snippet OMZL::history.zsh
+          # Configure autosuggestions
+          bindkey '^ ' autosuggest-execute                        # Ctrl+Space to execute suggestion
+          ZSH_AUTOSUGGEST_STRATEGY=(history completion)           # Use history and completion
+          ZSH_AUTOSUGGEST_USE_ASYNC=1                             # Async suggestions for better performance
 
-          # Configure autosuggestions with improved history awareness
-          bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
-          bindkey '^[[Z' autosuggest-accept # Shift+Tab to accept suggestion
-          ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd) # Use history and completion
-
-          # Don't let autosuggestions interfere with tab completion
-          ZSH_AUTOSUGGEST_ACCEPT_WIDGETS=('forward-char' 'end-of-line' 'vi-forward-char' 'vi-end-of-line' 'vi-add-eol')
-
-          # Setup better history navigation
-          bindkey '^[[A' history-substring-search-up     # Up arrow
-          bindkey '^[[B' history-substring-search-down   # Down arrow
-
-          # Prioritize history completion over regular completion
-          bindkey '^R' history-incremental-search-backward
+          # Setup history navigation
+          bindkey '^[[A' history-substring-search-up              # Up arrow
+          bindkey '^[[B' history-substring-search-down            # Down arrow
+          bindkey '^R' history-incremental-search-backward        # Ctrl+R for history search
 
           # Configure history for better suggestion quality
           HISTSIZE=50000
@@ -113,42 +105,35 @@ in
           setopt HIST_EXPIRE_DUPS_FIRST  # expire duplicates first
 
           # Enhance completion system for history-based suggestions
-          zstyle ':completion:*' menu select # Use menu selection for completion
+          # Basic completion system configuration
+          zstyle ':completion:*' menu select                       # Use menu selection for completion
           zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
-          # Completion order with history prioritized
-          zstyle ':completion:*' completer _expand_alias _complete _history _ignored
-          zstyle ':completion:*:complete:*:*:*' group-order aliases functions commands builtins
+          # Simple completion order
+          zstyle ':completion:*' completer _expand_alias _complete _ignored
 
-          # Configure fzf-tab (improved tab completion)
+          # Basic fzf-tab configuration
           zstyle ':fzf-tab:*' fzf-command fzf
           zstyle ':fzf-tab:*' switch-group ',' '.'
           zstyle ':fzf-tab:*' fzf-preview 'ls -la $realpath'
 
-          # Sort completion candidates with strong history preference
-          # Sort completion candidates by frequency of use
-          zstyle ':completion:*:complete:*' sort true
-          zstyle ':completion:*' file-sort access
-          zstyle ':completion:*' sort-order 'recent=20 frequency=10 alpha=1'
-
-          # Add history-based completion
+          # Enable completion caching for better performance
           zstyle ':completion:*' use-cache on
           zstyle ':completion:*' cache-path "$HOME/.zcompcache"
 
-          # Configure fzf-tab for better completion
-          zstyle ':fzf-tab:*' prefer-prefix true
-          zstyle ':fzf-tab:*' continuous-trigger 'tab'
-          zstyle ':fzf-tab:*' fzf-flags '--tiebreak=begin --history=$HOME/.fzf_history'
-          zstyle ':fzf-tab:*' fzf-bindings 'tab:down,btab:up,change:top,ctrl-space:toggle'
+          # Simple fzf-tab key bindings
+          zstyle ':fzf-tab:*' continuous-trigger 'tab'            # TAB cycles through options
+          zstyle ':fzf-tab:*' fzf-bindings 'tab:down,btab:up'     # TAB/Shift+TAB to navigate
 
-          # Set up command history tracking for better sorting
+          # Set up command history
           HISTFILE=~/.zsh_history
+          HISTSIZE=10000
+          SAVEHIST=10000
+          setopt SHARE_HISTORY          # share history between sessions
+          setopt HIST_IGNORE_DUPS       # don't record duplicated commands
 
-          # Command to rebuild completion cache (run this occasionally)
-          alias rebuild-completion-cache='rm -f ~/.zcompcache/* && compinit'
-
-          # Initialize proper completion system
+          # Initialize completion system
           autoload -Uz compinit
           compinit
 

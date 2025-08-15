@@ -74,6 +74,8 @@
       zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
       zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
+      fpath=("$HOME/.zsh/completions" $fpath)
+
       # Simple completion order
       zstyle ':completion:*' completer _expand_alias _complete _ignored
 
@@ -89,10 +91,6 @@
       # Simple fzf-tab key bindings
       zstyle ':fzf-tab:*' continuous-trigger 'tab'            # TAB cycles through options
       zstyle ':fzf-tab:*' fzf-bindings 'tab:down,btab:up'     # TAB/Shift+TAB to navigate
-
-      # Initialize completion system
-      autoload -Uz compinit
-      compinit
 
       # Ensure nano is used for editing
       alias edit='nano'

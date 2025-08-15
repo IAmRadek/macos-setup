@@ -85,10 +85,20 @@ in
           zinit snippet OMZL::history.zsh
 
           # Configure autosuggestions
-          # Don't bind TAB to accept suggestions as it can interfere with navigation
-          # bindkey '^I' autosuggest-accept # Allow TAB to accept suggestions
+          # Make TAB work with autosuggestions but still allow completion menu
+          bindkey '^I' autosuggest-accept-or-complete # Custom function defined below
           bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
           ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd) # Use history, completion and previous commands
+
+          # Define custom function to accept suggestion or complete
+          function autosuggest-accept-or-complete() {
+            if [[ -n "$BUFFER" && -n "$POSTDISPLAY" ]]; then
+              zle autosuggest-accept
+            else
+              zle fzf-tab-complete
+            fi
+          }
+          zle -N autosuggest-accept-or-complete
 
           # Configure history for better suggestion quality
           HISTSIZE=10000
@@ -102,6 +112,10 @@ in
           zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
+          # Prioritize aliases and frequently used commands
+          zstyle ':completion:*' completer _expand_alias _complete _ignored
+          zstyle ':completion:*:complete:*:*:*' group-order aliases functions commands builtins
+
           # Configure fzf-tab (improved tab completion)
           zstyle ':fzf-tab:*' fzf-command fzf
           zstyle ':fzf-tab:*' switch-group ',' '.'
@@ -110,7 +124,12 @@ in
           # Sort completion candidates by frequency of use
           zstyle ':completion:*:complete:*' sort true
           zstyle ':completion:*' file-sort access
-          zstyle ':completion:*' sort-order 'recent=1 frequency=1'
+          zstyle ':completion:*' sort-order 'recent=20 frequency=10 alpha=5'
+
+          # Configure fzf-tab to use the same sorting as autosuggestions
+          zstyle ':fzf-tab:*' prefer-prefix true
+          zstyle ':fzf-tab:*' continuous-trigger 'tab'
+          zstyle ':fzf-tab:*' fzf-flags '--tiebreak=begin'
 
           # Cache completion for better performance with frequency sorting
           zstyle ':completion:*' use-cache on

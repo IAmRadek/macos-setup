@@ -15,7 +15,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin }: {
+  outputs = { self, nixpkgs, darwin, home-manager }: {
     darwinConfigurations = {
       "rd" = darwin.lib.darwinSystem {
         system = "aarch64-darwin";

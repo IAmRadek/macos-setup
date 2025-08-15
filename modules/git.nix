@@ -86,7 +86,7 @@ in
       core = {
         excludesFile = "${config.xdg.configHome}/git/.gitignore";
         editor = "nano";
-        pager  = "delta";
+        pager  = "${pkgs.delta}/bin/delta";
         hooksPath = "${hooksDir}";
       };
 

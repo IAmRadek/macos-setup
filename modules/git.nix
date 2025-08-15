@@ -33,33 +33,36 @@ in
         features = "calochortus-lyallii";
         dark = true;
         "map-styles" = "bold purple => syntax magenta, bold cyan => syntax blue";
+
         # Feature block below
-        "calochortus-lyallii.commit-decoration-style" = "none";
-        "calochortus-lyallii.dark" = "true";
-        "calochortus-lyallii.file-added-label" = "[+]";
-        "calochortus-lyallii.file-copied-label" = "[C]";
-        "calochortus-lyallii.file-decoration-style" = "none";
-        "calochortus-lyallii.file-modified-label" = "[M]";
-        "calochortus-lyallii.file-removed-label" = "[-]";
-        "calochortus-lyallii.file-renamed-label" = "[R]";
-        "calochortus-lyallii.file-style" = "232 bold 184";
-        "calochortus-lyallii.hunk-header-decoration-style" = "none";
-        "calochortus-lyallii.hunk-header-file-style" = "#999999";
-        "calochortus-lyallii.hunk-header-line-number-style" = "bold #03a4ff";
-        "calochortus-lyallii.hunk-header-style" = "file line-number syntax";
-        "calochortus-lyallii.line-numbers" = "true";
-        "calochortus-lyallii.line-numbers-left-style" = "black";
-        "calochortus-lyallii.line-numbers-minus-style" = "#B10036";
-        "calochortus-lyallii.line-numbers-plus-style" = "#03a4ff";
-        "calochortus-lyallii.line-numbers-right-style" = "black";
-        "calochortus-lyallii.line-numbers-zero-style" = "#999999";
-        "calochortus-lyallii.minus-emph-style" = "syntax bold #780000";
-        "calochortus-lyallii.minus-style" = "syntax #400000";
-        "calochortus-lyallii.plus-emph-style" = "syntax bold #007800";
-        "calochortus-lyallii.plus-style" = "syntax #004000";
-        "calochortus-lyallii.whitespace-error-style" = "#280050 reverse";
-        "calochortus-lyallii.zero-style" = "syntax";
-        "calochortus-lyallii.syntax-theme" = "Nord";
+        "calochortus-lyallii" = {
+          "commit-decoration-style" = "none";
+          "dark" = "true";
+          "file-added-label" = "[+]";
+          "file-copied-label" = "[C]";
+          "file-decoration-style" = "none";
+          "file-modified-label" = "[M]";
+          "file-removed-label" = "[-]";
+          "file-renamed-label" = "[R]";
+          "file-style" = "232 bold 184";
+          "hunk-header-decoration-style" = "none";
+          "hunk-header-file-style" = "#999999";
+          "hunk-header-line-number-style" = "bold #03a4ff";
+          "hunk-header-style" = "file line-number syntax";
+          "line-numbers" = "true";
+          "line-numbers-left-style" = "black";
+          "line-numbers-minus-style" = "#B10036";
+          "line-numbers-plus-style" = "#03a4ff";
+          "line-numbers-right-style" = "black";
+          "line-numbers-zero-style" = "#999999";
+          "minus-emph-style" = "syntax bold #780000";
+          "minus-style" = "syntax #400000";
+          "plus-emph-style" = "syntax bold #007800";
+          "plus-style" = "syntax #004000";
+          "whitespace-error-style" = "#280050 reverse";
+          "zero-style" = "syntax";
+          "syntax-theme" = "Nord";
+        };
       };
     };
 
@@ -94,16 +97,25 @@ in
 
       color = {
         ui = true;
-        "branch.current" = "yellow reverse";
-        "branch.local"   = "yellow";
-        "branch.remote"  = "green";
-        "diff.meta"      = "yellow bold";
-        "diff.frag"      = "magenta bold";
-        "diff.old"       = "red bold";
-        "diff.new"       = "green bold";
-        "status.added"    = "yellow";
-        "status.changed"  = "green";
-        "status.untracked"= "cyan";
+
+        branch = {
+          current = "yellow reverse";
+          local   = "yellow";
+          remote  = "green";
+        };
+
+        diff = {
+          meta      = "yellow bold";
+          frag      = "magenta bold";
+          old       = "red bold";
+          new       = "green bold";
+        };
+
+        status = {
+          added    = "yellow";
+          changed  = "green";
+          untracked= "cyan";
+        };
       };
 
       interactive.diffFilter = "${pkgs.delta}/bin/delta --color-only";

@@ -194,12 +194,9 @@ in
           set -ag terminal-overrides ",xterm-256color:RGB"
           setw -g xterm-keys on
 
-          # # Change CTRL-B to more convenient CTRL-A
-          # unbind C-b
-          # set-option -g prefix C-a
-          # bind-key C-a send-prefix
-
           set -g @plugin 'IAmRadek/tmux-k8s-context-switcher'
+
+          KUBE_TMUX_BINARY=${pkgs.kubectl}
 
           # Fix titlebar
           set -g set-titles on
@@ -218,7 +215,7 @@ in
           bind | split-window -h -c "#{pane_current_path}"
           unbind '"'
 
-          KUBE_TMUX_BINARY=${pkgs.kubectl}
+
 
           bind t new-window \; display "new window opened"
           bind w kill-window
@@ -232,8 +229,8 @@ in
           set -g status-style "bg=default"
           setw -g window-status-current-style fg=black,bg=white
 
-          set -g window-status-format '#I:#(pwd="#{pane_current_path}"; echo $${pwd###*/})#F'
-          set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo $${pwd###*/})#F'
+          set -g window-status-format '#I:#(pwd="#{pane_current_path}"; echo $\{pwd###*/})#F'
+          set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo $\{pwd###*/})#F'
           set -g status-interval 10
         '';
 

@@ -134,6 +134,8 @@
     };
 
     ssh = {
+      enable = true;
+
       # SSH configuration with 1Password agent
       extraConfig = ''
         Host *

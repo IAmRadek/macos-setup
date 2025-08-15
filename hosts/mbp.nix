@@ -227,8 +227,8 @@ in
           set -g status-style "bg=default"
           setw -g window-status-current-style fg=black,bg=white
 
-          set -g window-status-format '#I:#(pwd="#{pane_current_path}"; echo $${pwd###*/})#F'
-          set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo $${pwd###*/})#F'
+          set -g window-status-format '#I:#(pwd="#{pane_current_path}"; echo \${pwd###*/})#F'
+          set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo \${pwd###*/})#F'
           set -g status-interval 10
         '';
 

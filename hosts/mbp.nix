@@ -76,64 +76,80 @@ in
           # Load zinit plugins
 
           # Essential plugins
+          # History-aware completion plugin
+          zinit light marlonrichert/zsh-hist                      # History-based completion
+
+          # Essential plugins
           zinit light zdharma-continuum/fast-syntax-highlighting  # Command syntax highlighting
           zinit light zsh-users/zsh-autosuggestions               # Inline command suggestions
           zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
-          zinit light z-shell/zsh-navigation-tools                # History management and more
 
           # History search with up/down arrows
           zinit snippet OMZL::history.zsh
 
-          # Configure autosuggestions
-          # Make TAB work with autosuggestions but still allow completion menu
-          bindkey '^I' autosuggest-accept-or-complete # Custom function defined below
+          # Configure autosuggestions with improved history awareness
+          bindkey '^I' hist-complete # Use hist-complete for TAB
           bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
-          ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd) # Use history, completion and previous commands
+          ZSH_AUTOSUGGEST_STRATEGY=(history completion) # Use history and completion
 
-          # Define custom function to accept suggestion or complete
-          function autosuggest-accept-or-complete() {
-            if [[ -n "$BUFFER" && -n "$POSTDISPLAY" ]]; then
-              zle autosuggest-accept
-            else
-              zle fzf-tab-complete
-            fi
-          }
-          zle -N autosuggest-accept-or-complete
+          # Setup history-based completion
+          autoload -Uz add-zsh-hook
+          zle -N hist-complete
+
+          # Prioritize history completion over regular completion
+          bindkey -M emacs '^R' hist-search
 
           # Configure history for better suggestion quality
-          HISTSIZE=10000
-          SAVEHIST=10000
+          HISTSIZE=50000
+          SAVEHIST=50000
           setopt SHARE_HISTORY          # share history between sessions
           setopt EXTENDED_HISTORY        # add timestamps to history
           setopt HIST_IGNORE_DUPS        # don't record duplicated commands
+          setopt HIST_FIND_NO_DUPS       # don't show duplicates in search
+          setopt HIST_REDUCE_BLANKS      # remove superfluous blanks
+          setopt HIST_IGNORE_SPACE       # don't record commands starting with space
+          setopt HIST_EXPIRE_DUPS_FIRST  # expire duplicates first
 
-          # Enhance completion system
+          # Enhance completion system for history-based suggestions
           zstyle ':completion:*' menu select # Use menu selection for completion
           zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
-          # Prioritize aliases and frequently used commands
-          zstyle ':completion:*' completer _expand_alias _complete _ignored
-          zstyle ':completion:*:complete:*:*:*' group-order aliases functions commands builtins
+          # Configure hist plugin for optimal history-based completion
+          zstyle ':hist:*' size 50000
+          zstyle ':hist:*' unique true
+          zstyle ':hist:*' reverse true
+
+          # Completion order with history prioritized
+          zstyle ':completion:*' completer _expand_alias _hist_complete _complete _ignored
+          zstyle ':completion:*:complete:*:*:*' group-order aliases history-lines functions commands builtins
 
           # Configure fzf-tab (improved tab completion)
           zstyle ':fzf-tab:*' fzf-command fzf
           zstyle ':fzf-tab:*' switch-group ',' '.'
           zstyle ':fzf-tab:*' fzf-preview 'ls -la $realpath'
 
-          # Sort completion candidates by frequency of use
+          # Sort completion candidates with strong history preference
           zstyle ':completion:*:complete:*' sort true
           zstyle ':completion:*' file-sort access
-          zstyle ':completion:*' sort-order 'recent=20 frequency=10 alpha=5'
+          zstyle ':completion:*' sort-order 'recent=50 frequency=30 alpha=1'
 
-          # Configure fzf-tab to use the same sorting as autosuggestions
+          # History-based completion settings
+          zstyle ':hist-complete:*' hist-sort recent
+          zstyle ':hist-complete:*' hist-limit 100
+
+          # Configure fzf-tab for history awareness
           zstyle ':fzf-tab:*' prefer-prefix true
           zstyle ':fzf-tab:*' continuous-trigger 'tab'
-          zstyle ':fzf-tab:*' fzf-flags '--tiebreak=begin'
+          zstyle ':fzf-tab:*' fzf-flags '--tiebreak=begin,index --history=$HOME/.fzf_history'
+          zstyle ':fzf-tab:*' accept-line enter
 
           # Cache completion for better performance with frequency sorting
           zstyle ':completion:*' use-cache on
           zstyle ':completion:*' cache-path "$HOME/.zcompcache"
+
+          # Initialize history plugin for better completion performance
+          zsh-hist-init
 
           # Improved fzf-tab defaults for better completion
           zstyle ':completion:*:descriptions' format '[%d]'

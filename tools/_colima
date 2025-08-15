@@ -19,6 +19,7 @@ _colima_snapshots() {
 }
 
 _arguments -C \
+  '(-)--profile[Select colima profile]:profile:_colima_profiles' \
   '1:subcommand:(start stop restart status logs prune nuke ssh images ports snap_save snap_load)' \
   '*::args:->args'
 

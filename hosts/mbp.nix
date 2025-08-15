@@ -88,8 +88,24 @@ in
 
           # Configure autosuggestions with improved history awareness
           bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
-          bindkey '^I' autosuggest-accept  # Tab to accept suggestion
+          # Custom TAB handling for hybrid completion/suggestion behavior
           ZSH_AUTOSUGGEST_STRATEGY=(history completion match_prev_cmd) # Use history and completion
+
+          # Custom function for smart TAB completion
+          smart-tab() {
+            # If this is the second TAB in succession
+            if [[ $LASTWIDGET == smart-tab ]]; then
+              # Accept autosuggestion if available
+              if [[ -n "$POSTDISPLAY" ]]; then
+                zle autosuggest-accept
+              fi
+            else
+              # First TAB press - show completion menu
+              zle fzf-tab-complete
+            fi
+          }
+          zle -N smart-tab
+          bindkey '^I' smart-tab
 
           # Setup better history navigation
           bindkey '^[[A' history-substring-search-up     # Up arrow
@@ -115,8 +131,12 @@ in
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
           # Completion order with history prioritized
-          zstyle ':completion:*' completer _expand_alias _complete _ignored
-          zstyle ':completion:*:complete:*:*:*' group-order aliases functions commands builtins
+          zstyle ':completion:*' completer _expand_alias _history _complete _ignored
+          zstyle ':completion:*:complete:*:*:*' group-order history-words aliases functions commands builtins
+
+          # Special history completion settings
+          zstyle ':completion:*:history-words' list false
+          zstyle ':completion:*:history-words' menu yes
 
           # Configure fzf-tab (improved tab completion)
           zstyle ':fzf-tab:*' fzf-command fzf
@@ -128,15 +148,29 @@ in
           zstyle ':completion:*' file-sort access
           zstyle ':completion:*' sort-order 'recent=50 frequency=30 alpha=1'
 
-          # Configure fzf-tab for better completion
-          zstyle ':fzf-tab:*' prefer-prefix true
-          zstyle ':fzf-tab:*' continuous-trigger 'tab'
-          zstyle ':fzf-tab:*' fzf-flags '--tiebreak=begin,index --history=$HOME/.fzf_history'
-          zstyle ':fzf-tab:*' accept-line enter
-
-          # Cache completion for better performance with frequency sorting
+          # Add history-based completion
           zstyle ':completion:*' use-cache on
           zstyle ':completion:*' cache-path "$HOME/.zcompcache"
+
+          # Store and use history data for completion ordering
+          zstyle ':completion:*' rehash true
+          zstyle ':completion:*' remember yes
+          zstyle ':completion:*:history-words' remove-all-dups yes
+          zstyle ':completion:*:history-words' stop yes
+
+          # Configure fzf-tab for better completion with history awareness
+          zstyle ':fzf-tab:*' prefer-prefix true
+          zstyle ':fzf-tab:*' continuous-trigger \'\' # Disable continuous trigger to allow our smart-tab function
+          zstyle ':fzf-tab:*' fzf-flags '--tiebreak=begin,index,history --history=$HOME/.fzf_history'
+          zstyle ':fzf-tab:*' accept-line enter
+          zstyle ':fzf-tab:*' fzf-bindings 'tab:accept'
+
+          # Set up command history tracking for better sorting
+          HISTFILE=~/.zsh_history
+          fc -RI # Read history file
+
+          # Command to rebuild completion cache (run this occasionally)
+          alias rebuild-completion-cache='rm -f ~/.zcompcache/* && compinit'
 
           # Initialize proper completion system
           autoload -Uz compinit

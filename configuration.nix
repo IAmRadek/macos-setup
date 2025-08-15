@@ -26,6 +26,7 @@
     _1password-cli
     delta
     languagetool
+    nano
   ];
 
   # GUI Applications

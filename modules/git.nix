@@ -117,17 +117,16 @@ in
       };
 
       # GitHub/Gist credential helpers (use Nix gh path)
-      'credential "https://github.com"'.helper = [
-        ""  # clear existing helpers
-        "!${pkgs.gh}/bin/gh auth git-credential"
-      ];
-      'credential "https://gist.github.com"'.helper = [
-        ""
-        "!${pkgs.gh}/bin/gh auth git-credential"
-      ];
+      'credential = {
+        "https://github.com".helper = [
+          ""  # clear existing helpers
+          "!${pkgs.gh}/bin/gh auth git-credential"
+        ];
+        "https://gist.github.com".helper = [
+          ""
+          "!${pkgs.gh}/bin/gh auth git-credential"
+        ];
+      }
     };
   };
-
-  # Make sure delta and gh are installed
-  home.packages = with pkgs; [ gitAndTools.delta gh ];
 }

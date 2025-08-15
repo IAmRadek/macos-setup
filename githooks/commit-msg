@@ -1,0 +1,31 @@
+#!/bin/bash
+
+exec </dev/tty
+
+COMMIT_PATTERN="^\[[A-Z]+-[0-9]+\]: "
+
+IFS=$'\n' read -rd '' -a BRANCH_COMMITS <<<"$(git cherry master -v | cut -d' ' -f3-)"
+
+if [[ ${#BRANCH_COMMITS[@]} -gt 0 ]]; then
+  for commit in "${BRANCH_COMMITS[@]}"; do
+    if [[ "$commit" =~ $COMMIT_PATTERN ]]; then
+      exit 0
+    fi
+  done
+fi
+
+INPUT_FILE=$1
+START_LINE=$(head -n1 $INPUT_FILE)
+if ! [[ "$START_LINE" =~ $COMMIT_PATTERN ]]; then
+  echo "Bad commit message, see example: $FIRST_COMMIT_PATTERN$START_LINE"
+  while read -r -p "Do you really want to commit with that message? (y/n) " yn; do
+    case $yn in
+    [Yy])
+      echo "Committing with not standard message"
+      break
+      ;;
+    [Nn]) exit 1 ;;
+    *) echo "Please answer y (yes) or n (no):" && continue ;;
+    esac
+  done
+fi

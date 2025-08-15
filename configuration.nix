@@ -20,7 +20,11 @@
     kubectl
     nodejs
     python3
+
     go
+    golangci-lint
+    govulncheck
+
     jq
     watch
     _1password-cli

@@ -1,0 +1,10 @@
+.idea
+.DS_Store
+.gitsecret/keys/random_seed
+!*.secret
+.ssh/id_IAmRadek
+.ssh/id_IAmRadek.pub
+.ssh/id_ingrid
+.ssh/id_ingrid.pub
+.ssh/environment-rd
+.ssh/known_hosts

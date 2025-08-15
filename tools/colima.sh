@@ -98,13 +98,13 @@ dispatch(){
   local base="$(basename -- "${0}")"
   case "$base" in
     colima-tools) ;; # go to subcommand mode
-    up|down|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
+    up|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
       "$base" "$@"; return ;;
   esac
 
   local sub="${1:-}"
   case "$sub" in
-    up|down|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
+    up|stop|restart|status|logs|prune|nuke|ssh|images|ports|snap_save|snap_load)
       shift
       "$sub" "$@"
       ;;

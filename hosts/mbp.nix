@@ -84,6 +84,7 @@ in
           zinit light zsh-users/zsh-autosuggestions               # Inline command suggestions
           zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
           zinit light Freed-Wu/fzf-tab-source
+          zinit light mfaerevaag/wd
 
           # History substring search for better history navigation
           zinit light zsh-users/zsh-history-substring-search
@@ -188,8 +189,10 @@ in
           };
 
           directory = {
-            truncation_length = 3;
-            truncate_to_repo = true;
+            truncation_length = 0;
+            truncate_to_repo = false;
+            home_symbol = "~";
+            use_os_path_sep = true;
           };
 
           git_branch = {

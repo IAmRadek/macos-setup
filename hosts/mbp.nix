@@ -8,6 +8,10 @@ in
   # TODO https://github.com/LnL7/nix-darwin/issues/682
   users.users.${username}.home = "/Users/${username}";
 
+  environment.systemPackages = with pkgs; [
+    starship
+  ];
+
   homebrew = {
     # casks = [
     # ];
@@ -90,6 +94,9 @@ in
 
           # Source zinit
           source "$ZINIT_HOME/bin/zinit.zsh"
+        '';
+
+        initExtra = ''
 
           # Load zinit plugins
 
@@ -125,6 +132,48 @@ in
           autoload -Uz compinit
           compinit
         '';
+      };
+
+      programs.starship = {
+        enable = true;
+        settings = {
+          # Starship configuration
+          add_newline = true;
+
+          character = {
+            success_symbol = "[➜](bold green)";
+            error_symbol = "[✗](bold red)";
+          };
+
+          directory = {
+            truncation_length = 3;
+            truncate_to_repo = true;
+          };
+
+          git_branch = {
+            format = "[$symbol$branch]($style) ";
+            symbol = "🌱 ";
+          };
+
+          git_status = {
+            format = '([\[$all_status$ahead_behind\]]($style) )';
+            conflicted = "🏳";
+            ahead = "⇡\${count}";
+            behind = "⇣\${count}";
+            diverged = "⇕⇡\${ahead_count}⇣\${behind_count}";
+            untracked = "?";
+            stashed = "📦";
+            modified = "!";
+            staged = "+";
+            renamed = "»";
+            deleted = "✘";
+          };
+
+          cmd_duration = {
+            min_time = 2000;
+            format = "took [$duration]($style) ";
+          };
+        };
       };
 
       programs.alacritty = {

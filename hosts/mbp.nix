@@ -54,6 +54,8 @@ in
         shellAliases = {
           system-update = "cd ~/.nix-darwin && make update";
           ".." = "cd ..";
+          "g" = "git";
+          "k" = "kubectl";
         };
 
         initContent = ''
@@ -82,7 +84,7 @@ in
           zinit snippet OMZL::history.zsh
 
           # Configure autosuggestions
-          bindkey '^I' autosuggest-accept # Allow TAB to accept suggestions
+          # bindkey '^I' autosuggest-accept # Allow TAB to accept suggestions
           bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
           ZSH_AUTOSUGGEST_STRATEGY=(history completion) # Use both history and completion for suggestions
 

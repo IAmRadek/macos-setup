@@ -15,6 +15,14 @@ in
     # };
   };
 
+  system = {
+    # Changes CapsLock to Control
+    keyboard = {
+      enableKeyMapping = true;
+      remapCapsLockToControl = true;
+    };
+  };
+
   home-manager = {
     useUserPackages = true;
     useGlobalPkgs = true;

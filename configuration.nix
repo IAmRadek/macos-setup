@@ -120,12 +120,6 @@
         AppleInterfaceStyle = "Dark";
       };
     };
-
-    # Changes CapsLock to Control
-    keyboard = {
-      enableKeyMapping = true;
-      remapCapsLockToControl = true;
-    };
   };
 
   # Fix nixbld group GID mismatch

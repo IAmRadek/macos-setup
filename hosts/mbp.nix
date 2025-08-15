@@ -53,6 +53,7 @@ in
 
         shellAliases = {
           system-update = "cd ~/.nix-darwin && make update";
+          ".." = "cd ..";
         };
 
         initContent = ''
@@ -103,6 +104,19 @@ in
           # Ensure compinit is properly initialized for zinit
           autoload -Uz compinit
           compinit
+
+          # Diagnostic - Check for problematic definitions
+          if typeset -f ".." > /dev/null; then
+            echo "WARNING: '..' is defined as a function which might cause navigation issues"
+            unfunction ".."
+          fi
+
+          if alias ".." 2>/dev/null | grep -v "cd .."; then
+            echo "WARNING: '..' is aliased to something other than 'cd ..'"
+          fi
+
+          # Always ensure .. works properly
+          alias ..='cd ..'
 
           eval "$(starship init zsh)"
         '';

@@ -87,7 +87,7 @@ in
         excludesFile = "${config.xdg.configHome}/git/.gitignore";
         editor = "nano";
         pager  = "delta";
-        hooksPath = "${hooksPath}";
+        hooksPath = "${hooksDir}";
       };
 
       pull.rebase = false;

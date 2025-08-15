@@ -127,19 +127,22 @@
   programs = {
     zsh = {
       enable = true;
-      shellAliases = {
-        system-update = "cd ~/.nix-darwin && make update";
-      };
+
+      # shellAliases = {
+      #   system-update = "cd ~/.nix-darwin && make update";
+      # };
     };
+
+    ssh = {
+      # SSH configuration with 1Password agent
+      extraConfig = ''
+        Host *
+          IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+      '';
+    }
   };
 
-  # SSH configuration with 1Password agent
-  programs.ssh = {
-    extraConfig = ''
-      Host *
-        IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-    '';
-  };
+
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog

@@ -52,14 +52,30 @@ in
         };
 
         initExtraFirst = ''
-          PROMPT='$fg_bold[blue] [ $fg[red]%n@%m:%~$(git_prompt_info)$fg[yellow]$(ruby_prompt_info)$fg_bold[blue] ]$reset_color
-           $ '
+          # Custom git prompt function
+          function git_prompt_info() {
+            local ref
+            if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+              ref=$(git symbolic-ref HEAD 2> /dev/null) || \
+              ref=$(git rev-parse --short HEAD 2> /dev/null) || return 0
+              echo "%F{green}(${ref#refs/heads/}$(parse_git_dirty))%f"
+            fi
+          }
 
-          # git theming
-          ZSH_THEME_GIT_PROMPT_PREFIX="$fg_bold[green]("
-          ZSH_THEME_GIT_PROMPT_SUFFIX=")"
-          ZSH_THEME_GIT_PROMPT_CLEAN="✔"
-          ZSH_THEME_GIT_PROMPT_DIRTY="✗"
+          # Check for uncommitted changes
+          function parse_git_dirty() {
+            local STATUS
+            STATUS=$(git status --porcelain 2> /dev/null | tail -n1)
+            if [[ -n $STATUS ]]; then
+              echo "%F{red}✗%f"
+            else
+              echo "%F{green}✔%f"
+            fi
+          }
+
+          # Define the prompt
+          PROMPT='%F{blue}[ %F{red}%n@%m:%~%f$(git_prompt_info)%F{blue} ]%f
+ $ '
 
           # Define zinit home directory
           ZINIT_HOME="$HOME/.zinit"
@@ -79,19 +95,33 @@ in
         initExtra = ''
           # Load zinit plugins
 
-          # Syntax highlighting and autosuggestions
-          zinit light zdharma-continuum/fast-syntax-highlighting
-          zinit light zsh-users/zsh-autosuggestions
-
-          # Completions
-          zinit light zsh-users/zsh-completions
-
-
-          # Enhanced 'cd' command
-          zinit light agkozak/zsh-z
+          # Essential plugins
+          zinit light zdharma-continuum/fast-syntax-highlighting  # Command syntax highlighting
+          zinit light zsh-users/zsh-autosuggestions               # Inline command suggestions
+          zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
 
           # History search with up/down arrows
           zinit snippet OMZL::history.zsh
+
+          # Configure autosuggestions
+          bindkey '^I' autosuggest-accept # Allow TAB to accept suggestions
+          bindkey '^ ' autosuggest-execute # Ctrl+Space to execute suggestion
+          ZSH_AUTOSUGGEST_STRATEGY=(history completion) # Use both history and completion for suggestions
+
+          # Enhance completion system
+          zstyle ':completion:*' menu select # Use menu selection for completion
+          zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
+          zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS} # Colorize completion menu
+
+          # Configure fzf-tab (improved tab completion)
+          zstyle ':fzf-tab:*' fzf-command fzf
+          zstyle ':fzf-tab:*' switch-group ',' '.'
+          zstyle ':fzf-tab:*' fzf-preview 'ls -la $realpath'
+
+          # Improved fzf-tab defaults for better completion
+          zstyle ':completion:*:descriptions' format '[%d]'
+          zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+          zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
 
           # Ensure compinit is properly initialized for zinit
           autoload -Uz compinit

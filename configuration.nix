@@ -135,9 +135,9 @@
     config.homebrew.brewPrefix # TODO https://github.com/LnL7/nix-darwin/issues/596
   ];
 
-  fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "jetbrains-mono" ]; })
-  ];
+  fonts.packages = [
+    pkgs.nerd-fonts.jetbrains-mono
+  ]
 
   # Create /etc/zshrc that loads the nix-darwin environment
   programs = {

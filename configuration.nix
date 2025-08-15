@@ -11,7 +11,6 @@
   # Minimal system packages - just essential tools
   environment.systemPackages = with pkgs; [
     git
-    nano
     curl
     tmux
     fzf
@@ -26,8 +25,14 @@
     watch
     _1password-cli
     delta
-    languagetool
+    nano
   ];
+
+  # Set nano as default editor
+  environment.variables = {
+    EDITOR = "nano";
+    VISUAL = "nano";
+  };
 
   # GUI Applications
   homebrew = {

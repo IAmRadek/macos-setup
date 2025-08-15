@@ -4,7 +4,9 @@ exec </dev/tty
 
 COMMIT_PATTERN="^\[[A-Z]+-[0-9]+\]: "
 
-IFS=$'\n' read -rd '' -a BRANCH_COMMITS <<<"$(git cherry master -v | cut -d' ' -f3-)"
+DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+
+IFS=$'\n' read -rd '' -a BRANCH_COMMITS <<<"$(git cherry $DEFAULT_BRANCH -v | cut -d' ' -f3-)"
 
 if [[ ${#BRANCH_COMMITS[@]} -gt 0 ]]; then
   for commit in "${BRANCH_COMMITS[@]}"; do

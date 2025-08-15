@@ -50,6 +50,44 @@ in
         shellAliases = {
           system-update = "cd ~/.nix-darwin && make update";
         };
+
+        initExtraFirst = ''
+          # Define zinit home directory
+          ZINIT_HOME="$HOME/.zinit"
+
+          # Check if zinit is installed, if not, install it
+          if [[ ! -d "$ZINIT_HOME" ]]; then
+            print -P "%F{33}▓▒░ %F{220}Installing %F{33}ZINIT%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+            mkdir -p "$ZINIT_HOME"
+            git clone https://github.com/zdharma-continuum/zinit "$ZINIT_HOME/bin"
+            print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b"
+          fi
+
+          # Source zinit
+          source "$ZINIT_HOME/bin/zinit.zsh"
+        '';
+
+        initExtra = ''
+          # Load zinit plugins
+
+          # Syntax highlighting and autosuggestions
+          zinit light zdharma-continuum/fast-syntax-highlighting
+          zinit light zsh-users/zsh-autosuggestions
+
+          # Completions
+          zinit light zsh-users/zsh-completions
+
+
+          # Enhanced 'cd' command
+          zinit light agkozak/zsh-z
+
+          # History search with up/down arrows
+          zinit snippet OMZL::history.zsh
+
+          # Ensure compinit is properly initialized for zinit
+          autoload -Uz compinit
+          compinit
+        '';
       };
 
       programs.alacritty = {

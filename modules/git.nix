@@ -117,7 +117,7 @@ in
       };
 
       # GitHub/Gist credential helpers (use Nix gh path)
-      'credential = {
+      credential = {
         "https://github.com".helper = [
           ""  # clear existing helpers
           "!${pkgs.gh}/bin/gh auth git-credential"

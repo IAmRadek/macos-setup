@@ -3,6 +3,7 @@
 
   programs.zsh = {
     enable = true;
+    enableCompletion = true;
 
     shellAliases = {
       system-update = "cd ~/.nix-darwin && make update";

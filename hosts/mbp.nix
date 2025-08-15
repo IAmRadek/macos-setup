@@ -67,9 +67,6 @@ in
         # Display cursor position in the status bar
         set constantshow
 
-        # Use smooth scrolling
-        set smooth
-
         # Enable mouse support
         set mouse
 

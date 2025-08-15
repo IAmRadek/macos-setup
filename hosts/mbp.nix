@@ -10,8 +10,6 @@ in
 
   environment.systemPackages = with pkgs; [
     starship
-
-    tmuxPlugins
   ];
 
   homebrew = {

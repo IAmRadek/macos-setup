@@ -7,10 +7,10 @@ in
 {
 
   xdg.configFile."git/hooks" = {
-    source = ./githooks;    # directory in your repo
+    source = ../githooks;    # directory in your repo
     recursive = true;       # copy all files/subdirs
   };
-  xdg.configFile."git/.gitignore".source = ./_gitignore;
+  xdg.configFile."git/.gitignore".source = ../_gitignore;
 
   programs.git = {
     enable = true;

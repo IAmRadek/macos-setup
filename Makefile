@@ -13,10 +13,10 @@ default: build
 	bash /tmp/brew-install.sh
 
 .hostname-set:
-	@echo "Setting hostname to 'rd'..."
-	sudo scutil --set HostName rd
-	sudo scutil --set LocalHostName rd
-	sudo scutil --set ComputerName rd
+	@echo "Setting hostname to 'rdwk'..."
+	sudo scutil --set HostName rdwk
+	sudo scutil --set LocalHostName rdwk
+	sudo scutil --set ComputerName rdwk
 	@echo "Hostname set successfully. You may need to restart your terminal."
 	touch .hostname-set
 

@@ -53,6 +53,7 @@ in
           ../modules/alacritty.nix
           ../modules/zsh.nix
           ../modules/tmux.nix
+          ../modules/git.nix
         ];
 
       # Configure nano with xdg.configFile

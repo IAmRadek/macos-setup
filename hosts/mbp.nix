@@ -120,7 +120,7 @@ in
 
           # Improved fzf-tab defaults for better completion
           zstyle ':completion:*:descriptions' format '[%d]'
-          zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+          zstyle ':completion:*' list-colors $${(s.:.)LS_COLORS}
           zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
 
           # Ensure compinit is properly initialized for zinit

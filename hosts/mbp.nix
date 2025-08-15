@@ -49,6 +49,7 @@ in
           ../modules/zsh.nix
           ../modules/tmux.nix
           ../modules/git.nix
+          ../modules/tools.nix
         ];
 
       # Configure nano with xdg.configFile

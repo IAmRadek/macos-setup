@@ -5,7 +5,6 @@
 
   # Minimal system packages - just essential tools
   environment.systemPackages = with pkgs; [
-    ssh
     git
     curl
     tmux

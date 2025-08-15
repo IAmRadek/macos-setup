@@ -56,31 +56,6 @@ in
         };
 
         initContent = ''
-          # Custom git prompt function
-          function git_prompt_info() {
-            local ref
-            if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-              ref=$(git symbolic-ref HEAD 2> /dev/null) || \
-              ref=$(git rev-parse --short HEAD 2> /dev/null) || return 0
-              echo "%F{green}($${ref#refs/heads/}$(parse_git_dirty))%f"
-            fi
-          }
-
-          # Check for uncommitted changes
-          function parse_git_dirty() {
-            local STATUS
-            STATUS=$$(git status --porcelain 2> /dev/null | tail -n1)
-            if [[ -n $$STATUS ]]; then
-              echo "%F{red}✗%f"
-            else
-              echo "%F{green}✔%f"
-            fi
-          }
-
-          # Define the prompt
-          PROMPT='%F{blue}[ %F{red}%n@%m:%~%f$(git_prompt_info)%F{blue} ]%f
- $ '
-
           # Define zinit home directory
           ZINIT_HOME="$HOME/.zinit"
 
@@ -128,6 +103,8 @@ in
           # Ensure compinit is properly initialized for zinit
           autoload -Uz compinit
           compinit
+
+          eval "$(starship init zsh)"
         '';
       };
 

@@ -59,6 +59,10 @@ in
         };
 
         initContent = ''
+          # Set nano as default editor
+          export EDITOR="nano"
+          export VISUAL="nano"
+
           # Define zinit home directory
           ZINIT_HOME="$HOME/.zinit"
 
@@ -132,6 +136,9 @@ in
           autoload -Uz compinit
           compinit
 
+          # Ensure nano is used for editing
+          alias edit='nano'
+
           # Improved fzf-tab defaults for better completion
           zstyle ':completion:*:descriptions' format '[%d]'
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01'
@@ -145,31 +152,29 @@ in
         '';
       };
 
-      programs.nano = {
-        enable = true;
-        nanorc = ''
-          # Display line numbers
-          set linenumbers
+      # Configure nano with xdg.configFile
+      xdg.configFile."nano/nanorc".text = ''
+        # Display line numbers
+        set linenumbers
 
-          # Use auto-indentation
-          set autoindent
+        # Use auto-indentation
+        set autoindent
 
-          # Display cursor position in the status bar
-          set constantshow
+        # Display cursor position in the status bar
+        set constantshow
 
-          # Use smooth scrolling
-          set smooth
+        # Use smooth scrolling
+        set smooth
 
-          # Enable mouse support
-          set mouse
+        # Enable mouse support
+        set mouse
 
-          # Don't wrap text at the end of the line
-          set nowrap
+        # Don't wrap text at the end of the line
+        set nowrap
 
-          # Syntax highlighting
-          include "${pkgs.nano}/share/nano/*.nanorc"
-        '';
-      };
+        # Syntax highlighting
+        include "${pkgs.nano}/share/nano/*.nanorc"
+      '';
 
       programs.starship = {
         enable = true;

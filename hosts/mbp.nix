@@ -156,7 +156,7 @@ in
           };
 
           git_status = {
-            format = '([\[$all_status$ahead_behind\]]($style) )';
+            format = ''([\[$all_status$ahead_behind\]]($style) )'';
             conflicted = "🏳";
             ahead = "⇡\${count}";
             behind = "⇣\${count}";

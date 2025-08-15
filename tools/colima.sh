@@ -44,7 +44,7 @@ EOF
 }
 
 # ----------------- functions -----------------
-cup(){
+up(){
   need colima
   local args=(start --profile "$COLIMA_PROFILE" --cpu "$COLIMA_CPU" --memory "$COLIMA_MEM" --disk "$COLIMA_DISK" --vm-type "$COLIMA_VM")
   [[ -n "$COLIMA_ARCH" ]] && args+=(--arch "$COLIMA_ARCH")
@@ -61,26 +61,26 @@ cup(){
 
   cstatus
 }
-cstop(){ need colima; echo "→ colima stop --profile $COLIMA_PROFILE"; colima stop --profile "$COLIMA_PROFILE"; }
-crestart(){ need colima; echo "→ colima restart --profile $COLIMA_PROFILE"; colima restart --profile "$COLIMA_PROFILE"; }
-cstatus(){
+stop(){ need colima; echo "→ colima stop --profile $COLIMA_PROFILE"; colima stop --profile "$COLIMA_PROFILE"; }
+restart(){ need colima; echo "→ colima restart --profile $COLIMA_PROFILE"; colima restart --profile "$COLIMA_PROFILE"; }
+status(){
   need colima
   colima status --profile "$COLIMA_PROFILE" || true
   if _has docker; then echo "Docker context: $(docker context show 2>/dev/null || echo 'n/a')"; fi
   if _has kubectl; then kubectl config current-context 2>/dev/null || true; fi
 }
-clogs(){ need colima; colima logs --profile "$COLIMA_PROFILE"; }
-cprune(){ need docker; echo "→ docker system prune -f --volumes"; docker system prune -f --volumes; echo "→ docker builder prune -f"; docker builder prune -f || true; }
-cnuke(){
+logs(){ need colima; colima logs --profile "$COLIMA_PROFILE"; }
+prune(){ need docker; echo "→ docker system prune -f --volumes"; docker system prune -f --volumes; echo "→ docker builder prune -f"; docker builder prune -f || true; }
+nuke(){
   need colima
   read -rp "This will STOP and DELETE Colima profile '$COLIMA_PROFILE'. Continue? (y/N) " yn
   [[ "${yn:-N}" =~ ^[Yy]$ ]] || exit 1
   colima stop --profile "$COLIMA_PROFILE" || true
   colima delete --profile "$COLIMA_PROFILE"
 }
-cssh(){ need colima; colima ssh --profile "$COLIMA_PROFILE"; }
-cimages(){ need docker; docker images --format '{{.Repository}}:{{.Tag}}\t{{.Size}}' | sort -hr -k2; }
-cports(){
+ssh(){ need colima; colima ssh --profile "$COLIMA_PROFILE"; }
+images(){ need docker; docker images --format '{{.Repository}}:{{.Tag}}\t{{.Size}}' | sort -hr -k2; }
+ports(){
   need colima
   colima list --json | awk -v p="$COLIMA_PROFILE" '
     /"name":/ { gsub(/[",]/,""); name=$2 }
@@ -90,8 +90,8 @@ cports(){
     /}/ && name==p && port!="" { printf "%s://%s:%s\n", proto, host, port; port=host=proto="" }
   '
 }
-csnap_save(){ need colima; local name="${1:-snap-$(date +%Y%m%d-%H%M%S)}"; echo "→ snapshot save '$name'"; colima snapshot save --profile "$COLIMA_PROFILE" "$name"; }
-csnap_load(){ need colima; local name="${1:?snapshot name required}"; echo "→ snapshot load '$name'"; colima snapshot restore --profile "$COLIMA_PROFILE" "$name"; }
+snap_save(){ need colima; local name="${1:-snap-$(date +%Y%m%d-%H%M%S)}"; echo "→ snapshot save '$name'"; colima snapshot save --profile "$COLIMA_PROFILE" "$name"; }
+snap_load(){ need colima; local name="${1:?snapshot name required}"; echo "→ snapshot load '$name'"; colima snapshot restore --profile "$COLIMA_PROFILE" "$name"; }
 
 # ----------------- dispatcher -----------------
 dispatch(){

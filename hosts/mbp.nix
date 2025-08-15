@@ -147,7 +147,7 @@ in
 
       programs.nano = {
         enable = true;
-        nanorc = '''
+        nanorc = ''
           # Display line numbers
           set linenumbers
 
@@ -168,7 +168,7 @@ in
 
           # Syntax highlighting
           include "${pkgs.nano}/share/nano/*.nanorc"
-        ''';
+        '';
       };
 
       programs.starship = {

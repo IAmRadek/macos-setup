@@ -144,7 +144,34 @@
     zsh = {
       enable = true;
     };
+
+    nano = {
+      enable = true;
+      nanorc = ''
+        # Display line numbers
+        set linenumbers
+
+        # Use auto-indentation
+        set autoindent
+
+        # Display cursor position in the status bar
+        set constantshow
+
+        # Use smooth scrolling
+        set smooth
+
+        # Enable mouse support
+        set mouse
+
+        # Don't wrap text at the end of the line
+        set nowrap
+
+        # Syntax highlighting
+        include "${pkgs.nano}/share/nano/*.nanorc"
+      '';
+    };
   };
+
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog

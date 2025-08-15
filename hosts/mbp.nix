@@ -33,7 +33,7 @@ in
         shellAliases = {
           system-update = "cd ~/.nix-darwin && make update";
         };
-      }
+      };
 
       programs.alacritty = {
         enable = true;

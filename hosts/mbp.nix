@@ -51,14 +51,14 @@ in
           system-update = "cd ~/.nix-darwin && make update";
         };
 
-        initExtraFirst = ''
+        initContent = ''
           # Custom git prompt function
           function git_prompt_info() {
             local ref
             if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-              ref=$$(git symbolic-ref HEAD 2> /dev/null) || \
-              ref=$$(git rev-parse --short HEAD 2> /dev/null) || return 0
-              echo "%F{green}($${ref#refs/heads/}$$(parse_git_dirty))%f"
+              ref=$(git symbolic-ref HEAD 2> /dev/null) || \
+              ref=$(git rev-parse --short HEAD 2> /dev/null) || return 0
+              echo "%F{green}($${ref#refs/heads/}$(parse_git_dirty))%f"
             fi
           }
 
@@ -74,7 +74,7 @@ in
           }
 
           # Define the prompt
-          PROMPT='%F{blue}[ %F{red}%n@%m:%~%f$$(git_prompt_info)%F{blue} ]%f
+          PROMPT='%F{blue}[ %F{red}%n@%m:%~%f$(git_prompt_info)%F{blue} ]%f
  $ '
 
           # Define zinit home directory
@@ -90,9 +90,7 @@ in
 
           # Source zinit
           source "$ZINIT_HOME/bin/zinit.zsh"
-        '';
 
-        initExtra = ''
           # Load zinit plugins
 
           # Essential plugins

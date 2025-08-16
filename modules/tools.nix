@@ -16,7 +16,7 @@ in
   home.file.".zsh/completions/_colima-tools".source = ../tools/_colima;
 
   home.activation.mySymlinks = lib.mkAfter ''
-   	  ln -sf ~/.local/share/navi/cheats/local ~/.nix-darwin/tools/navi/cheats
+   	  ln -sf ~/.nix-darwin/tools/navi/cheats ~/.local/share/navi/cheats/local
    	'';
 
 }

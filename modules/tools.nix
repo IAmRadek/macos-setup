@@ -18,6 +18,6 @@ in
   xdg.enable = true;
   xdg.dataFile."navi/cheats/local".source =
     config.lib.file.mkOutOfStoreSymlink
-      "${config.home.homeDirectory}/.nix-darwin/navi/cheats";
+      "~/.nix-darwin/navi/cheats";
 
 }

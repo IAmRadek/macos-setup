@@ -92,9 +92,6 @@
       zstyle ':fzf-tab:*' continuous-trigger 'tab'            # TAB cycles through options
       zstyle ':fzf-tab:*' fzf-bindings 'tab:down,btab:up'     # TAB/Shift+TAB to navigate
 
-      # Ensure nano is used for editing
-      alias edit='nano'
-
       # Improved fzf-tab defaults for better completion
       zstyle ':completion:*:descriptions' format '[%d]'
       zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01'

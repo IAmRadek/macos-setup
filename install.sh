@@ -128,14 +128,6 @@ install_setup() {
 }
 
 initialize_1password_cli() {
-    print_info "Initializing 1Password CLI (op)..."
-
-    # Check if 1Password CLI is installed
-    if ! command -v op &> /dev/null; then
-        print_warning "1Password CLI (op) not found"
-        print_info "Please install 1Password CLI manually"
-    fi
-
     # Try to open 1Password app
     print_info "Opening 1Password app..."
     open -a "1Password" 2>/dev/null || print_warning "Could not open 1Password automatically"
@@ -145,10 +137,8 @@ initialize_1password_cli() {
     print_info "This will authenticate the CLI with your 1Password account"
     print_info ""
     print_info "Steps:"
-    print_info "1. Sign in to 1Password app if not already signed in"
+    print_info "1. Sign in to 1Password app"
     print_info "2. Remember to enable CLI support in Settings"
-    print_info "3. Run: op signin"
-    print_info "4. Follow the prompts to authenticate"
     print_info ""
 
     # Interactive setup for op signin

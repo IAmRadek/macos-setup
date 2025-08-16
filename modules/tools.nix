@@ -15,5 +15,5 @@ in
   home.file.".local/bin/colima-tools".executable = true;
   home.file.".zsh/completions/_colima-tools".source = ../tools/_colima;
 
-  home.file.".local/share/navi/cheats".source = ../tools/navi/cheats;
+  home.file.".config/navi/config.yaml".source = ../tools/navi/config.yaml;
 }

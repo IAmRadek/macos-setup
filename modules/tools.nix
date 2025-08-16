@@ -15,7 +15,9 @@ in
   home.file.".local/bin/colima-tools".executable = true;
   home.file.".zsh/completions/_colima-tools".source = ../tools/_colima;
 
+  xdg.enable = true;
   xdg.dataFile."navi/cheats/local".source =
-      lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.nix-darwin/navi/cheats";
+    config.lib.file.mkOutOfStoreSymlink
+      "${config.home.homeDirectory}/.nix-darwin/navi/cheats";
 
 }

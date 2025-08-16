@@ -58,7 +58,7 @@
       set -g status-interval 10
 
       unbind-key -T prefix c
-      bind-key -T prefix C-c split-window -p 35 \
+      bind-key -T prefix c split-window -p 35 \
         "$SHELL -lc 'set -e; navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane'"
     '';
 

@@ -1,0 +1,14 @@
+% md5 -> {text}
+echo -n "{{text}}" | md5
+
+% hmac-sha256 -> {key} {text}
+echo -n "{{text}}" | openssl dgst -sha256 -hmac "{{key}}" -binary | xxd -p -c 256
+
+% b64-enc -> {text}
+echo -n "{{text}}" | base64
+
+% uuid
+uuidgen | tr 'A-Z' 'a-z'
+
+% json pretty -> {json}
+echo '{{json}}' | jq

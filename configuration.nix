@@ -25,6 +25,8 @@
 
     dust
     duf
+    hurl
+    navi
 
     go
     gotest
@@ -41,6 +43,7 @@
   # GUI Applications
   homebrew = {
     enable = true;
+    onActivation.autoUpdate = true;
     onActivation.cleanup = "zap";
 
     # GUI Apps

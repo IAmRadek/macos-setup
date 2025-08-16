@@ -18,5 +18,5 @@ in
   home.file.".config/navi/config.yaml" = {
     copy = true;
     source = ../tools/navi/config.yaml;
-  }
+  };
 }

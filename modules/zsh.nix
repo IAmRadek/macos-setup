@@ -101,7 +101,8 @@
       autoload -Uz compinit
       compinit
 
-      eval "$(starship init zsh)"
+      eval "$(${pkgs.starship}/bin/starship init zsh)"
+      eval "$(${pkgs.navi}/bin/navi widget zsh)"
     '';
   };
 

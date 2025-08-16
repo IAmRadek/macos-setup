@@ -55,9 +55,8 @@
       set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo ''${pwd###*/})#F'
       set -g status-interval 10
 
-      unbind c
-      bind-key -N "Open Navi (cheat sheets)" -T prefix C-c split-window \
-        "$SHELL --login -i -c 'navi --print | tmux load-buffer -b tmp - ; tmux paste-buffer -p -t {last} -b tmp -d'"
+      bind-key -T prefix C-c split-window -p 35 \
+        "$SHELL -lc 'set -e; navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane'"
     '';
 
     # plugins = with pkgs; [

@@ -59,7 +59,8 @@
 
       unbind-key -T prefix c
       bind-key -T prefix c split-window -p 35 \
-        "$SHELL -lc 'navi --path $HOME/.config/navi/cheats --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane'"
+        "$SHELL -lc 'navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane'"
+
 
     '';
 

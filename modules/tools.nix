@@ -15,6 +15,8 @@ in
   home.file.".local/bin/colima-tools".executable = true;
   home.file.".zsh/completions/_colima-tools".source = ../tools/_colima;
 
-  home.file.".local/share/navi/cheats/local".source = ../tools/navi/cheats;
+  home.activation.mySymlinks = lib.mkAfter ''
+   	  ln -sf ~/.local/share/navi/cheats/local ~/.nix-darwin/tools/navi/cheats
+   	'';
 
 }

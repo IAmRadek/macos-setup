@@ -42,6 +42,8 @@
       bind t new-window \; display "new window opened"
       bind w kill-window
 
+      bind-key r source-file ~/.config/tmux/tmux.conf \; display-message "tmux.conf reloaded"
+
       # Start numbering panes at 1, not 0.
       set -g pane-base-index 1
 

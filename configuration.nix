@@ -135,6 +135,7 @@
           "${pkgs.google-chrome}/Applications/Google Chrome.app"
           "${pkgs.alacritty}/Applications/Alacritty.app"
           "${pkgs.zed-editor}/Applications/Zed.app/"
+          "${pkgs._1password}/Applications/1Password.app"
         ];
         persistent-others = [ ];
       };

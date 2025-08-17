@@ -34,8 +34,6 @@
     golangci-lint
     govulncheck
 
-    zed-editor
-
     jq
     fd
     watch
@@ -132,9 +130,9 @@
         show-recents = false;
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
-          "${pkgs.google-chrome}/Applications/Google Chrome.app"
-          "${pkgs.alacritty}/Applications/Alacritty.app"
-          "${pkgs.zed-editor}/Applications/Zed.app/"
+          "/Applications/Google Chrome.app"
+          "/Applications/Alacritty.app"
+          "/Applications/Zed.app"
           "/Applications/1Password.app"
         ];
         persistent-others = [ ];

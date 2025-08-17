@@ -45,8 +45,11 @@
   # GUI Applications
   homebrew = {
     enable = true;
-    onActivation.autoUpdate = true;
-    onActivation.cleanup = "zap";
+    onActivation = {
+      autoUpdate = true;
+      cleanup = "uninstall";
+      upgrade = true;
+    };
 
     # GUI Apps
     casks = [

@@ -21,20 +21,10 @@ echo '<json>' | jq
 
 % runbooks
 
-# Open runbook by title (parses YAML front-matter `title:`)
-glow "<rbfile>"
+# Open a runbook (fzf + glow preview; picks any *.md in ~/.runbooks)
+glow "<file>"
 
-$rbfile: bash -lc '
-RB="$HOME/.runbooks"
-fd -e md . "$RB" | while IFS= read -r f; do
-  t=$(awk '"'"'/^---/{c++} c==1 && /^title:/{sub(/^title:[ ]*/,"");print; exit}'"'"' "$f")
-  [ -z "$t" ] && t=$(basename "$f")
-  printf "%s\t%s\n" "$t" "$f"
-done
-' --- \
-  --delimiter '\t' \
-  --with-nth 1 \
-  --preview 'glow -p {2}' \
-  --map 'cut -f2' \
-  --header 'title\tfile' \
-  --query ""
+$file: bash -lc 'fd -e md . "$HOME/.runbooks" | sort' --- \
+  --preview 'glow -p {}' \
+  --query "" \
+  --header 'Select a runbook'

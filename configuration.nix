@@ -59,6 +59,7 @@
 
       # Development
       "alacritty"
+      "zed"
       # "google-cloud-sdk"
       "jetbrains-toolbox"
       # "docker"  # Docker Desktop

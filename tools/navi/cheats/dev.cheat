@@ -25,6 +25,6 @@ echo '<json>' | jq
 glow "<file>"
 
 $file: bash -lc 'fd -e md . "$HOME/.runbooks" | sort' --- \
-  --preview 'glow -p {}' \
+  --preview 'awk "/^<!--/{in=1; next} /^-->/ && in==1{exit} in==1{print}" {} | glow -p -' \
   --query "" \
   --header 'Select a runbook'

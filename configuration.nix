@@ -34,6 +34,8 @@
     golangci-lint
     govulncheck
 
+    zed-editor
+
     jq
     fd
     watch
@@ -59,7 +61,6 @@
 
       # Development
       "alacritty"
-      "zed"
       # "google-cloud-sdk"
       "jetbrains-toolbox"
       # "docker"  # Docker Desktop

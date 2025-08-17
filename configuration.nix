@@ -27,6 +27,7 @@
     duf
     hurl
     navi
+    glow
 
     go
     gotest

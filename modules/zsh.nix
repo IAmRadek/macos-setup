@@ -124,7 +124,7 @@
       };
 
       git_branch = {
-        format = "\[[$symbol$branch]($style)\]";
+        format = ''\[[$symbol$branch]($style)\]'';
         symbol = "🌱 ";
       };
 

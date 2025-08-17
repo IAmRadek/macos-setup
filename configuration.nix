@@ -8,7 +8,6 @@
 {
   system.primaryUser = "rd";
 
-  # Minimal system packages - just essential tools
   environment.systemPackages = with pkgs; [
     git
     git-town
@@ -28,6 +27,9 @@
     hurl
     navi
     glow
+
+    zed-editor
+    alacritty
 
     go
     gotest
@@ -58,8 +60,6 @@
       # "firefox"
 
       # Development
-      "alacritty"
-      "zed"
       # "google-cloud-sdk"
       "jetbrains-toolbox"
       # "docker"  # Docker Desktop
@@ -132,8 +132,8 @@
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
           "/Applications/Google Chrome.app"
-          "/Applications/Alacritty.app"
-          "/Applications/Zed.app"
+          "${pkgs.alacritty}/Applications/Alacritty.app"
+          "${pkgs.zed-editor}/Applications/Zed.app"
           "/Applications/1Password.app"
         ];
         persistent-others = [ ];

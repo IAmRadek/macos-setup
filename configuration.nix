@@ -104,7 +104,7 @@
     let
       whitelist = map lib.getName [
         pkgs.google-chrome
-        pkgs._1password
+        pkgs._1password-cli
       ];
     in
     pkg: builtins.elem (lib.getName pkg) whitelist;

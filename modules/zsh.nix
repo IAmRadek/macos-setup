@@ -124,12 +124,16 @@
       };
 
       git_branch = {
-        format = "[$symbol$branch]($style) ";
+        format = "\[[$symbol$branch]($style)\]";
         symbol = "🌱 ";
       };
 
+      golang = {
+        format = ''\[[$symbol($version)]($style)\]'';
+      };
+
       git_status = {
-        format = ''([\[$all_status$ahead_behind\]]($style) )'';
+        format = ''([\[$all_status$ahead_behind\]]($style))'';
         conflicted = "🏳";
         ahead = "⇡\${count}";
         behind = "⇣\${count}";
@@ -144,7 +148,7 @@
 
       cmd_duration = {
         min_time = 2000;
-        format = "took [$duration]($style) ";
+        format = ''\[[⏱ $duration]($style)\]'';
       };
     };
   };

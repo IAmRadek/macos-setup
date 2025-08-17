@@ -133,11 +133,15 @@
         persistent-apps = [
           "${pkgs.google-chrome}/Applications/Google Chrome.app"
           "${pkgs.alacritty}/Applications/Alacritty.app"
+          "${pkgs.zed}/Applications/Zed.app"
         ];
         persistent-others = [ ];
       };
       finder = {
         AppleShowAllFiles = true;
+        FXPreferredViewStyle = "clmv";
+        NewWindowTarget = "Home";
+        ShowPathbar = true;
       };
       NSGlobalDomain = {
         AppleInterfaceStyle = "Dark";

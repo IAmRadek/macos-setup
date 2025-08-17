@@ -1,14 +1,40 @@
-% md5 -> {text}
-echo -n "{{text}}" | md5
+% tools, converters
 
-% hmac-sha256 -> {key} {text}
-echo -n "{{text}}" | openssl dgst -sha256 -hmac "{{key}}" -binary | xxd -p -c 256
+# md5 -> {text}
+echo -n "<text>" | md5
 
-% b64-enc -> {text}
-echo -n "{{text}}" | base64
+# hmac-sha256 -> {key} {text}
+echo -n "<text>" | openssl dgst -sha256 -hmac "{{key}}" -binary | xxd -p -c 256
 
-% uuid
+# b64-enc -> {text}
+echo -n "<text>" | base64
+
+% uuid generators
+
+# uuid
 uuidgen | tr 'A-Z' 'a-z'
 
-% json pretty -> {json}
-echo '{{json}}' | jq
+% json
+
+# json pretty -> {json}
+echo '<json>' | jq
+
+% runbooks
+
+# Open runbook by title (parses YAML front-matter `title:`)
+glow "<rbfile>"
+
+$rbfile: bash -lc '
+RB="$HOME/.runbooks"
+fd -e md . "$RB" | while IFS= read -r f; do
+  t=$(awk '"'"'/^---/{c++} c==1 && /^title:/{sub(/^title:[ ]*/,"");print; exit}'"'"' "$f")
+  [ -z "$t" ] && t=$(basename "$f")
+  printf "%s\t%s\n" "$t" "$f"
+done
+' --- \
+  --delimiter '\t' \
+  --with-nth 1 \
+  --preview 'glow -p {2}' \
+  --map 'cut -f2' \
+  --header 'title\tfile' \
+  --query ""

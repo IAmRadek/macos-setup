@@ -34,6 +34,7 @@ in
         createDevDirectories = lib.hm.dag.entryAfter ["writeBoundary"] ''
           $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/Development/github.com
           $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/tmux/plugins
+          $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.runbooks
         '';
       };
 

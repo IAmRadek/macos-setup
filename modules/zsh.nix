@@ -7,6 +7,7 @@
 
     shellAliases = {
       system-update = "cd ~/.nix-darwin && make update";
+      system-edit = "zed ~/.nix-darwin";
       ".." = "cd ..";
       "g" = "git";
       "k" = "kubectl";

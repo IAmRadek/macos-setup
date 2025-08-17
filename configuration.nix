@@ -35,6 +35,7 @@
     govulncheck
 
     jq
+    fd
     watch
     _1password-cli
     delta

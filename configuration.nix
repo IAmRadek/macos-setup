@@ -133,7 +133,7 @@
         persistent-apps = [
           "${pkgs.google-chrome}/Applications/Google Chrome.app"
           "${pkgs.alacritty}/Applications/Alacritty.app"
-          "${pkgs.zed}/Applications/Zed.app"
+          "${pkgs.zed}/Applications/Zed.app/"
         ];
         persistent-others = [ ];
       };

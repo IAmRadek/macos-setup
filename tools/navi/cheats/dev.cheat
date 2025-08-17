@@ -24,7 +24,7 @@ echo '<json>' | jq
 # Open a runbook (fzf + glow preview; picks any *.md in ~/.runbooks)
 glow "<file>"
 
-$file: fd -e md . "$HOME/.runbooks | sort --- \
+$file: bash -lc 'fd -e md . "$HOME/.runbooks" | sort' --- \
   --preview 'glow -p {}' \
   --query "" \
   --header 'Select a runbook'

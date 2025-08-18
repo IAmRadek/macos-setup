@@ -6,7 +6,7 @@
 }:
 
 {
-  system.primaryUser = "rd";
+  system.primaryUser = "radoslawdejnek";
 
   environment.systemPackages = with pkgs; [
     git

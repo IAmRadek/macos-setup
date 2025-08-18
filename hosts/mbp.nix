@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  username = "rd";
+  username = "radoslawdejnek";
 in
 {
   system.primaryUser = username;

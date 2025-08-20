@@ -70,6 +70,9 @@ in
 
     aliases = {
       st = "status";
+      sync = "town sync";
+      append = "town append";
+      hack = "town hack";
     };
 
     # Everything else via extraConfig (mirrors your gitconfig)

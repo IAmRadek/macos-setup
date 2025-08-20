@@ -16,6 +16,12 @@
       set -ag terminal-overrides ",xterm-256color:RGB"
       setw -g xterm-keys on
 
+      set -g default-shell "$SHELL"
+      set -g default-command "$SHELL -i"
+
+      # How long status messages stay visible (ms). Default is 750.
+      set -g display-time 100     # try 100–200; feels instant
+
       set -g @plugin 'IAmRadek/tmux-k8s-context-switcher'
 
       KUBE_TMUX_BINARY=${pkgs.kubectl}/bin/kubectl
@@ -60,8 +66,6 @@
       unbind-key -T prefix c
       bind-key -T prefix c split-window -p 35 \
         "$SHELL -lc 'navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane'"
-
-
     '';
 
     # plugins = with pkgs; [

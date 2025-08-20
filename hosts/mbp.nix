@@ -34,7 +34,12 @@ in
         createDevDirectories = lib.hm.dag.entryAfter ["writeBoundary"] ''
           $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/Development/github.com
           $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/tmux/plugins
+          $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.cache/zsh
           $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.runbooks
+        '';
+
+        gitTownCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          ${pkgs.git-town}/bin/git-town completions zsh > "$HOME/.cache/zsh/_git-town.zsh"
         '';
       };
 

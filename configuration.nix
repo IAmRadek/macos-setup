@@ -21,6 +21,7 @@
     kubectl
     nodejs
     python3
+    sops
 
     dust
     duf
@@ -75,9 +76,12 @@
       "notion-calendar"
       "postman"
       "elgato-stream-deck"
+      "alt-tab"
 
       # Communication
-      # "slack"
+      "slack"
+      "telegram"
+      "signal"
       # "discord"
       # "zoom"
 
@@ -132,6 +136,8 @@
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
           "/Applications/Google Chrome.app"
+          "/Applications/Slack.app"
+          "/Applications/Telegram.app"
           "${pkgs.alacritty}/Applications/Alacritty.app"
           "${pkgs.zed-editor}/Applications/Zed.app"
           "/Applications/1Password.app"

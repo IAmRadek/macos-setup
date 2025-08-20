@@ -110,13 +110,11 @@
       };
 
       terminal.shell = {
-        program = "${pkgs.tmux}/bin/tmux";
+        program = "${pkgs.zsh}/bin/zsh";
         args = [
-          "new"
-          "-A"
-          "-s main"
-          "-f"
-          "${config.xdg.configHome}/tmux/tmux.conf"
+          "-l"
+          "-c"
+          "${pkgs.tmux}/bin/tmux new -A -s main -f ${config.xdg.configHome}/tmux/tmux.conf"
         ];
       };
     };

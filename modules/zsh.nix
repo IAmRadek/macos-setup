@@ -13,10 +13,25 @@
       "k" = "kubectl";
     };
 
-    initContent = ''
+    initContent = let zshConfigEarlyInit = lib.mkOrder 500 ''
+        zmodload zsh/datetime 2>/dev/null
+        _t() {
+            # local l="$1"; local s=$EPOCHREALTIME;
+            eval "$@"
+            # printf '%-22s %7.1f ms\n' "$l" "$(( (EPOCHREALTIME - s)*1000 ))" >&2
+        }
+
+        ZCACHEDIR="$HOME/.cache/zsh"
+        autoload -Uz compinit
+    '';
+    zshConfig = lib.mkOrder 1000 ''
       # Set nano as default editor
       export EDITOR="nano"
       export VISUAL="nano"
+
+      # Fix for testcontainers with colima (https://github.com/testcontainers/testcontainers-go/issues/2952)
+      export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+      export DOCKER_HOST="unix://''${HOME}/.colima/docker.sock"
 
       # Define zinit home directory
       ZINIT_HOME="$HOME/.zinit"
@@ -30,22 +45,22 @@
       fi
 
       # Source zinit
-      source "$ZINIT_HOME/bin/zinit.zsh"
+      _t 'source "$ZINIT_HOME/bin/zinit.zsh"'
 
       # Load zinit plugins
 
       # Essential plugins
-      zinit light zdharma-continuum/fast-syntax-highlighting  # Command syntax highlighting
-      zinit light zsh-users/zsh-autosuggestions               # Inline command suggestions
-      zinit light Aloxaf/fzf-tab                              # Enhanced tab completion with fzf
-      zinit light Freed-Wu/fzf-tab-source
-      zinit light mfaerevaag/wd
-      zinit light ianthehenry/zsh-autoquoter
+      _t 'zinit ice lucid wait"1"; zinit light zdharma-continuum/fast-syntax-highlighting'  # Command syntax highlighting
+      _t 'zinit light zsh-users/zsh-autosuggestions'               # Inline command suggestions
+      _t 'zinit ice lucid wait"1"; zinit light Aloxaf/fzf-tab'
+      _t 'zinit ice lucid wait"2"; zinit light Freed-Wu/fzf-tab-source'
+      _t 'zinit ice lucid wait"1"; zinit light mfaerevaag/wd'
+      _t 'zinit ice lucid wait"1"; zinit light ianthehenry/zsh-autoquoter'
 
       ZAQ_PREFIXES=('git commit -m' 'g commit -m' 'watch')
 
       # History substring search for better history navigation
-      zinit light zsh-users/zsh-history-substring-search
+      _t 'zinit light zsh-users/zsh-history-substring-search'
 
       # Configure autosuggestions
       bindkey '^ ' autosuggest-execute                        # Ctrl+Space to execute suggestion
@@ -87,7 +102,7 @@
 
       # Enable completion caching for better performance
       zstyle ':completion:*' use-cache on
-      zstyle ':completion:*' cache-path "$HOME/.zcompcache"
+      zstyle ':completion:*' cache-path "$ZCACHEDIR/zcompcache"
 
       # Simple fzf-tab key bindings
       zstyle ':fzf-tab:*' continuous-trigger 'tab'            # TAB cycles through options
@@ -99,11 +114,11 @@
       zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
 
       # Ensure compinit is properly initialized for zinit
-      autoload -Uz compinit
-      compinit
+      _t 'compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"'
 
-      eval "$(${pkgs.navi}/bin/navi widget zsh)"
+      _t 'source "$ZCACHEDIR/_git-town.zsh"'
     '';
+    in lib.mkMerge [ zshConfigEarlyInit zshConfig ];
   };
 
   programs.starship = {

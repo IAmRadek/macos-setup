@@ -22,6 +22,8 @@
     nodejs
     python3
     sops
+    gnupg
+    age
 
     dust
     duf
@@ -29,10 +31,10 @@
     navi
     glow
 
-    zed-editor
     alacritty
 
     go
+    gotools
     gotest
     golangci-lint
     govulncheck
@@ -43,6 +45,8 @@
     _1password-cli
     delta
     nano
+    oath-toolkit
+    go-swag
   ];
 
   # GUI Applications
@@ -63,6 +67,7 @@
       # Development
       # "google-cloud-sdk"
       "jetbrains-toolbox"
+      "zed"
       # "docker"  # Docker Desktop
 
       # Utilities
@@ -138,8 +143,9 @@
           "/Applications/Google Chrome.app"
           "/Applications/Slack.app"
           "/Applications/Telegram.app"
+          "/Users/radoslawdejnek/Applications/Goland.app"
           "${pkgs.alacritty}/Applications/Alacritty.app"
-          "${pkgs.zed-editor}/Applications/Zed.app"
+          "/Applications/Zed.app"
           "/Applications/1Password.app"
         ];
         persistent-others = [ ];

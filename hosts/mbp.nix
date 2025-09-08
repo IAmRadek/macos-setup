@@ -43,6 +43,24 @@ in
         '';
       };
 
+      home.packages = [
+        (pkgs.buildGoModule {
+            pname = "godotenv";
+            version = "1.5.1";
+
+            src = pkgs.fetchFromGitHub {
+                owner = "joho";
+                repo  = "godotenv";
+                rev   = "v1.5.1";
+                hash  = "sha256-kA0osKfsc6Kp+nuGTRJyXZZlJt1D/kuEazKMWYCWcQ8=";
+            };
+
+            # Build only the CLI
+            subPackages = [ "cmd/godotenv" ];
+            vendorHash = null;
+        })
+      ];
+
       programs.ssh = {
         enable = true;
         extraConfig = ''

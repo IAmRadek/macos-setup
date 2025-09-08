@@ -14,15 +14,31 @@
     };
 
     initContent = let zshConfigEarlyInit = lib.mkOrder 500 ''
+        # zmodload zsh/zprof
+        # record the time when zsh starts parsing rc files
         zmodload zsh/datetime 2>/dev/null
-        _t() {
-            # local l="$1"; local s=$EPOCHREALTIME;
-            eval "$@"
-            # printf '%-22s %7.1f ms\n' "$l" "$(( (EPOCHREALTIME - s)*1000 ))" >&2
+        zsh_start_time=$EPOCHREALTIME
+
+        function show_startup_time() {
+          local elapsed=$(( ($EPOCHREALTIME - $zsh_start_time) * 1000 ))
+          printf "\n🚀 Zsh startup took %.2f ms\n\n" $elapsed
+          # only show once, then remove the hook
+          unset -f show_startup_time
         }
+
+        # precmd runs before the first prompt
+        precmd_functions+=(show_startup_time)
 
         ZCACHEDIR="$HOME/.cache/zsh"
         autoload -Uz compinit
+
+        # Fix CR/LF only when running inside tmux
+        if [[ -n $TMUX ]]; then
+          stty icrnl -inlcr -igncr 2>/dev/null
+        fi
+    '';
+    zshConfigLateInit = lib.mkOrder 2000 ''
+      # zprof
     '';
     zshConfig = lib.mkOrder 1000 ''
       # Set nano as default editor
@@ -45,22 +61,22 @@
       fi
 
       # Source zinit
-      _t 'source "$ZINIT_HOME/bin/zinit.zsh"'
+      source "$ZINIT_HOME/bin/zinit.zsh"
 
       # Load zinit plugins
 
       # Essential plugins
-      _t 'zinit ice lucid wait"1"; zinit light zdharma-continuum/fast-syntax-highlighting'  # Command syntax highlighting
-      _t 'zinit light zsh-users/zsh-autosuggestions'               # Inline command suggestions
-      _t 'zinit ice lucid wait"1"; zinit light Aloxaf/fzf-tab'
-      _t 'zinit ice lucid wait"2"; zinit light Freed-Wu/fzf-tab-source'
-      _t 'zinit ice lucid wait"1"; zinit light mfaerevaag/wd'
-      _t 'zinit ice lucid wait"1"; zinit light ianthehenry/zsh-autoquoter'
+      zinit ice lucid wait"1"; zinit light zdharma-continuum/fast-syntax-highlighting
+      zinit light zsh-users/zsh-autosuggestions
+      zinit ice lucid wait"1"; zinit light Aloxaf/fzf-tab
+      zinit ice lucid wait"2"; zinit light Freed-Wu/fzf-tab-source
+      zinit ice lucid wait"1"; zinit light mfaerevaag/wd
+      zinit ice lucid wait"1"; zinit light ianthehenry/zsh-autoquoter
 
       ZAQ_PREFIXES=('git commit -m' 'g commit -m' 'watch')
 
       # History substring search for better history navigation
-      _t 'zinit light zsh-users/zsh-history-substring-search'
+      zinit light zsh-users/zsh-history-substring-search
 
       # Configure autosuggestions
       bindkey '^ ' autosuggest-execute                        # Ctrl+Space to execute suggestion
@@ -114,11 +130,11 @@
       zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
 
       # Ensure compinit is properly initialized for zinit
-      _t 'compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"'
+      compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
 
-      _t 'source "$ZCACHEDIR/_git-town.zsh"'
+      source "$ZCACHEDIR/_git-town.zsh"
     '';
-    in lib.mkMerge [ zshConfigEarlyInit zshConfig ];
+    in lib.mkMerge [ zshConfigEarlyInit zshConfig zshConfigLateInit ];
   };
 
   programs.starship = {

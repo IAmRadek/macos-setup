@@ -104,7 +104,6 @@
     # Mac App Store apps
     masApps = {
       #   "Amphetamine" = 937984704;
-      #   "Xcode" = 497799835;
     };
   };
 

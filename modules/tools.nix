@@ -1,15 +1,16 @@
 { config, lib, pkgs, ... }:
 
 let
-  colimaTools = pkgs.writeShellScriptBin "colima-tools" (builtins.readFile ../tools/colima.sh);
+  py = pkgs.python3.withPackages (ps: [ ps.invoke ]);
 in
 {
   home.packages = [
-    colimaTools
+    (pkgs.writeShellScriptBin "colima-tools" ''
+      set -euo pipefail
+      exec ${py}/bin/inv -r ''$HOME/.nix-darwin/tools/colima "''${1}" -- "''${@:2}"
+    '')
   ];
 
-  home.file.".local/bin/colima-tools".source = ../tools/colima.sh;
-  home.file.".local/bin/colima-tools".executable = true;
   home.file.".zsh/completions/_colima-tools".source = ../tools/_colima;
 
   home.file.".runbooks/new.sh".source = ../tools/runbooks/new.sh;

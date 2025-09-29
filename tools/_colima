@@ -1,37 +1,13 @@
-#compdef colima-tools
+# ~/.zsh/completions/_colima-tools (or a file sourced from .zshrc)
+autoload -Uz bashcompinit && bashcompinit
 
-# Complete Colima profile names
-_colima_profiles() {
-  local -a profiles
-  local json
-  if json=$(colima list --json 2>/dev/null); then
-    profiles=(${(f)"$(echo $json | jq -r '.[].name' 2>/dev/null)"})
-  fi
-  (( ${#profiles[@]} )) || profiles=(default)
-  _describe 'profile' profiles
+# paste the same bash function here:
+_colima_tools_complete() {
+  local cur prev words cword
+  _init_completion -n : || return
+  local TASKS="${HOME}/.nix-darwin/tools/colima.py"   # <- change me
+  local out
+  out=$(inv -r "$TASKS" --complete -- "${COMP_WORDS[@]:1}" 2>/dev/null) || return 0
+  COMPREPLY=( $(compgen -W "$out" -- "$cur") )
 }
-
-# Complete snapshot names
-_colima_snapshots() {
-  local -a snaps
-  snaps=(${(f)"$(colima snapshot list 2>/dev/null | awk 'NR>1{print $1}')"}) # skip header
-  _describe 'snapshot' snaps
-}
-
-_arguments -C \
-  '(-)--profile[Select colima profile]:profile:_colima_profiles' \
-  '1:subcommand:(start stop restart status logs prune nuke ssh images ports snap_save snap_load)' \
-  '*::args:->args'
-
-case $state in
-  args)
-    case $words[2] in
-      start|stop|restart|status|logs|prune|nuke|ssh|images|ports)
-        _message 'no arguments; optionally set COLIMA_PROFILE=<profile>'
-        ;;
-      *)
-        _message 'select a subcommand'
-        ;;
-    esac
-    ;;
-esac
+complete -F _colima_tools_complete colima-tools

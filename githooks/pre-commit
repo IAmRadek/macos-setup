@@ -18,13 +18,13 @@ if [[ "$BRANCH" = "master" ]] || [[ "$BRANCH" = "main" ]]; then
   exit 0
 fi
 
-DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
-BRANCH_PATTERN="^((feat|fix|chore|hotfix)(/[a-z0-9._-]+)?|(production)|(stage)|(development))$"
-if ! [[ "$BRANCH" =~ $BRANCH_PATTERN ]]; then
-  echo "There is something wrong with your branch name. Branch names in this project must adhere to this contract: $BRANCH_PATTERN."
-  COMMITS_COUNTS=$(git rev-list --count --no-merges "${DEFAULT_BRANCH}..")
-  if [[ "$COMMITS_COUNTS" = "0" ]]; then
-    echo "You shall not pass! Rename your branch with \"git branch -m ...\" to continue."
-    exit 1
-  fi
-fi
+# DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+# BRANCH_PATTERN="^((feat|fix|chore|hotfix)(/[a-z0-9._-]+)?|(production)|(stage)|(development))$"
+# if ! [[ "$BRANCH" =~ $BRANCH_PATTERN ]]; then
+#   echo "There is something wrong with your branch name. Branch names in this project must adhere to this contract: $BRANCH_PATTERN."
+#   COMMITS_COUNTS=$(git rev-list --count --no-merges "${DEFAULT_BRANCH}..")
+#   if [[ "$COMMITS_COUNTS" = "0" ]]; then
+#     echo "You shall not pass! Rename your branch with \"git branch -m ...\" to continue."
+#     exit 1
+#   fi
+# fi

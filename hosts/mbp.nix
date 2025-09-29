@@ -43,6 +43,10 @@ in
         '';
       };
 
+      home.sessionPath = [
+        "$HOME/go/bin"
+      ];
+
       home.packages = [
         (pkgs.buildGoModule {
             pname = "godotenv";

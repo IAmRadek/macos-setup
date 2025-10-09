@@ -34,10 +34,13 @@
     alacritty
 
     go
+    gopls
     gotools
     gotest
     golangci-lint
     govulncheck
+
+    uv
 
     jq
     fd
@@ -87,6 +90,7 @@
       "slack"
       "telegram"
       "signal"
+      "whatsapp"
       # "discord"
       # "zoom"
 

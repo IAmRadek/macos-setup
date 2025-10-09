@@ -47,3 +47,12 @@ The hostname used for the configuration is "rdwk". If your hostname is different
 2. Or update the `darwinConfigurations` name in `flake.nix` to match your hostname
 
 Check your hostname with: `hostname -s`
+
+
+## Additional tools:
+
+```bash
+
+uv tools install mcpdoc
+
+```

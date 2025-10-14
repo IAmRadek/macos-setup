@@ -9,6 +9,7 @@
   system.primaryUser = "radoslawdejnek";
 
   environment.systemPackages = with pkgs; [
+    nixd
     git
     git-town
     gh

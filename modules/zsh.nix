@@ -133,6 +133,7 @@
       compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
 
       source "$ZCACHEDIR/_git-town.zsh"
+      source "$ZCACHEDIR/_helm.zsh"
     '';
     in lib.mkMerge [ zshConfigEarlyInit zshConfig zshConfigLateInit ];
   };

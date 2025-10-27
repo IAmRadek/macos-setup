@@ -41,6 +41,10 @@ in
         gitTownCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           ${pkgs.git-town}/bin/git-town completions zsh > "$HOME/.cache/zsh/_git-town.zsh"
         '';
+
+        helmCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm.zsh"
+        '';
       };
 
       home.sessionPath = [

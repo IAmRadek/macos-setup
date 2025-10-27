@@ -102,6 +102,7 @@
 
     # Some CLI tools are better from Homebrew
     brews = [
+      "helm"
       # macOS-specific tools that integrate deeply with the system
       # "mas"  # Mac App Store CLI
     ];
@@ -169,9 +170,9 @@
   # Fix nixbld group GID mismatch
   ids.gids.nixbld = 350;
 
-  # environment.systemPath = [
-  #   config.homebrew.brewPrefix # TODO https://github.com/LnL7/nix-darwin/issues/596
-  # ];
+  environment.systemPath = [
+    config.homebrew.brewPrefix # TODO https://github.com/LnL7/nix-darwin/issues/596
+  ];
 
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono

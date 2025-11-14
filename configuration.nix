@@ -13,6 +13,7 @@
     git
     git-town
     gh
+    mergiraf
     curl
     tmux
     fzf

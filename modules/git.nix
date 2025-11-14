@@ -10,7 +10,23 @@ in
     source = ../githooks;    # directory in your repo
     recursive = true;       # copy all files/subdirs
   };
-  xdg.configFile."git/.gitignore".source = ../_gitignore;
+  xdg.configFile."git/ignore".text = ''
+    .idea
+    .DS_Store
+    .gitsecret/keys/random_seed
+    !*.secret
+    .ssh/id_IAmRadek
+    .ssh/id_IAmRadek.pub
+    .ssh/id_ingrid
+    .ssh/id_ingrid.pub
+    .ssh/environment-rd
+    .ssh/known_hosts
+    CRUSH.md
+  '';
+
+  xdg.configFile."git/attributes".text = ''
+    * merge=mergiraf
+  '';
 
   programs.git = {
     enable = true;
@@ -48,7 +64,8 @@ in
       commit.gpgsign = true;
 
       core = {
-        excludesFile = "${config.xdg.configHome}/git/.gitignore";
+        excludesFile = "${config.xdg.configHome}/git/ignore";
+        attributesfile = "${config.xdg.configHome}/git/attributes";
         editor = "nano";
         pager  = "${pkgs.delta}/bin/delta";
         hooksPath = "${hooksDir}";
@@ -82,6 +99,9 @@ in
       interactive.diffFilter = "${pkgs.delta}/bin/delta --color-only";
 
       merge.conflictstyle = "diff3";
+      merge.mergiraf.name = "mergiraf";
+      merge.mergiraf.driver = "mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L";
+
       diff.colorMoved = "default";
 
       push = {

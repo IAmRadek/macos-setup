@@ -11,6 +11,7 @@ echo "[pre-push] Go checks"
 : "${GITHOOKS_TEST_P:=4}"
 : "${GITHOOKS_FAILFAST:=1}"
 : "${GITHOOKS_SKIP_SECRETS:=0}"
+: "${GITHOOKS_SKIP_COVER:=0}"
 
 
 RED="\033[31m"
@@ -240,6 +241,85 @@ if [[ "$GITHOOKS_SKIP_TESTS" != "1" ]]; then
     echo "[pre-push] Continuing despite test failures…"
   fi
 fi
+
+
+# ----------------------- COVERAGE (rolling per branch) -----------------------
+if [[ "${GITHOOKS_SKIP_COVER:-0}" != "1" ]]; then
+  # Always run from repo root for consistent paths
+  REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+  cd "$REPO_ROOT" || exit 0
+
+  BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+  BRANCH="${BRANCH:-unknown}"
+  COVER_DIR="$REPO_ROOT/.git/gocover"
+  mkdir -p "$COVER_DIR"
+
+  LAST_PROFILE="$COVER_DIR/${BRANCH}.cover"
+  CURRENT_PROFILE="$(mktemp)"
+
+  echo "[pre-push] go test coverage for branch ${BRANCH}…"
+
+  # Choose what to cover: changed pkgs vs all.
+  # If you want "everything":
+  #   COVER_PKGS=("./...")
+  # If you want "only changed":
+  #   COVER_PKGS=("${PKGS[@]}")
+  COVER_PKGS=("./...")
+
+  if ! go test -coverprofile="$CURRENT_PROFILE" "${COVER_PKGS[@]}"; then
+    echo "[pre-push] Coverage run failed (go test with -coverprofile)."
+    rm -f "$CURRENT_PROFILE"
+    if ! confirm_or_abort "Coverage test run failed. Continue push anyway?"; then
+      exit 1
+    fi
+    echo "[pre-push] Continuing despite coverage run failure…"
+  else
+    # Extract total coverage as a plain number, e.g. 78.5
+    get_total_cov() {
+      go tool cover -func="$1" 2>/dev/null | awk '/^total:/ {gsub("%","",$3); print $3}'
+    }
+
+    NEW_COV="$(get_total_cov "$CURRENT_PROFILE")"
+    if [[ -z "$NEW_COV" ]]; then
+      echo "[pre-push] Could not compute coverage total from new profile."
+      rm -f "$CURRENT_PROFILE"
+    else
+      if [[ -f "$LAST_PROFILE" ]]; then
+        OLD_COV="$(get_total_cov "$LAST_PROFILE")"
+
+        if [[ -n "$OLD_COV" ]]; then
+          # Compare floats: if NEW < OLD, coverage dropped
+          if echo "$NEW_COV < $OLD_COV" | bc -l >/dev/null 2>&1 && \
+             [[ "$(echo "$NEW_COV < $OLD_COV" | bc -l)" -eq 1 ]]; then
+            printf "\033[31m[pre-push] Coverage dropped on %s: %s%% → %s%%\033[0m\n" \
+                   "$BRANCH" "$OLD_COV" "$NEW_COV"
+
+            if ! confirm_or_abort "Coverage decreased. Continue push anyway?"; then
+              rm -f "$CURRENT_PROFILE"
+              exit 1
+            fi
+            echo "[pre-push] Continuing despite coverage decrease…"
+          else
+            printf "\033[32m[pre-push] Coverage non-decreasing on %s: %s%% → %s%%\033[0m\n" \
+                "$BRANCH" "$OLD_COV" "$NEW_COV"
+          fi
+        else
+          echo "[pre-push] Previous coverage profile invalid, resetting baseline."
+        fi
+      else
+        printf "[pre-push] No previous coverage baseline for %s, creating one (%.2f%%).\n" \
+          "$BRANCH" "$NEW_COV"
+      fi
+
+      # Update baseline for next push
+      mv "$CURRENT_PROFILE" "$LAST_PROFILE"
+      CURRENT_PROFILE=""
+    fi
+  fi
+
+  [[ -n "${CURRENT_PROFILE:-}" && -f "$CURRENT_PROFILE" ]] && rm -f "$CURRENT_PROFILE"
+fi
+
 
 echo "[pre-push] OK"
 exit 0

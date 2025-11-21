@@ -34,7 +34,7 @@ in
     userName  = "Radosław Dejnek";
     userEmail = "radek@dejnek.pl";
 
-    alias = {
+    aliases = {
       st = "status";
       sync = "town sync";
       append = "town append";

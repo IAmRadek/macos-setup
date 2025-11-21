@@ -67,7 +67,7 @@
     casks = [
       # Browsers
       "google-chrome"
-      # "firefox"
+      "firefox"
 
       # Development
       # "google-cloud-sdk"
@@ -146,13 +146,13 @@
         show-recents = false;
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
-          "/Applications/Google Chrome.app"
-          "/Applications/Slack.app"
-          "/Applications/Telegram.app"
-          "/Users/radoslawdejnek/Applications/Goland.app"
-          "${pkgs.alacritty}/Applications/Alacritty.app"
-          "/Applications/Zed.app"
-          "/Applications/1Password.app"
+          # "/Applications/Google Chrome.app"
+          # "/Applications/Slack.app"
+          # "/Applications/Telegram.app"
+          # "/Users/radoslawdejnek/Applications/Goland.app"
+          # "${pkgs.alacritty}/Applications/Alacritty.app"
+          # "/Applications/Zed.app"
+          # "/Applications/1Password.app"
         ];
         persistent-others = [ ];
       };

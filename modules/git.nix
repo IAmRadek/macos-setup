@@ -49,7 +49,7 @@ in
     lfs.enable = true;  # replaces the manual [filter "lfs"] block
 
     # Everything else via extraConfig (mirrors your gitconfig)
-    extraConfig = {
+    settings = {
       url."ssh://git@github.com".insteadOf = "https://github.com";
 
       gpg.format = "ssh";

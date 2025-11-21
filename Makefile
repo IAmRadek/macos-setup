@@ -28,7 +28,7 @@ bootstrap: /nix /opt/homebrew/bin/brew
 build: bootstrap
 	@if [ -f /run/current-system/sw/bin/darwin-rebuild ]; then \
 		echo "Using installed darwin-rebuild..."; \
-		sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .; \
+		sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .#$(USER); \
 	else \
 		echo "darwin-rebuild not found, using nix run..."; \
 		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(USER); \

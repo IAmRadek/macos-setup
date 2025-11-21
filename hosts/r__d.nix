@@ -20,12 +20,26 @@ in
       enableKeyMapping = true;
       remapCapsLockToControl = true;
     };
+    defaults = {
+      dock = {
+        autohide = true;
+        show-recents = false;
+        # Only these stay in Dock — everything else disappears
+        persistent-apps = [
+          "/Applications/Firefox.app"
+          "${pkgs.alacritty}/Applications/Alacritty.app"
+          "/Users/${username}/Applications/Goland.app"
+          "/Applications/Zed.app"
+        ];
+        persistent-others = [ ];
+      };
+    };
   };
 
   home-manager = {
     useUserPackages = true;
     useGlobalPkgs = true;
-    users.${username} = { pkgs, lib, config, ... }: {
+    users.${username} = { pkgs, lib, ... }: {
       home.stateVersion = "22.11";
       programs.home-manager.enable = true;
 
@@ -52,23 +66,7 @@ in
         "$HOME/.local/bin"
       ];
 
-      home.packages = [
-        (pkgs.buildGoModule {
-            pname = "godotenv";
-            version = "1.5.1";
-
-            src = pkgs.fetchFromGitHub {
-                owner = "joho";
-                repo  = "godotenv";
-                rev   = "v1.5.1";
-                hash  = "sha256-kA0osKfsc6Kp+nuGTRJyXZZlJt1D/kuEazKMWYCWcQ8=";
-            };
-
-            # Build only the CLI
-            subPackages = [ "cmd/godotenv" ];
-            vendorHash = null;
-        })
-      ];
+      home.packages = [];
 
       programs.ssh = {
         enable = true;

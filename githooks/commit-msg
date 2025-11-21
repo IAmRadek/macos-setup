@@ -3,6 +3,8 @@ set -u
 
 # Allowed conventional commit types
 TYPE_GROUP='feat|fix|hotfix|chore|refactor|docs|style|test|ci|build|perf|revert'
+# Human-readable form for messages: feat, fix, ...
+TYPE_LIST="${TYPE_GROUP//|/, }"
 
 # Conventional commit:
 #   type: message
@@ -30,6 +32,8 @@ echo
 echo "Bad commit message."
 echo "First line must be either a conventional commit or Jira+conventional."
 echo
+echo "Allowed types: ${TYPE_LIST}"
+echo
 echo "Examples:"
 echo "  feat: add login flow"
 echo "  fix(auth): handle expired token"
@@ -41,7 +45,6 @@ echo "Got:"
 echo "  $FIRST_LINE"
 echo
 
-# Ask on /dev/tty so we don’t steal git’s stdin
 while read -r -p "Do you really want to commit with that message? (y/n) " yn </dev/tty; do
   case "$yn" in
     [Yy])

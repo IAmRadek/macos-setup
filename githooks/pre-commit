@@ -1,19 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -u
 
-exec </dev/tty
+# Comma- or space-separated list of protected branches.
+# Default: master and main
+: "${GITHOOKS_PROTECTED_BRANCHES:=master main}"
 
-BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-if [[ "$BRANCH" = "master" ]] || [[ "$BRANCH" = "main" ]]; then
-  while read -p "Do you really want to commit to master/main branch? (y/n) " yn; do
-    case $yn in
-    [Yy])
-      echo "Committing to master branch"
-      break
-      ;;
-    [Nn]) exit 1 ;;
-    *) echo "Please answer y (yes) or n (no):" && continue ;;
-    esac
-  done
+BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+BRANCH="${BRANCH:-}"
 
+if [[ -z "$BRANCH" || "$BRANCH" == "HEAD" ]]; then
   exit 0
 fi
+
+IFS=' ,:' read -r -a PROTECTED <<<"$GITHOOKS_PROTECTED_BRANCHES"
+
+is_protected=0
+for b in "${PROTECTED[@]}"; do
+  [[ "$BRANCH" == "$b" ]] && is_protected=1 && break
+done
+
+if [[ $is_protected -ne 1 ]]; then
+  exit 0
+fi
+
+echo
+echo "You are about to commit directly to a protected branch: '$BRANCH'."
+echo
+
+while read -r -p "Do you really want to commit to $BRANCH? (y/n) " yn </dev/tty; do
+  case "$yn" in
+    [Yy])
+      echo "Committing to $BRANCH."
+      exit 0
+      ;;
+    [Nn])
+      echo "Commit aborted."
+      exit 1
+      ;;
+    *)
+      echo "Please answer y (yes) or n (no)."
+      ;;
+  esac
+done

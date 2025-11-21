@@ -1,33 +1,59 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -u
 
-exec </dev/tty
+# Allowed conventional commit types
+TYPE_GROUP='feat|fix|hotfix|chore|refactor|docs|style|test|ci|build|perf|revert'
 
-COMMIT_PATTERN="^\[[A-Z]+-[0-9]+\]: "
+# Conventional commit:
+#   type: message
+#   type(scope): message
+#   type!: message
+#   type(scope)!: message
+CONV_PATTERN="^(${TYPE_GROUP})(\\([^)]+\\))?(!)?: .+"
 
-DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
+# Jira + conventional:
+#   [PROJ-123] type: message
+#   [PROJ-123] type(scope): message
+#   [PROJ-123] type!: message
+#   [PROJ-123] type(scope)!: message
+JIRA_PATTERN="^\\[[A-Z][A-Z0-9]+-[0-9]+\\] (${TYPE_GROUP})(\\([^)]+\\))?(!)?: .+"
 
-IFS=$'\n' read -rd '' -a BRANCH_COMMITS <<<"$(git cherry $DEFAULT_BRANCH -v | cut -d' ' -f3-)"
+MSG_FILE="$1"
+FIRST_LINE="$(head -n1 "$MSG_FILE")"
 
-if [[ ${#BRANCH_COMMITS[@]} -gt 0 ]]; then
-  for commit in "${BRANCH_COMMITS[@]}"; do
-    if [[ "$commit" =~ $COMMIT_PATTERN ]]; then
-      exit 0
-    fi
-  done
+# If it matches either pattern, we're good
+if [[ "$FIRST_LINE" =~ $CONV_PATTERN || "$FIRST_LINE" =~ $JIRA_PATTERN ]]; then
+  exit 0
 fi
 
-INPUT_FILE=$1
-START_LINE=$(head -n1 $INPUT_FILE)
-if ! [[ "$START_LINE" =~ $COMMIT_PATTERN ]]; then
-  echo "Bad commit message, see example: $FIRST_COMMIT_PATTERN$START_LINE"
-  while read -r -p "Do you really want to commit with that message? (y/n) " yn; do
-    case $yn in
+echo
+echo "Bad commit message."
+echo "First line must be either a conventional commit or Jira+conventional."
+echo
+echo "Examples:"
+echo "  feat: add login flow"
+echo "  fix(auth): handle expired token"
+echo "  hotfix!: emergency fix in prod"
+echo "  [PROJ-123] feat: implement checkout"
+echo "  [API-42] fix(auth): handle expired token"
+echo
+echo "Got:"
+echo "  $FIRST_LINE"
+echo
+
+# Ask on /dev/tty so we don’t steal git’s stdin
+while read -r -p "Do you really want to commit with that message? (y/n) " yn </dev/tty; do
+  case "$yn" in
     [Yy])
-      echo "Committing with not standard message"
-      break
+      echo "Committing with non-standard message."
+      exit 0
       ;;
-    [Nn]) exit 1 ;;
-    *) echo "Please answer y (yes) or n (no):" && continue ;;
-    esac
-  done
-fi
+    [Nn])
+      echo "Commit aborted."
+      exit 1
+      ;;
+    *)
+      echo "Please answer y (yes) or n (no)."
+      ;;
+  esac
+done

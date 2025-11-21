@@ -34,12 +34,11 @@ in
     userName  = "Radosław Dejnek";
     userEmail = "radek@dejnek.pl";
 
-      alias = {
-        st = "status";
-        sync = "town sync";
-        append = "town append";
-        hack = "town hack";
-      };
+    alias = {
+      st = "status";
+      sync = "town sync";
+      append = "town append";
+      hack = "town hack";
     };
     # SSH signing via 1Password
     signing = {

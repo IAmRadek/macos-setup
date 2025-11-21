@@ -1,36 +1,82 @@
 #!/usr/bin/env bash
 set -u
-exec </dev/tty
 
 echo "[pre-push] Go checks"
 
 # --- config knobs (env overridable) -----------------------------------------
 : "${GITHOOKS_SKIP_LINT:=0}"
 : "${GITHOOKS_SKIP_VULN:=0}"
-: "${GITHOOKS_VULN_MODE:=imports}"   # imports | source (source is slower)
 : "${GITHOOKS_SKIP_TESTS:=0}"
 : "${GITHOOKS_TEST_RACE:=1}"
 : "${GITHOOKS_TEST_P:=4}"
 : "${GITHOOKS_FAILFAST:=1}"
+: "${GITHOOKS_SKIP_SECRETS:=0}"
+
+
+RED="\033[31m"
+YELLOW="\033[33m"
+BOLD="\033[1m"
+RESET="\033[0m"
+
 # -----------------------------------------------------------------------------
 
+# Helper: ask for confirmation only if we have a TTY; otherwise fail hard
+confirm_or_abort() {
+  local msg="$1"
+
+  # Do we have a TTY to talk to?
+  if [[ -t 0 ]] || [[ -e /dev/tty ]]; then
+    while true; do
+      # read from /dev/tty explicitly, so we don't consume git's stdin
+      if read -r -p "$msg (y/n) " yn </dev/tty; then
+        case "$yn" in
+          [Yy]) return 0 ;;
+          [Nn]) echo "Aborting push."; return 1 ;;
+          *) echo "Please answer y or n." ;;
+        esac
+      else
+        # /dev/tty not readable for some reason
+        echo "No interactive input available. Aborting."
+        return 1
+      fi
+    done
+  else
+    echo "$msg"
+    echo "Non-interactive environment; aborting push."
+    return 1
+  fi
+}
+
 # Read first pre-push line: local_ref local_sha remote_ref remote_sha
-read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA || true
+# (Git provides this on stdin)
+LOCAL_REF=""
+LOCAL_SHA=""
+REMOTE_REF=""
+REMOTE_SHA=""
+
+if ! read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA; then
+  # No refs from git (edge cases like older git, weird invocation)
+  # We'll just treat as if REMOTE_SHA is empty and fall back below.
+  REMOTE_SHA=""
+fi
 
 ZERO40="0000000000000000000000000000000000000000"
-if [[ -n "${REMOTE_SHA:-}" && "$REMOTE_SHA" != "$ZERO40" ]]; then
-  BASE_SHA="$REMOTE_SHA"
+
+if [[ -n "${REMOTE_SHA:-}" && "${REMOTE_SHA:-}" != "$ZERO40" ]]; then
+  BASE_SHA="${REMOTE_SHA:-}"
 else
-  DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || true)
+  DEFAULT_BRANCH="$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null \
+                    | sed 's@^refs/remotes/origin/@@' || true)"
   if [[ -n "$DEFAULT_BRANCH" ]]; then
-    BASE_SHA=$(git rev-parse "$DEFAULT_BRANCH" 2>/dev/null || true)
+    BASE_SHA="$(git rev-parse "$DEFAULT_BRANCH" 2>/dev/null || true)"
   fi
   BASE_SHA="${BASE_SHA:-$(git rev-parse HEAD~1 2>/dev/null || echo "$ZERO40")}"
 fi
+
 RANGE="${BASE_SHA}..HEAD"
 
 # Fast exit if no Go changes
-CHANGED_GO=$(git diff --name-only "$RANGE" -- '*.go' 2>/dev/null || true)
+CHANGED_GO="$(git diff --name-only "$RANGE" -- '*.go' 2>/dev/null || true)"
 if [[ -z "$CHANGED_GO" ]]; then
   echo "[pre-push] No Go changes in $RANGE — skipping."
   exit 0
@@ -39,9 +85,23 @@ fi
 # Map changed files -> unique import paths
 mapfile -t PKG_DIRS < <(printf "%s\n" "$CHANGED_GO" | xargs -r -n1 dirname | sort -u)
 mapfile -t PKGS < <(printf "%s\n" "${PKG_DIRS[@]}" | xargs -r -n50 go list 2>/dev/null | sort -u)
+
 if [[ ${#PKGS[@]} -eq 0 ]] || ! go list ./... >/dev/null 2>&1; then
   echo "[pre-push] No importable Go packages or not a module/workspace — skipping."
   exit 0
+fi
+
+if [[ -f go.mod ]]; then
+  MOD_DIRTY=0
+  BEFORE=$(git status --porcelain go.mod go.sum)
+  go mod tidy >/dev/null 2>&1 || MOD_DIRTY=1
+  AFTER=$(git status --porcelain go.mod go.sum)
+  if [[ "$BEFORE" != "$AFTER" && $MOD_DIRTY -eq 0 ]]; then
+    printf "\033[33m[pre-push] go mod tidy would change go.mod/go.sum.\033[0m\n"
+    if ! confirm_or_abort "go.mod/go.sum not tidy. Continue push anyway?"; then
+      exit 1
+    fi
+  fi
 fi
 
 # ----------------------- LINT ------------------------------------------------
@@ -51,6 +111,7 @@ if [[ "$GITHOOKS_SKIP_LINT" != "1" ]]; then
     echo "See: https://github.com/golangci/golangci-lint" >&2
     exit 1
   fi
+  echo "------------------------------------------"
   echo "[pre-push] golangci-lint ($RANGE)…"
   if [[ "$BASE_SHA" != "$ZERO40" ]]; then
     golangci-lint run --new-from-rev="$BASE_SHA" -n
@@ -59,76 +120,124 @@ if [[ "$GITHOOKS_SKIP_LINT" != "1" ]]; then
   fi
   LINT_RC=$?
   if [[ $LINT_RC -ne 0 ]]; then
-    while read -r -p "golangci-lint found issues. Continue anyway? (y/n) " yn; do
-      case $yn in [Yy]) echo "Continuing despite linter issues…"; break ;;
-                   [Nn]) exit 1 ;;
-                   *) echo "Please answer y or n." ;; esac
-    done
+    if ! confirm_or_abort "golangci-lint found issues. Continue push anyway?"; then
+      exit 1
+    fi
+    echo "Continuing despite linter issues…"
   fi
 fi
 
 # ----------------------- VULN (govulncheck) ---------------------------------
 if [[ "$GITHOOKS_SKIP_VULN" != "1" ]]; then
+  echo "------------------------------------------"
   if ! command -v govulncheck >/dev/null 2>&1; then
     echo "govulncheck not installed or not in PATH" >&2
     echo "Install: go install golang.org/x/vuln/cmd/govulncheck@latest" >&2
     exit 1
   fi
-  echo "[pre-push] govulncheck (${GITHOOKS_VULN_MODE}) on changed packages…"
-  # Faster: restrict to changed packages; use JSON to detect findings robustly
-  # govulncheck exits 0 even when findings exist, so we parse output.
+  echo "[pre-push] govulncheck on changed packages…"
+  # Run govulncheck, capturing stdout (JSON) and stderr (errors)
   OUT_JSON="$(mktemp)"
-  if ! govulncheck -json -mode="${GITHOOKS_VULN_MODE}" "${PKGS[@]}" >"$OUT_JSON" 2>/dev/null; then
+  ERR_LOG="$(mktemp)"
+
+  if ! govulncheck -json "${PKGS[@]}" \
+       >"$OUT_JSON" 2>"$ERR_LOG"; then
+
     echo "govulncheck failed to run (tool error)."
-    rm -f "$OUT_JSON"
+    cat "$ERR_LOG"
+
+    rm -f "$OUT_JSON" "$ERR_LOG"
     exit 1
   fi
 
-  # Any "finding" objects?
+  rm -f "$ERR_LOG"
+
   if grep -q '"finding"' "$OUT_JSON"; then
+    echo -e "${RED}[pre-push] govulncheck reported vulnerabilities that may affect your code.${RESET}"
+    jq -r '
+      select(.finding != null) |
+      .finding as $f |
+      ($f.trace[0].package // $f.trace[0].module // "unknown") as $pkg |
+      "- \($f.osv) in \($pkg)"
+    ' "$OUT_JSON"
     echo
-    echo "⚠️  govulncheck reported vulnerabilities that may affect your code."
-    # Show a concise summary (IDs and package)
-    awk '
-      /"finding"/ {inFinding=1}
-      inFinding && /"symbol":/ {gsub(/[",]/,""); sym=$2}
-      inFinding && /"package":/ {gsub(/[",]/,""); pkg=$2}
-      inFinding && /"id":/ {gsub(/[",]/,""); id=$2}
-      inFinding && /}/ { if (id!="") { printf(" - %s in %s (%s)\n", id, pkg, sym); id=""; pkg=""; sym="" } inFinding=0}
-    ' "$OUT_JSON" | sort -u
-    echo
-    while read -r -p "Continue push anyway? (y/n) " yn; do
-      case $yn in [Yy]) echo "Continuing despite vulnerabilities…"; break ;;
-                   [Nn]) rm -f "$OUT_JSON"; exit 1 ;;
-                   *) echo "Please answer y or n." ;; esac
-    done
+    if ! confirm_or_abort "[pre-push] Continue push despite vulnerabilities?"; then
+      rm -f "$OUT_JSON"
+      exit 1
+    fi
+    echo "[pre-push] Continuing despite vulnerabilities…"
+  else
+    echo "[pre-push] No vulnerabilities found…"
   fi
   rm -f "$OUT_JSON"
 fi
 
+
+# ----------------------- SECRETS (gitleaks) ----------------------------------
+if [[ "${GITHOOKS_SKIP_SECRETS:-0}" != "1" ]]; then
+  if ! command -v gitleaks >/dev/null 2>&1; then
+    printf "\033[33m[pre-push] gitleaks not installed; skipping secrets scan.\033[0m\n" >&2
+  else
+    echo "------------------------------------------"
+    printf "[pre-push] gitleaks secrets scan on %s…\n" "$RANGE"
+
+    # Use a temp report for nicer output if needed
+    GITLEAKS_TMP="$(mktemp)"
+
+    # --no-banner keeps it clean; --source . + --log-opts limit to the pushed range
+    if !  gitleaks detect --no-banner --no-git -v --source . --log-opts "$RANGE" >"$GITLEAKS_TMP" 2>&1; then
+      printf "\033[31m[pre-push] gitleaks found potential secrets.\033[0m\n"
+      n=0
+      while IFS= read -r line && [ $n -lt 80 ]; do
+        printf "\t%s\n" "$line"
+        n=$((n+1))
+      done <"$GITLEAKS_TMP"
+
+      rm -f "$GITLEAKS_TMP"
+
+      if ! confirm_or_abort "[pre-push] Secrets scan failed (gitleaks). Continue push anyway?"; then
+        exit 1
+      fi
+      echo "[pre-push] Continuing despite gitleaks findings…"
+    else
+      rm -f "$GITLEAKS_TMP"
+      printf "\033[32m[pre-push] gitleaks: no secrets detected in %s.\033[0m\n" "$RANGE"
+    fi
+  fi
+fi
+
 # ----------------------- TEST ------------------------------------------------
 if [[ "$GITHOOKS_SKIP_TESTS" != "1" ]]; then
+  echo "------------------------------------------"
   echo "[pre-push] go test on changed packages…"
   TEST_CMD="go test"; command -v gotest >/dev/null 2>&1 && TEST_CMD="gotest"
   ARGS=(-count=1 -p "$GITHOOKS_TEST_P")
   [[ "$GITHOOKS_FAILFAST" == "1" ]] && ARGS+=(-failfast)
   [[ "$GITHOOKS_TEST_RACE" == "1" ]] && ARGS+=(-race)
 
-  printf "%s\n" "${PKGS[@]}" | xargs -r -n1 -P "$GITHOOKS_TEST_P" bash -c '
-    pkg="$1"; shift
-    if ! '"$TEST_CMD"' "${@}" "$pkg" >/dev/null; then
-      echo "[FAIL] '"$TEST_CMD"' ${*} $pkg"
-      exit 1
+  printf "%s\n" "${PKGS[@]}" |
+    xargs -r -n1 -P "$GITHOOKS_TEST_P" bash -c '
+    TMP="$(mktemp)"
+
+    if ! '"$TEST_CMD"' "$@" "$pkg" >"$TMP" 2>&1; then
+        # Print failure header in red
+        printf "\033[31m[pre-push] Tests failed\033[0m\n"
+        while IFS= read -r line; do
+        printf "\t%s\n" "$line"
+        done <"$TMP"
+        rm -f "$TMP"
+        exit 1
     fi
-  ' _ "${ARGS[@]}"
+
+    rm -f "$TMP"
+    ' _ "${ARGS[@]}"
   TEST_RC=$?
 
   if [[ $TEST_RC -ne 0 ]]; then
-    while read -r -p "Tests failed. Continue push anyway? (y/n) " yn; do
-      case $yn in [Yy]) echo "Continuing despite test failures…"; break ;;
-                   [Nn]) exit 1 ;;
-                   *) echo "Please answer y or n." ;; esac
-    done
+    if ! confirm_or_abort "[pre-push] Tests failed. Continue push anyway?"; then
+      exit 1
+    fi
+    echo "[pre-push] Continuing despite test failures…"
   fi
 fi
 

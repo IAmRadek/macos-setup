@@ -41,6 +41,7 @@
     gotest
     golangci-lint
     govulncheck
+    gitleaks
 
     uv
 

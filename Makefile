@@ -12,15 +12,15 @@ default: build
 	curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o /tmp/brew-install.sh
 	bash /tmp/brew-install.sh
 
-.hostname-set:
-	@echo "Setting hostname to 'rdwk'..."
-	sudo scutil --set HostName rdwk
-	sudo scutil --set LocalHostName rdwk
-	sudo scutil --set ComputerName rdwk
-	@echo "Hostname set successfully. You may need to restart your terminal."
-	touch .hostname-set
+#.hostname-set:
+#	@echo "Setting hostname to 'rdwk'..."
+#	sudo scutil --set HostName rdwk
+#	sudo scutil --set LocalHostName rdwk
+#	sudo scutil --set ComputerName rdwk
+#	@echo "Hostname set successfully. You may need to restart your terminal."
+#	touch .hostname-set
 
-bootstrap: /nix /opt/homebrew/bin/brew .hostname-set
+bootstrap: /nix /opt/homebrew/bin/brew
 	@echo "Bootstrapping nix-darwin with flake..."
 	sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .
 	@echo "Bootstrap complete! darwin-rebuild is now available."
@@ -37,4 +37,4 @@ build: bootstrap
 update:
 	git pull
 	nix flake update
-	sudo darwin-rebuild switch --flake .
+	sudo darwin-rebuild switch --flake .#$(USER)

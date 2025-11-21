@@ -174,7 +174,7 @@ print_next_steps() {
     echo "2. Test Nix: nix-shell -p hello --command hello"
     echo "3. View configuration: cd $INSTALL_DIR"
     echo "4. Make changes: edit configuration.nix"
-    echo "5. Apply changes: darwin-rebuild switch --flake ."
+    echo "5. Apply changes: darwin-rebuild switch --flake .#$(USER)"
     echo ""
     echo "For more information, see: $INSTALL_DIR/README.md"
 }

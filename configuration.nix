@@ -6,7 +6,7 @@
 }:
 
 {
-  system.primaryUser = "radoslawdejnek";
+  system.primaryUser = lib.mkDefault "radoslawdejnek";
 
   environment.systemPackages = with pkgs; [
     nixd

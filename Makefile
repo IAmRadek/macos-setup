@@ -22,7 +22,7 @@ default: build
 
 bootstrap: /nix /opt/homebrew/bin/brew
 	@echo "Bootstrapping nix-darwin with flake..."
-	sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .
+	sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(USER)
 	@echo "Bootstrap complete! darwin-rebuild is now available."
 
 build: bootstrap
@@ -31,7 +31,7 @@ build: bootstrap
 		sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .; \
 	else \
 		echo "darwin-rebuild not found, using nix run..."; \
-		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .; \
+		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(USER); \
 	fi
 
 update:

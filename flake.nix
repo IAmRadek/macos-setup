@@ -25,6 +25,15 @@
           ./hosts/mbp.nix
         ];
       };
+
+      "r__d" = darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          ./configuration.nix
+          home-manager.darwinModules.home-manager
+          ./hosts/r__d.nix
+        ];
+      };
     };
   };
 }

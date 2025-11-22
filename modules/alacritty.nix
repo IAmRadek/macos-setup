@@ -109,14 +109,14 @@
         };
       };
 
-      terminal.shell = {
-        program = "${pkgs.zsh}/bin/zsh";
-        args = [
-          "-l"
-          "-c"
-          "${pkgs.tmux}/bin/tmux new -A -s main -f ${config.xdg.configHome}/tmux/tmux.conf"
-        ];
-      };
+      # terminal.shell = {
+      #   # program = "${pkgs.zsh}/bin/zsh";
+      #   # args = [
+      #   #   "-l"
+      #   #   "-c"
+      #   #   "${pkgs.tmux}/bin/tmux new -A -s main -f ${config.xdg.configHome}/tmux/tmux.conf"
+      #   # ];
+      # };
     };
   };
 

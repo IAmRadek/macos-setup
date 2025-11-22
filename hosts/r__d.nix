@@ -76,6 +76,7 @@ in
       };
 
       imports = [
+          ../modules/kitty.nix
           ../modules/alacritty.nix
           ../modules/zsh.nix
           ../modules/tmux.nix

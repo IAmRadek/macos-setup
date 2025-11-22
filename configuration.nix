@@ -26,6 +26,8 @@
     sops
     gnupg
     age
+    presenterm
+    wget
 
     dust
     duf
@@ -34,6 +36,7 @@
     glow
 
     alacritty
+    kitty
 
     go
     gopls
@@ -42,6 +45,8 @@
     golangci-lint
     govulncheck
     gitleaks
+    gofumpt
+    go-swag
 
     uv
 
@@ -52,7 +57,7 @@
     delta
     nano
     oath-toolkit
-    go-swag
+
   ];
 
   # GUI Applications
@@ -74,6 +79,7 @@
       # "google-cloud-sdk"
       "jetbrains-toolbox"
       "zed"
+      "ghostty"
       # "docker"  # Docker Desktop
 
       # Utilities
@@ -100,6 +106,8 @@
       # Media
       "spotify"
       # "vlc"
+      #
+      "obsidian"
     ];
 
     # Some CLI tools are better from Homebrew

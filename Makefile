@@ -38,3 +38,6 @@ update:
 	git pull
 	nix flake update
 	sudo darwin-rebuild switch --flake .#$(USER)
+
+cleanup:
+	nix-collect-garbage

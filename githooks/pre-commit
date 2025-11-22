@@ -19,26 +19,52 @@ for b in "${PROTECTED[@]}"; do
   [[ "$BRANCH" == "$b" ]] && is_protected=1 && break
 done
 
-if [[ $is_protected -ne 1 ]]; then
-  exit 0
+if [[ $is_protected -eq 1 ]]; then
+    echo "You are about to commit directly to a protected branch: '$BRANCH'."
+
+    while read -r -p "Do you really want to commit to $BRANCH? (y/n) " yn </dev/tty; do
+    case "$yn" in
+        [Yy])
+        echo "Committing to $BRANCH."
+        break
+        ;;
+        [Nn])
+        echo "Commit aborted."
+        exit 1
+        ;;
+        *)
+        echo "Please answer y (yes) or n (no)."
+        ;;
+    esac
+    done
 fi
 
-echo
-echo "You are about to commit directly to a protected branch: '$BRANCH'."
-echo
+STAGED_GO=$(git diff --cached --name-only -- '*.go')
+if [[ -n "$STAGED_GO" ]]; then
+  echo "[pre-commit] gofumpt / goimports on staged Go files…"
+  echo "$STAGED_GO" | xargs -r gofumpt -w
+  echo "$STAGED_GO" | xargs -r goimports -w
 
-while read -r -p "Do you really want to commit to $BRANCH? (y/n) " yn </dev/tty; do
-  case "$yn" in
-    [Yy])
-      echo "Committing to $BRANCH."
-      exit 0
-      ;;
-    [Nn])
-      echo "Commit aborted."
-      exit 1
-      ;;
-    *)
-      echo "Please answer y (yes) or n (no)."
-      ;;
-  esac
-done
+  # Re-stage files after formatting
+  echo "$STAGED_GO" | xargs -r git add
+
+  if git diff --cached -- '*.go' | grep -q 'fmt\.Println'; then
+    echo "Found fmt.Println in staged Go changes."
+
+    while read -r -p "Do you really want to commit? (y/n) " yn </dev/tty; do
+    case "$yn" in
+        [Yy])
+        echo "Committing to $BRANCH."
+        break
+        ;;
+        [Nn])
+        echo "Commit aborted."
+        exit 1
+        ;;
+        *)
+        echo "Please answer y (yes) or n (no)."
+        ;;
+    esac
+    done
+  fi
+fi

@@ -35,6 +35,8 @@
     navi
     glow
     nb
+    w3m-full
+    watson
 
     alacritty
     kitty
@@ -50,6 +52,7 @@
     go-swag
 
     uv
+    eza
 
     jq
     fd
@@ -80,7 +83,6 @@
       # "google-cloud-sdk"
       "jetbrains-toolbox"
       "zed"
-      "ghostty"
       # "docker"  # Docker Desktop
 
       # Utilities
@@ -101,7 +103,7 @@
       "telegram"
       "signal"
       "whatsapp"
-      # "discord"
+      "discord"
       # "zoom"
 
       # Media

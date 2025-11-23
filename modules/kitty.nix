@@ -1,39 +1,52 @@
 { config, lib, pkgs, ... }:
 {
+
+  home.file.".config/kitty/navi_select.py".text = ''
+    from kitty.boss import Boss
+    import subprocess
+
+    NAVI = "${pkgs.navi}/bin/navi"
+
+    def main(args):
+        result = subprocess.run([NAVI, "--print"], capture_output=True, text=True)
+        if result.returncode != 0:
+            return ""
+        return result.stdout
+
+    def handle_result(args, answer, target_window_id, boss: Boss):
+        text = answer.strip()
+        if not text:
+            return
+        w = boss.window_id_map.get(target_window_id)
+        if w is not None:
+            w.paste_text(text)
+  '';
+
+  home.file.".config/kitty/scroll_mark.py".source =
+    pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/trygveaa/kitty-kitten-search/refs/heads/master/scroll_mark.py";
+      sha256 = "1a1l7sp2x247da8fr54wwq7ffm987wjal9nw2f38q956v3cfknzi";
+    };
+
+  home.file.".config/kitty/search.py".source =
+    pkgs.fetchurl {
+      url = "https://raw.githubusercontent.com/trygveaa/kitty-kitten-search/refs/heads/master/search.py";
+      sha256 = "035y3gwlr9ymb8y5zygv3knn91z1p5blj6gzv5vl2zcyhn7281n9";
+    };
+
   programs.kitty = {
     enable = true;
 
     font = {
       name = "JetBrainsMono Nerd Font";
-      size = 13.0;
-    };
-
-    keybindings = {
-      "cmd+1" = "goto_tab 1";
-      "cmd+2" = "goto_tab 2";
-      "cmd+3" = "goto_tab 3";
-      "cmd+4" = "goto_tab 4";
-      "cmd+5" = "goto_tab 5";
-      "cmd+6" = "goto_tab 6";
-      "cmd+7" = "goto_tab 7";
-      "cmd+8" = "goto_tab 8";
-      "cmd+9" = "goto_tab 9";
+      size = 14.0;
     };
 
     settings = {
-      ## Primary colors
+      # your existing colors
       foreground = "#BBBBBB";
       background = "#2B2B2B";
 
-      ## Cursor
-      # Default cursor color = foreground → no need to set
-      cursor_text_color = "background";
-
-      ## Selection
-      selection_background = "#245980";
-      # selection_foreground = "inherit"   # optional, but default is fine
-
-      ## Normal colors
       color0  = "#000000";
       color1  = "#F0524F";
       color2  = "#5C962C";
@@ -42,8 +55,6 @@
       color5  = "#A771BF";
       color6  = "#00A3A3";
       color7  = "#808080";
-
-      ## Bright colors
       color8  = "#595959";
       color9  = "#FF4050";
       color10 = "#4FC414";
@@ -53,38 +64,86 @@
       color14 = "#00E5E5";
       color15 = "#FFFFFF";
 
-      ## Padding
       window_padding_width = 10;
-
-      ## macOS alt behavior
       macos_option_as_alt = "both";
 
+      # ── Tab bar: “editor-like” flat style ──────────────────────────────
+      tab_bar_style = "powerline";      # flat tabs with a thin separator
+      tab_bar_edge = "top";
+      tab_bar_min_tabs = 1;
+      tab_bar_background = "#202225";   # slightly darker than main bg
 
-      # --- Basic tab bar behaviour ---
-      tab_bar_style = "powerline";   # or: fade, separator, slant, hidden
-      tab_bar_edge = "top";          # top | bottom
-      tab_bar_min_tabs = 1;          # show even with a single tab
-      tab_title_template = "{index}: {title}"; # how titles are rendered
+      # Active tab: lighter bg, bold text
+      active_tab_background = "#2B2B2B";
+      active_tab_foreground = "#BBBBBB";
+      active_tab_font_style = "bold";
 
-      # --- Colors for tabs (adapted to your theme) ---
-      # Active tab
-      active_tab_foreground = "#2B2B2B";  # text
-      active_tab_background = "#BBBBBB";  # bg
-      active_tab_font_style = "bold";     # normal | bold | italic | bold-italic
-
-      # Inactive tabs
-      inactive_tab_foreground = "#BBBBBB";
-      inactive_tab_background = "#245980";
+      # Inactive tabs: flat, low-contrast text
+      inactive_tab_background = "#202225";
+      inactive_tab_foreground = "#9A9A9A";
       inactive_tab_font_style = "normal";
 
-      # Optional: separator between tabs (for some styles)
-      tab_separator = " │ ";
+      # Small separator between tabs (looks like thin borders)
+      tab_separator = "  ";
+      tab_title_template = "{index}:{title}";
     };
 
-    ## Keybindings for word jumps (Alt + arrows)
     keybindings = {
+      # word jumps
       "alt+right" = "send_text all \\x1bF";
       "alt+left"  = "send_text all \\x1bB";
+
+      "cmd+f" = "launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id";
+
+      "ctrl+a>c" = "kitten navi_select.py";
+
+      # direct tab jumps
+      "ctrl+a>1" = "goto_tab 1";
+      "ctrl+a>2" = "goto_tab 2";
+      "ctrl+a>3" = "goto_tab 3";
+      "ctrl+a>4" = "goto_tab 4";
+      "ctrl+a>5" = "goto_tab 5";
+      "ctrl+a>6" = "goto_tab 6";
+      "ctrl+a>7" = "goto_tab 7";
+      "ctrl+a>8" = "goto_tab 8";
+      "ctrl+a>9" = "goto_tab 9";
+
+      "cmd+right" = "next_tab";
+      "cmd+left"  = "previous_tab";
+
+      "ctrl+a>n" = "set_tab_title";
+
+      # C-a -  -> split with a horizontal line (top/bottom), like: tmux split-window -v
+      "ctrl+a>-" = "launch --location=hsplit --cwd=current";
+
+      # C-a |  -> split with a vertical line (left/right), like: tmux split-window -h
+      "ctrl+a>\\" = "launch --location=vsplit --cwd=current";
+
+      # C-a t  -> new tmux window  ≈ new kitty *tab*
+      "ctrl+a>t" = "launch --type=tab --cwd=current";
+
+      # C-a w  -> kill-window  ≈ close current tab
+      "ctrl+a>w" = "close_tab";
+
+      # (optional) C-a q -> close current split (kitty window)
+      "ctrl+a>q" = "close_window";
+
+      # C-a r  -> reload kitty.conf (like your tmux `source-file` binding)
+      "ctrl+a>r" = "load_config_file";
+
+      # --- Optional: tmux-like pane navigation with hjkl ---
+
+      # C-a h/j/k/l to move between splits
+      "ctrl+a>h" = "neighboring_window left";
+      "ctrl+a>j" = "neighboring_window down";
+      "ctrl+a>k" = "neighboring_window up";
+      "ctrl+a>l" = "neighboring_window right";
+
+      # C-a H/J/K/L to resize splits
+      "ctrl+a>H" = "resize_window narrower 3";
+      "ctrl+a>L" = "resize_window wider 3";
+      "ctrl+a>J" = "resize_window taller 3";
+      "ctrl+a>K" = "resize_window shorter 3";
     };
   };
 }

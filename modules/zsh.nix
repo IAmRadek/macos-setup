@@ -1,6 +1,5 @@
 { config, lib, pkgs, ... }:
 {
-
   programs.zsh = {
     enable = true;
     enableCompletion = true;
@@ -11,6 +10,7 @@
       ".." = "cd ..";
       "g" = "git";
       "k" = "kubectl";
+      "ls" = "eza -l";
     };
 
     initContent = let zshConfigEarlyInit = lib.mkOrder 500 ''
@@ -20,6 +20,7 @@
         zsh_start_time=$EPOCHREALTIME
 
         function show_startup_time() {
+          return
           local elapsed=$(( ($EPOCHREALTIME - $zsh_start_time) * 1000 ))
           printf "\n🚀 Zsh startup took %.2f ms\n\n" $elapsed
           # only show once, then remove the hook
@@ -38,11 +39,33 @@
         fi
     '';
     zshConfigLateInit = lib.mkOrder 2000 ''
+      # Ensure our custom completions directory takes priority
+      fpath=($HOME/.cache/zsh $fpath)
+      compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
+
+      # Bind completions explicitly
+      compdef _nb nb 2>/dev/null
+      compdef _helm helm 2>/dev/null
+      compdef _git-town git-town 2>/dev/null
+
+      # Make `git town` / `g town` use _git-town completion
+      if (( $+functions[_git-town] && $+functions[_git] )); then
+        functions[_git-orig]=$functions[_git]
+        _git() {
+          # $words = (git town …) or (g town … -> alias → git town …)
+          if [[ ''${words[2]} == town ]]; then
+            _git-town
+          else
+            _git-orig
+          fi
+        }
+      fi
+
       # zprof
     '';
     zshConfig = lib.mkOrder 1000 ''
       # Set nano as default editor
-      # export EDITOR="nano"
+      export EDITOR="zed"
       export VISUAL="zed"
 
       # Fix for testcontainers with colima (https://github.com/testcontainers/testcontainers-go/issues/2952)
@@ -106,7 +129,8 @@
       zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
       zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
-      fpath=("$HOME/.zsh/completions" $fpath)
+      fpath=($HOME/.zsh/completions $fpath)
+      fpath=($HOME/.cache/zsh $fpath)
 
       # Simple completion order
       zstyle ':completion:*' completer _expand_alias _complete _ignored
@@ -132,8 +156,9 @@
       # Ensure compinit is properly initialized for zinit
       compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
 
-      source "$ZCACHEDIR/_git-town.zsh"
-      source "$ZCACHEDIR/_helm.zsh"
+      compdef _nb nb 2>/dev/null
+      compdef _helm helm 2>/dev/null
+      compdef _git-town git-town 2>/dev/null
     '';
     in lib.mkMerge [ zshConfigEarlyInit zshConfig zshConfigLateInit ];
   };

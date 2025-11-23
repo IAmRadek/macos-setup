@@ -27,8 +27,9 @@ in
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
           "/Applications/Firefox.app"
-          "${pkgs.alacritty}/Applications/Alacritty.app"
+          "${pkgs.kitty}/Applications/Kitty.app"
           "/Users/${username}/Applications/Goland.app"
+          "/Applications/Discord.app"
           "/Applications/Zed.app"
         ];
         persistent-others = [ ];
@@ -53,11 +54,15 @@ in
         '';
 
         gitTownCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          ${pkgs.git-town}/bin/git-town completions zsh > "$HOME/.cache/zsh/_git-town.zsh"
+          ${pkgs.git-town}/bin/git-town completions zsh > "$HOME/.cache/zsh/_git-town"
         '';
 
         helmCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-          /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm.zsh"
+          /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm"
+        '';
+
+        nbCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          ${pkgs.curl}/bin/curl -L https://raw.githubusercontent.com/xwmx/nb/master/etc/nb-completion.zsh -o $HOME/.cache/zsh/_nb
         '';
       };
 
@@ -67,6 +72,8 @@ in
       ];
 
       home.packages = [];
+
+      home.file.".hushlogin".text = "";
 
       programs.ssh = {
         enable = true;

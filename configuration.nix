@@ -34,6 +34,7 @@
     hurl
     navi
     glow
+    nb
 
     alacritty
     kitty

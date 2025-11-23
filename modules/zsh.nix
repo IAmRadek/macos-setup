@@ -159,6 +159,7 @@
       compdef _nb nb 2>/dev/null
       compdef _helm helm 2>/dev/null
       compdef _git-town git-town 2>/dev/null
+      compdef _watson git-town 2>/dev/null
     '';
     in lib.mkMerge [ zshConfigEarlyInit zshConfig zshConfigLateInit ];
   };

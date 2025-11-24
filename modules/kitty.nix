@@ -1,6 +1,23 @@
 { config, lib, pkgs, ... }:
-{
 
+let kubeContextPopup = pkgs.writeShellScriptBin "kube-context-popup" ''
+  #!${pkgs.bash}/bin/bash
+  set -euo pipefail
+
+  # List contexts, pick one with fzf
+  ctx="$(${pkgs.kubectl}/bin/kubectl config get-contexts -o name | ${pkgs.fzf}/bin/fzf --prompt='Kubernetes context> ')"
+
+  # If user pressed ESC / no choice
+  [ -z "$ctx" ] && exit 0
+
+  ${pkgs.kubectl}/bin/kubectl config use-context "$ctx"
+
+  echo
+  echo "Switched to context: $ctx"
+  echo
+  read -n 1 -s -r -p "Press any key to close..."
+'';
+in {
   home.file.".config/kitty/navi_select.py".text = ''
     from kitty.boss import Boss
     import subprocess
@@ -21,6 +38,8 @@
         if w is not None:
             w.paste_text(text)
   '';
+
+
 
   home.file.".config/kitty/scroll_mark.py".source =
     pkgs.fetchurl {
@@ -96,6 +115,7 @@
       "cmd+f" = "launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id";
 
       "ctrl+a>c" = "kitten navi_select.py";
+      "ctrl+a>g" = "launch --type=overlay --cwd=current --keep-focus ${kubeContextPopup}/bin/kube-context-popup";
 
       # direct tab jumps
       "ctrl+a>1" = "goto_tab 1";

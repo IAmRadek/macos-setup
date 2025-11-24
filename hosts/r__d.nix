@@ -73,6 +73,7 @@ in
       home.sessionPath = [
         "$HOME/go/bin"
         "$HOME/.local/bin"
+        "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
       ];
 
       home.packages = [];

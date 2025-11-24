@@ -39,28 +39,6 @@
         fi
     '';
     zshConfigLateInit = lib.mkOrder 2000 ''
-      # Ensure our custom completions directory takes priority
-      fpath=($HOME/.cache/zsh $fpath)
-      compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
-
-      # Bind completions explicitly
-      compdef _nb nb 2>/dev/null
-      compdef _helm helm 2>/dev/null
-      compdef _git-town git-town 2>/dev/null
-
-      # Make `git town` / `g town` use _git-town completion
-      if (( $+functions[_git-town] && $+functions[_git] )); then
-        functions[_git-orig]=$functions[_git]
-        _git() {
-          # $words = (git town …) or (g town … -> alias → git town …)
-          if [[ ''${words[2]} == town ]]; then
-            _git-town
-          else
-            _git-orig
-          fi
-        }
-      fi
-
       # zprof
     '';
     zshConfig = lib.mkOrder 1000 ''
@@ -129,8 +107,7 @@
       zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
       zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
 
-      fpath=($HOME/.zsh/completions $fpath)
-      fpath=($HOME/.cache/zsh $fpath)
+      fpath=($HOME/.zsh/completions $HOME/.cache/zsh $fpath)
 
       # Simple completion order
       zstyle ':completion:*' completer _expand_alias _complete _ignored
@@ -154,7 +131,7 @@
       zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
 
       # Ensure compinit is properly initialized for zinit
-      compinit -C -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
+      compinit -u -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
 
       compdef _nb nb 2>/dev/null
       compdef _helm helm 2>/dev/null
@@ -169,6 +146,8 @@
     settings = {
       # Starship configuration
       add_newline = false;
+
+      format = ''$directory$git_branch$git_status$golang$kubernetes$cmd_duration$line_break$character'';
 
       character = {
         success_symbol = "[➜](bold green)";
@@ -203,6 +182,11 @@
         staged = "+";
         renamed = "»";
         deleted = "✘";
+      };
+
+      kubernetes = {
+        format = ''\[[$cluster:$context](dimmed green)\]'';
+        disabled = false;
       };
 
       cmd_duration = {

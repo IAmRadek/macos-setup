@@ -50,6 +50,7 @@
     gitleaks
     gofumpt
     go-swag
+    gomarkdoc
 
     uv
     eza

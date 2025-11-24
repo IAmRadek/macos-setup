@@ -48,8 +48,10 @@ if [[ -n "$STAGED_GO" ]]; then
   # Re-stage files after formatting
   echo "$STAGED_GO" | xargs -r git add
 
-  if git diff --cached -- '*.go' | grep -q 'fmt\.Println'; then
-    echo "Found fmt.Println in staged Go changes."
+  FILES_WITH_PRINTLN="$(git grep --cached -l -- 'fmt\.Println' -- '*.go' || true)"
+  if [[ -n "$FILES_WITH_PRINTLN" ]]; then
+     echo "Found fmt.Println in staged Go files:"
+     echo "$FILES_WITH_PRINTLN"
 
     while read -r -p "Do you really want to commit? (y/n) " yn </dev/tty; do
     case "$yn" in

@@ -307,7 +307,7 @@ if [[ "${GITHOOKS_SKIP_COVER:-0}" != "1" ]]; then
           echo "[pre-push] Previous coverage profile invalid, resetting baseline."
         fi
       else
-        printf "[pre-push] No previous coverage baseline for %s, creating one (%.2f%%).\n" \
+        printf "[pre-push] No previous coverage baseline for %s, creating one (%s).\n" \
           "$BRANCH" "$NEW_COV"
       fi
 

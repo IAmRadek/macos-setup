@@ -114,56 +114,56 @@ in {
 
       "cmd+f" = "launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id";
 
-      "ctrl+a>c" = "kitten navi_select.py";
-      "ctrl+a>g" = "launch --type=overlay --cwd=current --keep-focus ${kubeContextPopup}/bin/kube-context-popup";
+      "ctrl+s>c" = "kitten navi_select.py";
+      "ctrl+s>g" = "launch --type=overlay --cwd=current --keep-focus ${kubeContextPopup}/bin/kube-context-popup";
 
       # direct tab jumps
-      "ctrl+a>1" = "goto_tab 1";
-      "ctrl+a>2" = "goto_tab 2";
-      "ctrl+a>3" = "goto_tab 3";
-      "ctrl+a>4" = "goto_tab 4";
-      "ctrl+a>5" = "goto_tab 5";
-      "ctrl+a>6" = "goto_tab 6";
-      "ctrl+a>7" = "goto_tab 7";
-      "ctrl+a>8" = "goto_tab 8";
-      "ctrl+a>9" = "goto_tab 9";
+      "ctrl+s>1" = "goto_tab 1";
+      "ctrl+s>2" = "goto_tab 2";
+      "ctrl+s>3" = "goto_tab 3";
+      "ctrl+s>4" = "goto_tab 4";
+      "ctrl+s>5" = "goto_tab 5";
+      "ctrl+s>6" = "goto_tab 6";
+      "ctrl+s>7" = "goto_tab 7";
+      "ctrl+s>8" = "goto_tab 8";
+      "ctrl+s>9" = "goto_tab 9";
 
       "cmd+right" = "next_tab";
       "cmd+left"  = "previous_tab";
 
-      "ctrl+a>n" = "set_tab_title";
+      "ctrl+s>n" = "set_tab_title";
 
       # C-a -  -> split with a horizontal line (top/bottom), like: tmux split-window -v
-      "ctrl+a>-" = "launch --location=hsplit --cwd=current";
+      "ctrl+s>-" = "launch --location=hsplit --cwd=current";
 
       # C-a |  -> split with a vertical line (left/right), like: tmux split-window -h
-      "ctrl+a>\\" = "launch --location=vsplit --cwd=current";
+      "ctrl+s>\\" = "launch --location=vsplit --cwd=current";
 
       # C-a t  -> new tmux window  ≈ new kitty *tab*
-      "ctrl+a>t" = "launch --type=tab --cwd=current";
+      "ctrl+s>t" = "launch --type=tab --cwd=current";
 
       # C-a w  -> kill-window  ≈ close current tab
-      "ctrl+a>w" = "close_tab";
+      "ctrl+s>w" = "close_tab";
 
       # (optional) C-a q -> close current split (kitty window)
-      "ctrl+a>q" = "close_window";
+      "ctrl+s>q" = "close_window";
 
       # C-a r  -> reload kitty.conf (like your tmux `source-file` binding)
-      "ctrl+a>r" = "load_config_file";
+      "ctrl+s>r" = "load_config_file";
 
       # --- Optional: tmux-like pane navigation with hjkl ---
 
       # C-a h/j/k/l to move between splits
-      "ctrl+a>h" = "neighboring_window left";
-      "ctrl+a>j" = "neighboring_window down";
-      "ctrl+a>k" = "neighboring_window up";
-      "ctrl+a>l" = "neighboring_window right";
+      "ctrl+s>h" = "neighboring_window left";
+      "ctrl+s>j" = "neighboring_window down";
+      "ctrl+s>k" = "neighboring_window up";
+      "ctrl+s>l" = "neighboring_window right";
 
       # C-a H/J/K/L to resize splits
-      "ctrl+a>H" = "resize_window narrower 3";
-      "ctrl+a>L" = "resize_window wider 3";
-      "ctrl+a>J" = "resize_window taller 3";
-      "ctrl+a>K" = "resize_window shorter 3";
+      "ctrl+s>H" = "resize_window narrower 3";
+      "ctrl+s>L" = "resize_window wider 3";
+      "ctrl+s>J" = "resize_window taller 3";
+      "ctrl+s>K" = "resize_window shorter 3";
     };
   };
 }

@@ -54,6 +54,7 @@
 
     uv
     eza
+    aichat
 
     jq
     fd

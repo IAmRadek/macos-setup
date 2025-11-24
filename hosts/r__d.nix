@@ -71,7 +71,7 @@ in
       };
 
       home.sessionPath = [
-        "$HOME/go/bin"
+        "$HOME/Development/Go/bin"
         "$HOME/.local/bin"
         "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
       ];

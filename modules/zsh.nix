@@ -63,8 +63,7 @@
 
       # Source zinit
       source "$ZINIT_HOME/bin/zinit.zsh"
-
-      # Load zinit plugins
+      export PKG_CONFIG_PATH=${pkgs.openssl.dev}/lib/pkgconfig
 
       # Essential plugins
       zinit ice lucid wait"1"; zinit light zdharma-continuum/fast-syntax-highlighting
@@ -147,7 +146,7 @@
       # Starship configuration
       add_newline = false;
 
-      format = ''$directory$git_branch$git_status$golang$kubernetes$cmd_duration$line_break$character'';
+      format = ''$directory$nix_shell$git_branch$git_status$golang$kubernetes$cmd_duration$line_break$character'';
 
       character = {
         success_symbol = "[➜](bold green)";
@@ -182,6 +181,10 @@
         staged = "+";
         renamed = "»";
         deleted = "✘";
+      };
+
+      nix_shell = {
+        format = ''\[[nix-shell](bold blue)\]'';
       };
 
       kubernetes = {

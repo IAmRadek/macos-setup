@@ -10,6 +10,7 @@
 
   environment.systemPackages = with pkgs; [
     nixd
+    nil
     git
     git-town
     gh
@@ -51,6 +52,12 @@
     gofumpt
     go-swag
     gomarkdoc
+
+    rustup
+    cargo
+    rust-analyzer
+    openssl
+    pkg-config
 
     uv
     eza

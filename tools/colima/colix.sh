@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_NAME="colima-tools"
+SCRIPT_NAME="colix"
 
 # ────────────────────────────────────────────────────────────────────────────
 # Helper functions
@@ -42,7 +42,6 @@ Commands:
   stop              Stop Colima
   restart           Restart Colima
   status            Show Colima status and Docker/K8s contexts
-  logs              Show Colima logs
   prune             Docker prune (incl. volumes) + builder prune
   nuke              STOP and DELETE the Colima profile (DANGEROUS)
   ssh               SSH into the Colima VM
@@ -61,10 +60,9 @@ cmd_start() {
     local disk=5
     local vm="vz"
     local k8s=false
-    local gpu=false
+    local rosetta=false
     local arch=""
     local dns=""
-    local mirror=""
 
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -79,13 +77,11 @@ cmd_start() {
             --vm=*) vm="${1#*=}"; shift ;;
             --vm) vm="$2"; shift 2 ;;
             --k8s) k8s=true; shift ;;
-            --gpu) gpu=true; shift ;;
+            --rosetta) rosetta=true; shift ;;
             --arch=*) arch="${1#*=}"; shift ;;
             --arch) arch="$2"; shift 2 ;;
             --dns=*) dns="${1#*=}"; shift ;;
             --dns) dns="$2"; shift 2 ;;
-            --mirror=*) mirror="${1#*=}"; shift ;;
-            --mirror) mirror="$2"; shift 2 ;;
             --help|-h)
                 cat <<EOF
 Usage: $SCRIPT_NAME start [options]
@@ -99,10 +95,9 @@ Options:
   --disk=N          Disk in GB (default: 5)
   --vm=TYPE         VM backend: vz|qemu (default: vz)
   --k8s             Enable Kubernetes
-  --gpu             Enable GPU (vz/aarch64)
+  --rosetta         Enable Rosetta for amd64 emulation (vz only)
   --arch=ARCH       Guest arch: x86_64|aarch64
   --dns=SERVER      Custom DNS server
-  --mirror=URL      Docker registry mirror URL
 EOF
                 return 0
                 ;;
@@ -113,7 +108,7 @@ EOF
     local -a args=(
         colima start
         --profile "$profile"
-        --cpu "$cpu"
+        --cpus "$cpu"
         --memory "$mem"
         --disk "$disk"
         --vm-type "$vm"
@@ -121,9 +116,8 @@ EOF
 
     [[ -n "$arch" ]] && args+=(--arch "$arch")
     [[ "$k8s" == true ]] && args+=(--kubernetes)
-    [[ "$gpu" == true ]] && args+=(--gpu)
+    [[ "$rosetta" == true ]] && args+=(--vz-rosetta)
     [[ -n "$dns" ]] && args+=(--dns "$dns")
-    [[ -n "$mirror" ]] && args+=(--registry-mirror "$mirror")
 
     echo "→ ${args[*]}"
     "${args[@]}"
@@ -227,31 +221,6 @@ EOF
         k8s_ctx=$(kubectl config current-context 2>/dev/null) || true
         [[ -n "$k8s_ctx" ]] && echo "K8s context: $k8s_ctx"
     fi
-}
-
-cmd_logs() {
-    local profile="default"
-
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --profile=*) profile="${1#*=}"; shift ;;
-            --profile) profile="$2"; shift 2 ;;
-            --help|-h)
-                cat <<EOF
-Usage: $SCRIPT_NAME logs [options]
-
-Show Colima logs.
-
-Options:
-  --profile=NAME    Colima profile name (default: default)
-EOF
-                return 0
-                ;;
-            *) echo "Unknown option: $1" >&2; return 1 ;;
-        esac
-    done
-
-    colima logs --profile "$profile"
 }
 
 cmd_prune() {
@@ -417,35 +386,68 @@ EOF
 
 cmd_completions() {
     cat <<'EOF'
-# Add this to your .zshrc or .bashrc:
-# eval "$(colima-tools completions)"
+#compdef colix
 
-_colima_tools_complete() {
-    local cur="${COMP_WORDS[COMP_CWORD]}"
-    local cmd="${COMP_WORDS[1]:-}"
+_colix() {
+    local -a commands
+    commands=(
+        'help:Show help message'
+        'start:Start Colima and set Docker/K8s contexts'
+        'stop:Stop Colima'
+        'restart:Restart Colima'
+        'status:Show Colima status and Docker/K8s contexts'
+        'prune:Docker prune (incl. volumes) + builder prune'
+        'nuke:STOP and DELETE the Colima profile (DANGEROUS)'
+        'ssh:SSH into the Colima VM'
+        'images:List Docker images by size (desc)'
+        'ports:Show forwarded ports'
+        'completions:Output shell completions'
+    )
 
-    if [[ $COMP_CWORD -eq 1 ]]; then
-        COMPREPLY=( $(compgen -W "help start stop restart status logs prune nuke ssh images ports completions" -- "$cur") )
-        return
-    fi
+    _arguments -C \
+        '1:command:->command' \
+        '*::arg:->args'
 
-    case "$cmd" in
-        start)
-            COMPREPLY=( $(compgen -W "--profile --cpu --mem --disk --vm --k8s --gpu --arch --dns --mirror --help" -- "$cur") )
+    case "$state" in
+        command)
+            _describe -t commands 'colix commands' commands
             ;;
-        stop|restart|status|logs|ssh|ports)
-            COMPREPLY=( $(compgen -W "--profile --help" -- "$cur") )
-            ;;
-        nuke)
-            COMPREPLY=( $(compgen -W "--profile --yes --help" -- "$cur") )
-            ;;
-        prune|images|help|completions)
-            COMPREPLY=( $(compgen -W "--help" -- "$cur") )
+        args)
+            case "$words[1]" in
+                start)
+                    _arguments \
+                        '--profile=[Colima profile name]:profile:' \
+                        '--cpu=[vCPUs]:cpus:' \
+                        '--mem=[Memory in GB]:memory:' \
+                        '--disk=[Disk in GB]:disk:' \
+                        '--vm=[VM backend]:vm:(vz qemu)' \
+                        '--k8s[Enable Kubernetes]' \
+                        '--rosetta[Enable Rosetta for amd64 emulation]' \
+                        '--arch=[Guest architecture]:arch:(x86_64 aarch64)' \
+                        '--dns=[Custom DNS server]:dns:' \
+                        '--help[Show help]'
+                    ;;
+                stop|restart|status|ssh|ports)
+                    _arguments \
+                        '--profile=[Colima profile name]:profile:' \
+                        '--help[Show help]'
+                    ;;
+                nuke)
+                    _arguments \
+                        '--profile=[Colima profile name]:profile:' \
+                        '--yes[Skip confirmation]' \
+                        '--help[Show help]'
+                    ;;
+                prune|images|help|completions)
+                    _arguments \
+                        '--help[Show help]'
+                    ;;
+            esac
             ;;
     esac
 }
 
-complete -F _colima_tools_complete colima-tools
+_colix "$@"
 EOF
 }
 
@@ -463,7 +465,6 @@ main() {
         stop) cmd_stop "$@" ;;
         restart) cmd_restart "$@" ;;
         status) cmd_status "$@" ;;
-        logs) cmd_logs "$@" ;;
         prune) cmd_prune "$@" ;;
         nuke) cmd_nuke "$@" ;;
         ssh) cmd_ssh "$@" ;;

@@ -33,37 +33,72 @@ in
 {
   home.packages = [
     git-pr
-    (pkgs.writeShellScriptBin "colima-tools" (builtins.readFile ../tools/colima/colima-tools.sh))
+    (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))
   ];
 
-  home.file.".zsh/completions/_colima-tools".text = ''
-    # Completions for colima-tools
-    _colima_tools_complete() {
-        local cur="''${COMP_WORDS[COMP_CWORD]}"
-        local cmd="''${COMP_WORDS[1]:-}"
+  home.file.".zsh/completions/_colix".text = ''
+    #compdef colix
 
-        if [[ $COMP_CWORD -eq 1 ]]; then
-            COMPREPLY=( $(compgen -W "help start stop restart status logs prune nuke ssh images ports completions" -- "$cur") )
-            return
-        fi
+    _colix() {
+        local -a commands
+        commands=(
+            'help:Show help message'
+            'start:Start Colima and set Docker/K8s contexts'
+            'stop:Stop Colima'
+            'restart:Restart Colima'
+            'status:Show Colima status and Docker/K8s contexts'
+            'prune:Docker prune (incl. volumes) + builder prune'
+            'nuke:STOP and DELETE the Colima profile (DANGEROUS)'
+            'ssh:SSH into the Colima VM'
+            'images:List Docker images by size (desc)'
+            'ports:Show forwarded ports'
+            'completions:Output shell completions'
+        )
 
-        case "$cmd" in
-            start)
-                COMPREPLY=( $(compgen -W "--profile --cpu --mem --disk --vm --k8s --gpu --arch --dns --mirror --help" -- "$cur") )
+        _arguments -C \
+            '1:command:->command' \
+            '*::arg:->args'
+
+        case "$state" in
+            command)
+                _describe -t commands 'colix commands' commands
                 ;;
-            stop|restart|status|logs|ssh|ports)
-                COMPREPLY=( $(compgen -W "--profile --help" -- "$cur") )
-                ;;
-            nuke)
-                COMPREPLY=( $(compgen -W "--profile --yes --help" -- "$cur") )
-                ;;
-            prune|images|help|completions)
-                COMPREPLY=( $(compgen -W "--help" -- "$cur") )
+            args)
+                case "$words[1]" in
+                    start)
+                        _arguments \
+                            '--profile=[Colima profile name]:profile:' \
+                            '--cpu=[vCPUs]:cpus:' \
+                            '--mem=[Memory in GB]:memory:' \
+                            '--disk=[Disk in GB]:disk:' \
+                            '--vm=[VM backend]:vm:(vz qemu)' \
+                            '--k8s[Enable Kubernetes]' \
+                            '--rosetta[Enable Rosetta for amd64 emulation]' \
+                            '--arch=[Guest architecture]:arch:(x86_64 aarch64)' \
+                            '--dns=[Custom DNS server]:dns:' \
+                            '--help[Show help]'
+                        ;;
+                    stop|restart|status|ssh|ports)
+                        _arguments \
+                            '--profile=[Colima profile name]:profile:' \
+                            '--help[Show help]'
+                        ;;
+                    nuke)
+                        _arguments \
+                            '--profile=[Colima profile name]:profile:' \
+                            '--yes[Skip confirmation]' \
+                            '--help[Show help]'
+                        ;;
+                    prune|images|help|completions)
+                        _arguments \
+                            '--help[Show help]'
+                        ;;
+                esac
                 ;;
         esac
     }
 
-    complete -F _colima_tools_complete colima-tools
+    _colix "$@"
   '';
 
   home.file.".runbooks/new.sh".source = ../tools/runbooks/new.sh;

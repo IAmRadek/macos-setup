@@ -1,7 +1,34 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
-  py = pkgs.python3.withPackages (ps: [ ps.invoke ]);
+  git-pr = pkgs.rustPlatform.buildRustPackage rec {
+    pname = "git-pr";
+    version = "1.1.2";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "IAmRadek";
+      repo = "git-pr";
+      rev = "v${version}";
+      hash = "sha256-rZKZGoqt+INwgDc3WhIQYP55OetsB1aHJWjhRiIGNZE=";
+    };
+
+    cargoHash = "sha256-dWb1m01PJsAnxj1fA4WnQU8JV9uD9UahZeUr3Go7aLc=";
+
+    nativeBuildInputs = [ pkgs.pkg-config ];
+    buildInputs = [ pkgs.openssl ];
+
+    doCheck = false;
+    meta = with lib; {
+      description = "Highly opinionated tool for PR creation";
+      homepage = "https://github.com/IAmRadek/git-pr";
+      license = licenses.mit;
+    };
+  };
 in
 {
   home.packages = [

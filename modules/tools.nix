@@ -29,10 +29,34 @@ let
       license = licenses.mit;
     };
   };
+
+  tm = pkgs.rustPlatform.buildRustPackage rec {
+    pname = "tm";
+    version = "0.0.1";
+
+    src = pkgs.fetchFromGitHub {
+      owner = "IAmRadek";
+      repo = "tm";
+      rev = "v${version}";
+      hash = "sha256-rFUzBBR/H7slnRJDDFcqA1SB9A9Tp4bdgTpDM4k041o=";
+    };
+
+    cargoHash = "sha256-0QhIiRLuiZ4tlUGAkOC711XJ9TRaxYvMIrkxIqPzfA8=";
+
+    nativeBuildInputs = [ pkgs.pkg-config ];
+
+    doCheck = false;
+    meta = with lib; {
+      description = "A minimal CLI time tracker for projects and tasks.";
+      homepage = "https://github.com/IAmRadek/tm";
+      license = licenses.mit;
+    };
+  };
 in
 {
   home.packages = [
     git-pr
+    tm
     (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))
   ];
 
@@ -103,7 +127,7 @@ in
 
   home.file.".runbooks/new.sh".source = ../tools/runbooks/new.sh;
   home.activation.mySymlinks = lib.mkAfter ''
-    	  ln -sf ~/.nix-darwin/tools/navi/cheats ~/.local/share/navi/cheats/local
-    	'';
+    ln -sf ~/.nix-darwin/tools/navi/cheats ~/.local/share/navi/cheats/local
+  '';
 
 }

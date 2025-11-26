@@ -37,7 +37,6 @@
     glow
     nb
     w3m-full
-    watson
 
     alacritty
     kitty

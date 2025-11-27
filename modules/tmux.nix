@@ -1,14 +1,13 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 {
-
 
   home.packages = [
     (pkgs.writeShellScriptBin "cmdai-tmux" ''
-        #!/usr/bin/env bash
-        set -euo pipefail
-        printf 'AI cmd> ' >&2
-        IFS= read -r input || exit 0
-        aichat --role %shell% --no-stream "$input" | tr -d '\n\r'
+      #!/usr/bin/env bash
+      set -euo pipefail
+      printf 'AI cmd> ' >&2
+      IFS= read -r input || exit 0
+      aichat --role %shell% --no-stream "$input" | tr -d '\n\r'
     '')
   ];
 

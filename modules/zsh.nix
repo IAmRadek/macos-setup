@@ -1,5 +1,4 @@
 {
-  config,
   lib,
   pkgs,
   ...
@@ -151,45 +150,6 @@
         zshConfigLateInit
       ];
   };
-
-  home.packages = [
-    (pkgs.writeShellScriptBin "tm-current-task" ''
-      #!${pkgs.bash}/bin/bash
-      set -euo pipefail
-
-      # If tm is not available → hide module
-      if ! command -v tm >/dev/null 2>&1; then
-      exit 1
-      fi
-
-      out="$(tm status 2>/dev/null || true)"
-      line="$(printf '%s\n' "$out" | head -n1)"
-
-      case "$line" in
-      "No active time entry."*)
-          exit 1
-          ;;
-      "Tracking:"*)
-          # Example: "Tracking: proj / task (1m 25s)"
-          rest="''${line#Tracking: }"     # "proj / task (1m 25s)"
-
-          project="''${rest%% / *}"       # before " / "
-          tmp="''${rest#* / }"            # "task (1m 25s)"
-          task="''${tmp%% (*}"            # before " ("
-          elapsed="''${tmp#*(}"           # "1m 25s)"
-          elapsed="''${elapsed%)}"        # "1m 25s"
-
-          # ⏱️ = stopwatch emoji
-          printf '%s / %s · %s\n' "''$project" "''$task" "''$elapsed"
-          exit 0
-          ;;
-      *)
-          # Unknown format → better hide
-          exit 1
-          ;;
-      esac
-    '')
-  ];
 
   programs.starship = {
     enable = true;

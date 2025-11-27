@@ -1,23 +1,25 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 
-let kubeContextPopup = pkgs.writeShellScriptBin "kube-context-popup" ''
-  #!${pkgs.bash}/bin/bash
-  set -euo pipefail
+let
+  kubeContextPopup = pkgs.writeShellScriptBin "kube-context-popup" ''
+    #!${pkgs.bash}/bin/bash
+    set -euo pipefail
 
-  # List contexts, pick one with fzf
-  ctx="$(${pkgs.kubectl}/bin/kubectl config get-contexts -o name | ${pkgs.fzf}/bin/fzf --prompt='Kubernetes context> ')"
+    # List contexts, pick one with fzf
+    ctx="$(${pkgs.kubectl}/bin/kubectl config get-contexts -o name | ${pkgs.fzf}/bin/fzf --prompt='Kubernetes context> ')"
 
-  # If user pressed ESC / no choice
-  [ -z "$ctx" ] && exit 0
+    # If user pressed ESC / no choice
+    [ -z "$ctx" ] && exit 0
 
-  ${pkgs.kubectl}/bin/kubectl config use-context "$ctx"
+    ${pkgs.kubectl}/bin/kubectl config use-context "$ctx"
 
-  echo
-  echo "Switched to context: $ctx"
-  echo
-  read -n 1 -s -r -p "Press any key to close..."
-'';
-in {
+    echo
+    echo "Switched to context: $ctx"
+    echo
+    read -n 1 -s -r -p "Press any key to close..."
+  '';
+in
+{
   home.file.".config/kitty/navi_select.py".text = ''
     from kitty.boss import Boss
     import subprocess
@@ -39,19 +41,15 @@ in {
             w.paste_text(text)
   '';
 
+  home.file.".config/kitty/scroll_mark.py".source = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/trygveaa/kitty-kitten-search/refs/heads/master/scroll_mark.py";
+    sha256 = "1a1l7sp2x247da8fr54wwq7ffm987wjal9nw2f38q956v3cfknzi";
+  };
 
-
-  home.file.".config/kitty/scroll_mark.py".source =
-    pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/trygveaa/kitty-kitten-search/refs/heads/master/scroll_mark.py";
-      sha256 = "1a1l7sp2x247da8fr54wwq7ffm987wjal9nw2f38q956v3cfknzi";
-    };
-
-  home.file.".config/kitty/search.py".source =
-    pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/trygveaa/kitty-kitten-search/refs/heads/master/search.py";
-      sha256 = "035y3gwlr9ymb8y5zygv3knn91z1p5blj6gzv5vl2zcyhn7281n9";
-    };
+  home.file.".config/kitty/search.py".source = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/trygveaa/kitty-kitten-search/refs/heads/master/search.py";
+    sha256 = "035y3gwlr9ymb8y5zygv3knn91z1p5blj6gzv5vl2zcyhn7281n9";
+  };
 
   programs.kitty = {
     enable = true;
@@ -66,16 +64,16 @@ in {
       foreground = "#BBBBBB";
       background = "#2B2B2B";
 
-      color0  = "#000000";
-      color1  = "#F0524F";
-      color2  = "#5C962C";
-      color3  = "#A68A0D";
-      color4  = "#3993D4";
-      color5  = "#A771BF";
-      color6  = "#00A3A3";
-      color7  = "#808080";
-      color8  = "#595959";
-      color9  = "#FF4050";
+      color0 = "#000000";
+      color1 = "#F0524F";
+      color2 = "#5C962C";
+      color3 = "#A68A0D";
+      color4 = "#3993D4";
+      color5 = "#A771BF";
+      color6 = "#00A3A3";
+      color7 = "#808080";
+      color8 = "#595959";
+      color9 = "#FF4050";
       color10 = "#4FC414";
       color11 = "#E5BF00";
       color12 = "#1FB0FF";
@@ -87,10 +85,10 @@ in {
       macos_option_as_alt = "both";
 
       # ── Tab bar: “editor-like” flat style ──────────────────────────────
-      tab_bar_style = "powerline";      # flat tabs with a thin separator
+      tab_bar_style = "powerline"; # flat tabs with a thin separator
       tab_bar_edge = "top";
       tab_bar_min_tabs = 1;
-      tab_bar_background = "#202225";   # slightly darker than main bg
+      tab_bar_background = "#202225"; # slightly darker than main bg
 
       # Active tab: lighter bg, bold text
       active_tab_background = "#2B2B2B";
@@ -110,12 +108,14 @@ in {
     keybindings = {
       # word jumps
       "alt+right" = "send_text all \\x1bF";
-      "alt+left"  = "send_text all \\x1bB";
+      "alt+left" = "send_text all \\x1bB";
 
-      "cmd+f" = "launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id";
+      "cmd+f" =
+        "launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id";
 
       "ctrl+s>c" = "kitten navi_select.py";
-      "ctrl+s>g" = "launch --type=overlay --cwd=current --keep-focus ${kubeContextPopup}/bin/kube-context-popup";
+      "ctrl+s>g" =
+        "launch --type=overlay --cwd=current --keep-focus ${kubeContextPopup}/bin/kube-context-popup";
 
       # direct tab jumps
       "ctrl+s>1" = "goto_tab 1";
@@ -129,7 +129,7 @@ in {
       "ctrl+s>9" = "goto_tab 9";
 
       "cmd+right" = "next_tab";
-      "cmd+left"  = "previous_tab";
+      "cmd+left" = "previous_tab";
 
       "ctrl+s>n" = "set_tab_title";
 

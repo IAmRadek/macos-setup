@@ -61,6 +61,7 @@
     uv
     eza
     aichat
+    monolith
 
     jq
     fd

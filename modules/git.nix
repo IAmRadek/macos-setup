@@ -1,16 +1,13 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 
 let
-  home = config.home.homeDirectory;
   hooksDir = "${config.xdg.configHome}/git/hooks";
 in
 {
-
   xdg.configFile."git/hooks" = {
     source = ../githooks; # directory in your repo
     recursive = true; # copy all files/subdirs

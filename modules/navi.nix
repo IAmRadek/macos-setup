@@ -4,7 +4,7 @@
 
 {
   home.file.".runbooks/new.sh".source = ../tools/runbooks/new.sh;
-  home.file.".local/share/navi/cheats/container/k3d.cheats".text = ''
+  home.file.".local/share/navi/cheats/k3d.cheat".text = ''
     % k3d
 
     # Check if docker is running
@@ -42,7 +42,7 @@
 
     $ cluster_name: k3d list |awk '{print $2}' | awk 'NF {print $0}' | tail -n +2
   '';
-  home.file.".local/share/navi/cheats/container/docker.cheats".text = ''
+  home.file.".local/share/navi/cheats/docker.cheat".text = ''
     % docker
 
     # Remove an image
@@ -119,7 +119,7 @@
     # Stops containers and removes containers, networks created by up
     docker compose down
   '';
-  home.file.".local/share/navi/cheats/container/kuberenetes.cheats".text = ''
+  home.file.".local/share/navi/cheats/kuberenetes.cheat".text = ''
     % kubernetes, k8s
 
     # Print all contexts
@@ -187,7 +187,7 @@
 
     $ namespaces: kubens --- --headers 1 --column 3
   '';
-  home.file.".local/share/navi/cheats/local/local.cheats".text = ''
+  home.file.".local/share/navi/cheats/local.cheat".text = ''
     % runbooks
 
     # Open a runbook (fzf + glow preview; picks any *.md in ~/.runbooks)

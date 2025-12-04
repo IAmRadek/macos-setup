@@ -97,6 +97,7 @@ in
           ../modules/git.nix
           ../modules/tools.nix
           ../modules/aichat.nix
+          ../modules/navi.nix
         ];
 
         # Configure nano with xdg.configFile

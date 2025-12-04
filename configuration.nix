@@ -62,6 +62,7 @@
     eza
     aichat
     monolith
+    ollama
 
     jq
     fd

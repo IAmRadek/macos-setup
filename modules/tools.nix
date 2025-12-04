@@ -87,12 +87,79 @@ let
         ;;
     esac
   '';
+
+  archiveWebpage = pkgs.writeShellScriptBin "webarchive" ''
+    #!/usr/bin/env bash
+
+    set -euo pipefail
+
+    # Check if URL is provided
+    if [ $# -eq 0 ]; then
+        echo "Usage: $0 <URL>"
+        echo "Example: $0 https://example.com"
+        exit 1
+    fi
+
+    URL="$1"
+
+    # Extract base domain from URL
+    BASE=$(echo "$URL" | sed -E 's|^https?://||' | sed -E 's|^www\.||' | sed -E 's|/.*$||')
+
+    # Create archive directory
+    ARCHIVE_DIR="$HOME/Documents/WebArchive/$BASE"
+    mkdir -p "$ARCHIVE_DIR"
+
+    echo "Fetching $URL..."
+
+    # Download the page to extract title
+    TEMP_FILE=$(mktemp)
+    trap "rm -f $TEMP_FILE" EXIT
+
+    curl -sL "$URL" > "$TEMP_FILE"
+
+    # Extract title from HTML
+    TITLE=$(grep -i '<title>' "$TEMP_FILE" | head -n1 | sed -E 's/.*<title>([^<]+)<\/title>.*/\1/' | sed -E 's/^[[:space:]]+|[[:space:]]+$//')
+
+    # Normalize title for filename: lowercase, replace spaces/special chars with hyphens, limit length
+    if [ -n "$TITLE" ]; then
+        FILENAME=$(echo "$TITLE" | \
+            tr '[:upper:]' '[:lower:]' | \
+            sed -E 's/[^a-z0-9]+/-/g' | \
+            sed -E 's/^-+|-+$//g' | \
+            cut -c1-80)
+
+        # If filename is empty after normalization, use timestamp
+        if [ -z "$FILENAME" ]; then
+            FILENAME=$(date +%Y%m%d_%H%M%S)
+        fi
+    else
+        # No title found, use timestamp
+        FILENAME=$(date +%Y%m%d_%H%M%S)
+    fi
+
+    # Handle duplicate filenames by appending a number
+    OUTPUT_FILE="$ARCHIVE_DIR/''${FILENAME}.html"
+    COUNTER=1
+    while [ -f "$OUTPUT_FILE" ]; do
+        OUTPUT_FILE="$ARCHIVE_DIR/''${FILENAME}-''${COUNTER}.html"
+        COUNTER=$((COUNTER + 1))
+    done
+
+    echo "Title: $TITLE"
+    echo "Saving to: $OUTPUT_FILE"
+
+    # Archive the webpage using monolith
+    monolith "$URL" -o "$OUTPUT_FILE"
+
+    echo "✓ Successfully archived to: $OUTPUT_FILE"
+  '';
 in
 {
   home.packages = [
     git-pr
     tm
     tmCurrentTask
+    archiveWebpage
     (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))
   ];
 

@@ -1,14 +1,16 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 
 let
-  home = config.home.homeDirectory;
   hooksDir = "${config.xdg.configHome}/git/hooks";
 in
 {
-
   xdg.configFile."git/hooks" = {
-    source = ../githooks;    # directory in your repo
-    recursive = true;       # copy all files/subdirs
+    source = ../githooks; # directory in your repo
+    recursive = true; # copy all files/subdirs
   };
   xdg.configFile."git/ignore".text = ''
     .idea
@@ -45,10 +47,10 @@ in
       signByDefault = true;
     };
 
-    lfs.enable = true;  # replaces the manual [filter "lfs"] block
+    lfs.enable = true; # replaces the manual [filter "lfs"] block
 
     # Everything else via extraConfig (mirrors your gitconfig)
-    extraConfig = {
+    settings = {
       url."ssh://git@github.com".insteadOf = "https://github.com";
 
       gpg.format = "ssh";
@@ -65,7 +67,7 @@ in
         excludesFile = "${config.xdg.configHome}/git/ignore";
         attributesfile = "${config.xdg.configHome}/git/attributes";
         editor = "nano";
-        pager  = "${pkgs.delta}/bin/delta";
+        pager = "${pkgs.delta}/bin/delta";
         hooksPath = "${hooksDir}";
       };
 
@@ -76,21 +78,21 @@ in
 
         branch = {
           current = "yellow reverse";
-          local   = "yellow";
-          remote  = "green";
+          local = "yellow";
+          remote = "green";
         };
 
         diff = {
-          meta      = "yellow bold";
-          frag      = "magenta bold";
-          old       = "red bold";
-          new       = "green bold";
+          meta = "yellow bold";
+          frag = "magenta bold";
+          old = "red bold";
+          new = "green bold";
         };
 
         status = {
-          added    = "yellow";
-          changed  = "green";
-          untracked= "cyan";
+          added = "yellow";
+          changed = "green";
+          untracked = "cyan";
         };
       };
 
@@ -110,7 +112,7 @@ in
       # GitHub/Gist credential helpers (use Nix gh path)
       credential = {
         "https://github.com".helper = [
-          ""  # clear existing helpers
+          "" # clear existing helpers
           "!${pkgs.gh}/bin/gh auth git-credential"
         ];
         "https://gist.github.com".helper = [
@@ -125,7 +127,7 @@ in
     enableGitIntegration = true;
 
     options = {
-      navigate = true;               # n / N to jump hunks
+      navigate = true; # n / N to jump hunks
       "side-by-side" = true;
       features = "calochortus-lyallii";
       dark = true;
@@ -162,7 +164,6 @@ in
       };
     };
   };
-
 
   home.activation.createGitPrivateConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${config.xdg.configHome}/git"

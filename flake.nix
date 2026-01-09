@@ -15,25 +15,32 @@
     };
   };
 
-  outputs = { self, nixpkgs, darwin, home-manager }: {
-    darwinConfigurations = {
-      "rdwk" = darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        modules = [
-          ./configuration.nix
-          home-manager.darwinModules.home-manager
-          ./hosts/mbp.nix
-        ];
-      };
+  outputs =
+    {
+      self,
+      nixpkgs,
+      darwin,
+      home-manager,
+    }:
+    {
+      darwinConfigurations = {
+        "rdwk" = darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [
+            ./configuration.nix
+            home-manager.darwinModules.home-manager
+            ./hosts/rdwk.nix
+          ];
+        };
 
-      "r__d" = darwin.lib.darwinSystem {
-        system = "aarch64-darwin";
-        modules = [
-          ./configuration.nix
-          home-manager.darwinModules.home-manager
-          ./hosts/r__d.nix
-        ];
+        "r__d" = darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [
+            ./configuration.nix
+            home-manager.darwinModules.home-manager
+            ./hosts/r__d.nix
+          ];
+        };
       };
     };
-  };
 }

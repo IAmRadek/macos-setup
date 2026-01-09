@@ -10,6 +10,7 @@
 
   environment.systemPackages = with pkgs; [
     nixd
+    nil
     git
     git-town
     gh
@@ -26,14 +27,19 @@
     sops
     gnupg
     age
+    presenterm
+    wget
 
     dust
     duf
     hurl
     navi
     glow
+    nb
+    w3m-full
 
     alacritty
+    kitty
 
     go
     gopls
@@ -41,8 +47,22 @@
     gotest
     golangci-lint
     govulncheck
+    gitleaks
+    gofumpt
+    go-swag
+    gomarkdoc
+
+    rustup
+    cargo
+    rust-analyzer
+    openssl
+    pkg-config
 
     uv
+    eza
+    aichat
+    monolith
+    ollama
 
     jq
     fd
@@ -51,7 +71,7 @@
     delta
     nano
     oath-toolkit
-    go-swag
+
   ];
 
   # GUI Applications
@@ -67,7 +87,7 @@
     casks = [
       # Browsers
       "google-chrome"
-      # "firefox"
+      "firefox"
 
       # Development
       # "google-cloud-sdk"
@@ -93,12 +113,14 @@
       "telegram"
       "signal"
       "whatsapp"
-      # "discord"
+      "discord"
       # "zoom"
 
       # Media
       "spotify"
       # "vlc"
+      #
+      "obsidian"
     ];
 
     # Some CLI tools are better from Homebrew
@@ -146,13 +168,13 @@
         show-recents = false;
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
-          "/Applications/Google Chrome.app"
-          "/Applications/Slack.app"
-          "/Applications/Telegram.app"
-          "/Users/radoslawdejnek/Applications/Goland.app"
-          "${pkgs.alacritty}/Applications/Alacritty.app"
-          "/Applications/Zed.app"
-          "/Applications/1Password.app"
+          # "/Applications/Google Chrome.app"
+          # "/Applications/Slack.app"
+          # "/Applications/Telegram.app"
+          # "/Users/radoslawdejnek/Applications/Goland.app"
+          # "${pkgs.alacritty}/Applications/Alacritty.app"
+          # "/Applications/Zed.app"
+          # "/Applications/1Password.app"
         ];
         persistent-others = [ ];
       };

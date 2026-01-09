@@ -1,30 +1,72 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -u
 
-exec </dev/tty
+# Comma- or space-separated list of protected branches.
+# Default: master and main
+: "${GITHOOKS_PROTECTED_BRANCHES:=master main}"
 
-BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-if [[ "$BRANCH" = "master" ]] || [[ "$BRANCH" = "main" ]]; then
-  while read -p "Do you really want to commit to master/main branch? (y/n) " yn; do
-    case $yn in
-    [Yy])
-      echo "Committing to master branch"
-      break
-      ;;
-    [Nn]) exit 1 ;;
-    *) echo "Please answer y (yes) or n (no):" && continue ;;
-    esac
-  done
+BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
+BRANCH="${BRANCH:-}"
 
+if [[ -z "$BRANCH" || "$BRANCH" == "HEAD" ]]; then
   exit 0
 fi
 
-# DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@')
-# BRANCH_PATTERN="^((feat|fix|chore|hotfix)(/[a-z0-9._-]+)?|(production)|(stage)|(development))$"
-# if ! [[ "$BRANCH" =~ $BRANCH_PATTERN ]]; then
-#   echo "There is something wrong with your branch name. Branch names in this project must adhere to this contract: $BRANCH_PATTERN."
-#   COMMITS_COUNTS=$(git rev-list --count --no-merges "${DEFAULT_BRANCH}..")
-#   if [[ "$COMMITS_COUNTS" = "0" ]]; then
-#     echo "You shall not pass! Rename your branch with \"git branch -m ...\" to continue."
-#     exit 1
-#   fi
-# fi
+IFS=' ,:' read -r -a PROTECTED <<<"$GITHOOKS_PROTECTED_BRANCHES"
+
+is_protected=0
+for b in "${PROTECTED[@]}"; do
+  [[ "$BRANCH" == "$b" ]] && is_protected=1 && break
+done
+
+if [[ $is_protected -eq 1 ]]; then
+    echo "You are about to commit directly to a protected branch: '$BRANCH'."
+
+    while read -r -p "Do you really want to commit to $BRANCH? (y/n) " yn </dev/tty; do
+    case "$yn" in
+        [Yy])
+        echo "Committing to $BRANCH."
+        break
+        ;;
+        [Nn])
+        echo "Commit aborted."
+        exit 1
+        ;;
+        *)
+        echo "Please answer y (yes) or n (no)."
+        ;;
+    esac
+    done
+fi
+
+STAGED_GO=$(git diff --cached --name-only -- '*.go')
+if [[ -n "$STAGED_GO" ]]; then
+  echo "[pre-commit] gofumpt / goimports on staged Go files…"
+  echo "$STAGED_GO" | xargs -r gofumpt -w
+  echo "$STAGED_GO" | xargs -r goimports -w
+
+  # Re-stage files after formatting
+  echo "$STAGED_GO" | xargs -r git add
+
+  FILES_WITH_PRINTLN="$(git grep --cached -l -- 'fmt\.Println' -- '*.go' || true)"
+  if [[ -n "$FILES_WITH_PRINTLN" ]]; then
+     echo "Found fmt.Println in staged Go files:"
+     echo "$FILES_WITH_PRINTLN"
+
+    while read -r -p "Do you really want to commit? (y/n) " yn </dev/tty; do
+    case "$yn" in
+        [Yy])
+        echo "Committing to $BRANCH."
+        break
+        ;;
+        [Nn])
+        echo "Commit aborted."
+        exit 1
+        ;;
+        *)
+        echo "Please answer y (yes) or n (no)."
+        ;;
+    esac
+    done
+  fi
+fi

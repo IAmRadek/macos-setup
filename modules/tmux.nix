@@ -1,5 +1,16 @@
-{ config, lib, pkgs, ... }:
+{ pkgs, ... }:
 {
+
+  home.packages = [
+    (pkgs.writeShellScriptBin "cmdai-tmux" ''
+      #!/usr/bin/env bash
+      set -euo pipefail
+      printf 'AI cmd> ' >&2
+      IFS= read -r input || exit 0
+      aichat --role %shell% --no-stream "$input" | tr -d '\n\r'
+    '')
+  ];
+
   # Configure tmux
   programs.tmux = {
     enable = true;
@@ -10,21 +21,22 @@
     escapeTime = 0;
     baseIndex = 1;
     prefix = "C-a";
+
     shell = "${pkgs.zsh}/bin/zsh";
 
     extraConfig = ''
       set -ag terminal-overrides ",xterm-256color:RGB"
       setw -g xterm-keys on
 
-      set -g default-shell "$SHELL"
-      set -g default-command "$SHELL -i"
+      # Sync some env vars from attaching client
+      set-option -g update-environment "PATH SSH_AUTH_SOCK DISPLAY WINDOWID XAUTHORITY ZDOTDIR"
 
-      # How long status messages stay visible (ms). Default is 750.
-      set -g display-time 100     # try 100–200; feels instant
+      # How long status messages stay visible (ms)
+      set -g display-time 100
 
+      # Plugins
       set -g @plugin 'IAmRadek/tmux-k8s-context-switcher'
-
-      KUBE_TMUX_BINARY=${pkgs.kubectl}/bin/kubectl
+      set-environment -g KUBE_TMUX_BINARY '${pkgs.kubectl}/bin/kubectl'
 
       # Fix titlebar
       set -g set-titles on
@@ -32,22 +44,21 @@
 
       set -g status-left ""
 
-      # Avoid date/time taking up space
-      set -g status-right \'\'
+      # Status right: kube context + date/time
       set -g status-right '#(/bin/bash $HOME/.config/tmux/plugins/kube-tmux/kube.tmux 250 red cyan) #[fg=yellow]%a %Y-%m-%d %H:%M'
       set -g status-right-length 250
       set -g status-right-style default
 
-      # Split current window horizontally
+      # Split current window horizontally/vertically in current path
       bind - split-window -v -c "#{pane_current_path}"
       unbind %
-      # Split current window vertically
       bind | split-window -h -c "#{pane_current_path}"
       unbind '"'
 
       bind t new-window \; display "new window opened"
       bind w kill-window
 
+      # Reload config
       bind-key r source-file ~/.config/tmux/tmux.conf \; display-message "tmux.conf reloaded"
 
       # Start numbering panes at 1, not 0.
@@ -63,21 +74,15 @@
       set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo ''${pwd###*/})#F'
       set -g status-interval 10
 
+      # ---- AI / navi binds ----
+
       unbind-key -T prefix c
       bind-key -T prefix c split-window -p 35 \
-        "$SHELL -lc 'navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane'"
-    '';
+        '$SHELL -lc "navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane"'
 
-    # plugins = with pkgs; [
-    #   {
-    #     plugin = tmuxPlugins.tpm;
-    #     extraConfig = "set -g @plugin 'tmux-plugins/tpm'";
-    #   }
-    #   {
-    #     plugin = tmuxPlugins.sensible;
-    #     extraConfig = "set -g @plugin 'tmux-plugins/tmux-sensible'";
-    #   }
-    # ];
+      bind-key -T prefix y split-window -p 35 \
+        '$SHELL -lc "cmdai-tmux | tmux load-buffer -b ai_cmd - ; tmux paste-buffer -p -t {last} -b ai_cmd -d ; tmux kill-pane"'
+    '';
   };
 
   # Install custom tmux plugins

@@ -13,14 +13,7 @@ in
   xdg.configFile."git/ignore".text = ''
     .idea
     .DS_Store
-    .gitsecret/keys/random_seed
     !*.secret
-    .ssh/id_IAmRadek
-    .ssh/id_IAmRadek.pub
-    .ssh/id_ingrid
-    .ssh/id_ingrid.pub
-    .ssh/environment-rd
-    .ssh/known_hosts
     CRUSH.md
   '';
 
@@ -31,10 +24,16 @@ in
   programs.git = {
     enable = true;
 
-    userName  = "Radosław Dejnek";
-    userEmail = "radek@dejnek.pl";
+    includes = [
+      { path = "${config.xdg.configHome}/git/config.private"; }
+    ] ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
 
-    aliases = {
+    user = {
+      name  = "Radosław Dejnek";
+      email = "radek@dejnek.pl";
+    };
+
+    alias = {
       st = "status";
       sync = "town sync";
       append = "town append";
@@ -165,4 +164,10 @@ in
   };
 
 
+  home.activation.createGitPrivateConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${config.xdg.configHome}/git"
+    if [ ! -f "${config.xdg.configHome}/git/config.private" ]; then
+      $DRY_RUN_CMD touch $VERBOSE_ARG "${config.xdg.configHome}/git/config.private"
+    fi
+  '';
 }

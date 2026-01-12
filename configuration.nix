@@ -20,8 +20,10 @@
     fzf
     coreutils
     docker
+    docker-credential-helpers
     colima
     kubectl
+    k3d
     nodejs
     python3
     sops
@@ -30,6 +32,8 @@
     presenterm
     wget
 
+    postgresql
+
     dust
     duf
     hurl
@@ -37,6 +41,7 @@
     glow
     nb
     w3m-full
+    nmap
 
     alacritty
     kitty
@@ -52,6 +57,8 @@
     go-swag
     gomarkdoc
 
+    ansible
+
     rustup
     cargo
     rust-analyzer
@@ -65,12 +72,15 @@
     ollama
 
     jq
+    ripgrep
     fd
     watch
     _1password-cli
     delta
     nano
     oath-toolkit
+
+    hugo
 
   ];
 
@@ -94,6 +104,8 @@
       "jetbrains-toolbox"
       "zed"
       # "docker"  # Docker Desktop
+      #
+      "vlc"
 
       # Utilities
       # "rectangle"  # Window managemen
@@ -121,6 +133,7 @@
       # "vlc"
       #
       "obsidian"
+      "textual"
     ];
 
     # Some CLI tools are better from Homebrew

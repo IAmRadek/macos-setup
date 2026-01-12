@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  lib,
   ...
 }:
 
@@ -30,12 +31,10 @@ in
       { path = "${config.xdg.configHome}/git/config.private"; }
     ] ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
 
-    user = {
-      name  = "Radosław Dejnek";
-      email = "radek@dejnek.pl";
-    };
+    userName  = "Radosław Dejnek";
+    userEmail = "radek@dejnek.pl";
 
-    alias = {
+    aliases = {
       st = "status";
       sync = "town sync";
       append = "town append";

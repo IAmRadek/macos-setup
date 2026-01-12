@@ -34,9 +34,11 @@ build: bootstrap
 		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(USER); \
 	fi
 
-update:
+upgrade:
 	git pull
 	nix flake update
+
+update:
 	sudo darwin-rebuild switch --flake .#$(USER)
 
 cleanup:

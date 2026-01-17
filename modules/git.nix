@@ -29,9 +29,10 @@ in
 
     includes = [
       { path = "${config.xdg.configHome}/git/config.private"; }
-    ] ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
+    ]
+    ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
 
-    userName  = "Radosław Dejnek";
+    userName = "Radosław Dejnek";
     userEmail = "radek@dejnek.pl";
 
     aliases = {
@@ -71,6 +72,8 @@ in
       };
 
       pull.rebase = false;
+
+      rerere.enabled = true;
 
       color = {
         ui = true;
@@ -164,7 +167,7 @@ in
     };
   };
 
-  home.activation.createGitPrivateConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.createGitPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${config.xdg.configHome}/git"
     if [ ! -f "${config.xdg.configHome}/git/config.private" ]; then
       $DRY_RUN_CMD touch $VERBOSE_ARG "${config.xdg.configHome}/git/config.private"

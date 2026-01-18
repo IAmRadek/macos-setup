@@ -2,10 +2,13 @@
 
 let
   username = "radoslawdejnek";
+  dotfiles = builtins.path {
+    path = ../dotfiles;
+    name = "dotfiles";
+  };
 in
 {
   system.primaryUser = username;
-  # TODO https://github.com/LnL7/nix-darwin/issues/682
   users.users.${username}.home = "/Users/${username}";
 
   environment.systemPackages = with pkgs; [
@@ -15,7 +18,6 @@ in
   homebrew = { };
 
   system = {
-    # Changes CapsLock to Control
     keyboard = {
       enableKeyMapping = true;
       remapCapsLockToControl = true;
@@ -31,7 +33,6 @@ in
         home.stateVersion = "22.11";
         programs.home-manager.enable = true;
 
-        # Create Development directory structure
         home.activation = {
           createDevDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/Development/github.com
@@ -66,18 +67,13 @@ in
               hash = "sha256-kA0osKfsc6Kp+nuGTRJyXZZlJt1D/kuEazKMWYCWcQ8=";
             };
 
-            # Build only the CLI
             subPackages = [ "cmd/godotenv" ];
             vendorHash = null;
           })
         ];
 
-        programs.ssh = {
-          enable = true;
-          extraConfig = ''
-            IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-          '';
-        };
+        # SSH configuration from dotfiles
+        home.file.".ssh/config".source = "${dotfiles}/ssh/config";
 
         imports = [
           ../modules/alacritty.nix
@@ -87,26 +83,8 @@ in
           ../modules/tools.nix
         ];
 
-        # Configure nano with xdg.configFile
-        xdg.configFile."nano/nanorc".text = ''
-          # Display line numbers
-          set linenumbers
-
-          # Use auto-indentation
-          set autoindent
-
-          # Display cursor position in the status bar
-          set constantshow
-
-          # Enable mouse support
-          set mouse
-
-          # Don't wrap text at the end of the line
-          set nowrap
-
-          # Syntax highlighting
-          include "${pkgs.nano}/share/nano/*.nanorc"
-        '';
+        # Nano configuration from dotfiles
+        xdg.configFile."nano/nanorc".source = "${dotfiles}/nano/nanorc";
       };
   };
 }

@@ -1,8 +1,16 @@
 { pkgs, ... }:
-{
 
-  home.packages = [
-    (pkgs.writeShellScriptBin "cmdai-tmux" ''
+let
+  dotfiles = builtins.path {
+    path = ../dotfiles;
+    name = "dotfiles";
+  };
+in
+{
+  # Install tmux and related tools
+  home.packages = with pkgs; [
+    tmux
+    (writeShellScriptBin "cmdai-tmux" ''
       #!/usr/bin/env bash
       set -euo pipefail
       printf 'AI cmd> ' >&2
@@ -11,81 +19,10 @@
     '')
   ];
 
-  # Configure tmux
-  programs.tmux = {
-    enable = true;
-    historyLimit = 100000;
-    terminal = "screen-256color";
-    keyMode = "vi";
-    mouse = true;
-    escapeTime = 0;
-    baseIndex = 1;
-    prefix = "C-a";
+  # Symlink tmux configuration from dotfiles
+  xdg.configFile."tmux/tmux.conf".source = "${dotfiles}/tmux/tmux.conf";
 
-    shell = "${pkgs.zsh}/bin/zsh";
-
-    extraConfig = ''
-      set -ag terminal-overrides ",xterm-256color:RGB"
-      setw -g xterm-keys on
-
-      # Sync some env vars from attaching client
-      set-option -g update-environment "PATH SSH_AUTH_SOCK DISPLAY WINDOWID XAUTHORITY ZDOTDIR"
-
-      # How long status messages stay visible (ms)
-      set -g display-time 100
-
-      # Plugins
-      set -g @plugin 'IAmRadek/tmux-k8s-context-switcher'
-      set-environment -g KUBE_TMUX_BINARY '${pkgs.kubectl}/bin/kubectl'
-
-      # Fix titlebar
-      set -g set-titles on
-      set -g set-titles-string "#T"
-
-      set -g status-left ""
-
-      # Status right: kube context + date/time
-      set -g status-right '#(/bin/bash $HOME/.config/tmux/plugins/kube-tmux/kube.tmux 250 red cyan) #[fg=yellow]%a %Y-%m-%d %H:%M'
-      set -g status-right-length 250
-      set -g status-right-style default
-
-      # Split current window horizontally/vertically in current path
-      bind - split-window -v -c "#{pane_current_path}"
-      unbind %
-      bind | split-window -h -c "#{pane_current_path}"
-      unbind '"'
-
-      bind t new-window \; display "new window opened"
-      bind w kill-window
-
-      # Reload config
-      bind-key r source-file ~/.config/tmux/tmux.conf \; display-message "tmux.conf reloaded"
-
-      # Start numbering panes at 1, not 0.
-      set -g pane-base-index 1
-
-      ######################
-      ### DESIGN CHANGES ###
-      ######################
-      set -g status-style "bg=default"
-      setw -g window-status-current-style fg=black,bg=white
-
-      set -g window-status-format '#I:#(pwd="#{pane_current_path}"; echo ''${pwd###*/})#F'
-      set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo ''${pwd###*/})#F'
-      set -g status-interval 10
-
-      # ---- AI / navi binds ----
-
-      unbind-key -T prefix c
-      bind-key -T prefix c split-window -p 35 \
-        '$SHELL -lc "navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane"'
-
-      bind-key -T prefix y split-window -p 35 \
-        '$SHELL -lc "cmdai-tmux | tmux load-buffer -b ai_cmd - ; tmux paste-buffer -p -t {last} -b ai_cmd -d ; tmux kill-pane"'
-    '';
-  };
-
-  # Install custom tmux plugins
+  # Install tmux plugins
   home.file.".config/tmux/plugins/tmux-k8s-context-switcher".source = pkgs.fetchFromGitHub {
     owner = "IAmRadek";
     repo = "tmux-k8s-context-switcher";
@@ -99,5 +36,4 @@
     rev = "master";
     sha256 = "0wfsqlcs24jkm1szih0s5g0i17qj8laks0wbd9nnm77q92q77gb7";
   };
-
 }

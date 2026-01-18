@@ -1,0 +1,10 @@
+# SSH Configuration
+
+# Use 1Password SSH Agent
+IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+
+# Only use identities from 1Password
+IdentitiesOnly yes
+
+# Include private/work-specific configuration
+Include ~/.ssh/config.private

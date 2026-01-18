@@ -1,0 +1,42 @@
+model: openrouter:openai/gpt-4.1-mini
+save: true
+highlight: true
+light_theme: false
+wrap: no
+wrap_code: false
+
+rag_embedding_model: openrouter:text-embedding-3-large
+rag_reranker_model: null
+rag_top_k: 5
+rag_chunk_size: 1500
+rag_chunk_overlap: 150
+
+rag_template: |
+  Answer the query based on the context while respecting the rules. (user query, some textual context and rules, all inside xml tags)
+
+  <context>
+  __CONTEXT__
+  </context>
+
+  <rules>
+  - If you don't know, just say so.
+  - If you are not sure, ask for clarification.
+  - Answer in the same language as the user query.
+  - If the context appears unreadable or of poor quality, tell the user then answer as best as you can.
+  - If the answer is not in the context but you think you know the answer, explain that to the user then answer with your own knowledge.
+  - Answer directly and without using xml tags.
+  </rules>
+
+  <user_query>
+  __INPUT__
+  </user_query>
+
+clients:
+  - type: openai-compatible
+    name: openrouter
+    api_base: https://openrouter.ai/api/v1
+  - type: openai-compatible
+    name: openrouter
+    models:
+    - name: text-embedding-3-large
+      type: embedding

@@ -1,0 +1,22 @@
+# Nano Configuration
+
+# Display line numbers
+set linenumbers
+
+# Use auto-indentation
+set autoindent
+
+# Display cursor position in the status bar
+set constantshow
+
+# Enable mouse support
+set mouse
+
+# Don't wrap text at the end of the line
+set nowrap
+
+# Syntax highlighting - try common paths
+include "/usr/share/nano/*.nanorc"
+include "/usr/local/share/nano/*.nanorc"
+include "/opt/homebrew/share/nano/*.nanorc"
+include "~/.nix-profile/share/nano/*.nanorc"

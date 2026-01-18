@@ -1,0 +1,92 @@
+# Alacritty Configuration
+
+[env]
+TERM = "xterm-256color"
+
+[window]
+dynamic_padding = true
+
+[window.padding]
+x = 10
+y = 10
+
+[font]
+size = 12.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+# ─────────────────────────────────────────────────────────────
+# Colors
+# ─────────────────────────────────────────────────────────────
+
+[colors.primary]
+background = "0x2B2B2B"
+foreground = "0xBBBBBB"
+
+[colors.cursor]
+cursor = "CellForeground"
+text = "CellBackground"
+
+[colors.selection]
+background = "0x245980"
+text = "CellForeground"
+
+[colors.normal]
+black = "0x000000"
+red = "0xF0524F"
+green = "0x5C962C"
+yellow = "0xA68A0D"
+blue = "0x3993D4"
+magenta = "0xA771BF"
+cyan = "0x00A3A3"
+white = "0x808080"
+
+[colors.bright]
+black = "0x595959"
+red = "0xFF4050"
+green = "0x4FC414"
+yellow = "0xE5BF00"
+blue = "0x1FB0FF"
+magenta = "0xED7EED"
+cyan = "0x00E5E5"
+white = "0xFFFFFF"
+
+[colors.search.matches]
+background = "0x50fa7b"
+foreground = "0x44475a"
+
+[colors.search.focused_match]
+background = "0xffb86c"
+foreground = "0x245980"
+
+[colors.footer_bar]
+background = "0x282a36"
+foreground = "0xf8f8f2"
+
+[colors.line_indicator]
+background = "None"
+foreground = "None"
+
+# ─────────────────────────────────────────────────────────────
+# Keybindings
+# ─────────────────────────────────────────────────────────────
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Alt"
+chars = "\u001BF"
+
+[[keyboard.bindings]]
+key = "Left"
+mods = "Alt"
+chars = "\u001BB"

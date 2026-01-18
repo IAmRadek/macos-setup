@@ -1,0 +1,90 @@
+[user]
+	name = Radosław Dejnek
+	email = radek@dejnek.pl
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIYnDm9RfWWUdae/MTzZps0KDhlDrDdWIrFFfoeWWulD
+
+[alias]
+	st = status
+	sync = town sync
+	append = town append
+	hack = town hack
+
+[url "ssh://git@github.com"]
+	insteadOf = https://github.com
+
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	program = /Applications/1Password.app/Contents/MacOS/op-ssh-sign
+	allowedSignersFile = ~/.config/git/allowed_signers
+
+[commit]
+	gpgsign = true
+
+[core]
+	excludesFile = ~/.config/git/ignore
+	attributesfile = ~/.config/git/attributes
+	editor = nano
+	pager = delta
+	hooksPath = ~/.config/git/hooks
+
+[pull]
+	rebase = false
+
+[rerere]
+	enabled = true
+
+[color]
+	ui = true
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = cyan
+
+[interactive]
+	diffFilter = delta --color-only
+
+[merge]
+	conflictstyle = diff3
+
+[merge "mergiraf"]
+	name = mergiraf
+	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L
+
+[diff]
+	colorMoved = default
+
+[push]
+	default = current
+	autoSetupRemote = true
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+
+[include]
+	path = ~/.config/git/config.private
+	path = ~/.config/git/delta.gitconfig

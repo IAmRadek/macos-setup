@@ -13,7 +13,7 @@
   };
 
   # Configure aichat with custom roles and agents
-  xdg.configFile."aichat/roles.yaml".text = '''';
+  xdg.configFile."aichat/roles.yaml".text = "";
 
   xdg.configFile."aichat/config.yaml".text = ''
     model: openrouter:openai/gpt-4.1-mini
@@ -96,21 +96,21 @@
     variables: {}
   '';
 
-  # Populate OPENROUTER_API_KEY from 1Password
+  # Populate OPENROUTER_API_KEY from ProtonPass
   home.activation.populateAichatEnv = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     AICHAT_CONFIG_DIR="''${XDG_CONFIG_HOME:-$HOME/.config}/aichat"
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$AICHAT_CONFIG_DIR"
 
-    $VERBOSE_ECHO "Fetching OPENROUTER_API_KEY from 1Password..."
-    API_KEY=$(${pkgs._1password-cli}/bin/op read "op://Private/OpenRouter/credentials" 2>/dev/null || echo "")
+    $VERBOSE_ECHO "Fetching OPENROUTER_API_KEY from ProtonPass..."
+    API_KEY=$(${pkgs.proton-proton-pass-cli}/bin/proton-pass item view --vault-name Personal --item-title OpenRouter --field credentials 2>/dev/null || echo "")
 
     if [ -n "$API_KEY" ]; then
       $DRY_RUN_CMD echo "OPENROUTER_API_KEY=$API_KEY" > "$AICHAT_CONFIG_DIR/.env"
       $DRY_RUN_CMD chmod 600 "$AICHAT_CONFIG_DIR/.env"
       $VERBOSE_ECHO "Successfully populated OPENROUTER_API_KEY"
     else
-      echo "Warning: Could not fetch OPENROUTER_API_KEY from 1Password"
-      echo "Please ensure the item exists at: op://Private/OpenRouter/credentials"
+      echo "Warning: Could not fetch OPENROUTER_API_KEY from ProtonPass"
+      echo "Please ensure the item exists."
     fi
   '';
 }

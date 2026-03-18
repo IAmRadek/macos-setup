@@ -47,16 +47,15 @@ in
       signByDefault = true;
     };
 
-    lfs.enable = true; # replaces the manual [filter "lfs"] block
+    lfs.enable = true;
 
-    # Everything else via extraConfig (mirrors your gitconfig)
     settings = {
       url."ssh://git@github.com".insteadOf = "https://github.com";
 
       gpg.format = "ssh";
       gpg = {
         "ssh" = {
-          program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+          # program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
           allowedSignersFile = "${config.xdg.configHome}/git/allowed_signers";
         };
       };

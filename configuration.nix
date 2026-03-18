@@ -9,79 +9,112 @@
   system.primaryUser = lib.mkDefault "radoslawdejnek";
 
   environment.systemPackages = with pkgs; [
+    # Nix
     nixd
     nil
+
+    # Version Control
     git
     git-town
     gh
     mergiraf
-    curl
-    tmux
-    fzf
+    gitleaks
+    delta
+
+    # Core Utilities
     coreutils
+    curl
+    wget
+    nano
+    watch
+    fzf
+    tmux
+
+    # Containers & Kubernetes
     docker
     docker-credential-helpers
     colima
     kubectl
     k3d
-    nodejs
-    python3
-    sops
-    gnupg
-    age
-    presenterm
-    wget
 
-    postgresql
-
-    dust
-    duf
-    hurl
-    navi
-    glow
-    nb
-    w3m-full
-    nmap
-
-    alacritty
-    kitty
-
+    # Go
     go
     gopls
     gotools
     gotest
     golangci-lint
     govulncheck
-    gitleaks
     gofumpt
     go-swag
     gomarkdoc
+    go-cover-treemap
 
-    ansible
-
+    # Rust
     rustup
     cargo
     rust-analyzer
     openssl
     pkg-config
 
+    # JavaScript / Python
+    nodejs
+    pnpm
+    python3
     uv
-    eza
-    aichat
-    monolith
-    ollama
 
+    # Infrastructure & Secrets
+    ansible
+    sops
+    gnupg
+    age
+
+    # Database
+    postgresql
+    duckdb
+
+    # Security & Auth
+    _1password-cli
+    oath-toolkit
+    nmap
+    proton-pass
+    proton-pass-cli
+
+    # File & Text Tools
     jq
     ripgrep
     fd
-    watch
-    _1password-cli
-    delta
-    nano
-    oath-toolkit
+    ansifilter
+    eza
+    dust
+    duf
 
+    # Web & Network
+    curl # (already above, move here or keep in core)
+    hurl
+    w3m-full
+    monolith
+
+    # AI / LLM
+    aichat
+    ollama
+    opencode
+
+    # Media
+    ffmpeg
+
+    # Terminal Emulators
+    alacritty
+    kitty
+
+    # Docs, Presentations & Notes
+    navi
+    glow
+    nb
+    presenterm
     hugo
 
+    # Load Testing
+    k6
   ];
 
   # GUI Applications
@@ -134,7 +167,10 @@
       #
       "obsidian"
       "textual"
+      "claude-code"
     ];
+
+    taps = [ ];
 
     # Some CLI tools are better from Homebrew
     brews = [
@@ -154,6 +190,8 @@
       whitelist = map lib.getName [
         pkgs.google-chrome
         pkgs._1password-cli
+        pkgs.proton-pass-cli
+        pkgs.proton-pass
       ];
     in
     pkg: builtins.elem (lib.getName pkg) whitelist;
@@ -207,7 +245,7 @@
   ids.gids.nixbld = 350;
 
   environment.systemPath = [
-    config.homebrew.brewPrefix # TODO https://github.com/LnL7/nix-darwin/issues/596
+    "${config.homebrew.prefix}/bin" # TODO https://github.com/LnL7/nix-darwin/issues/596
   ];
 
   fonts.packages = [

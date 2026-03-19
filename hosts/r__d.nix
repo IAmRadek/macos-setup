@@ -126,6 +126,7 @@ in
           ../modules/tools.nix
           ../modules/aichat.nix
           ../modules/navi.nix
+          ../modules/claude.nix
         ];
 
         # Configure nano with xdg.configFile

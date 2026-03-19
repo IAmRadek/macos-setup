@@ -112,6 +112,7 @@
     nb
     presenterm
     hugo
+    tldr
 
     # Load Testing
     k6

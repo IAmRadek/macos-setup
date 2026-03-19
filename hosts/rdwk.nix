@@ -85,6 +85,7 @@ in
           ../modules/tmux.nix
           ../modules/git.nix
           ../modules/tools.nix
+          ../modules/claude.nix
         ];
 
         # Configure nano with xdg.configFile

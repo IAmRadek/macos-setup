@@ -98,7 +98,7 @@
           HISTFILE=~/.zsh_history
           HISTSIZE=50000
           SAVEHIST=50000
-          setopt SHARE_HISTORY          # share history between sessions
+          setopt INC_APPEND_HISTORY_TIME # append to shared history immediately, but keep per-session navigation
           setopt EXTENDED_HISTORY        # add timestamps to history
           setopt HIST_IGNORE_DUPS        # don't record duplicated commands
           setopt HIST_FIND_NO_DUPS       # don't show duplicates in search

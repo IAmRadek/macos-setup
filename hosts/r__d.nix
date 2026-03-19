@@ -67,8 +67,13 @@ in
             ${pkgs.curl}/bin/curl -L https://raw.githubusercontent.com/xwmx/nb/master/etc/nb-completion.zsh -o $HOME/.cache/zsh/_nb
           '';
 
-          watsonCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            ${pkgs.curl}/bin/curl -L https://raw.githubusercontent.com/jazzband/Watson/refs/heads/master/watson.zsh-completion -o $HOME/.cache/zsh/_watson
+          sshPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.nix-darwin/private"
+            $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.ssh"
+            if [ ! -f "$HOME/.nix-darwin/private/ssh.private" ]; then
+              $DRY_RUN_CMD touch $VERBOSE_ARG "$HOME/.nix-darwin/private/ssh.private"
+            fi
+            $DRY_RUN_CMD ln -sf $VERBOSE_ARG "$HOME/.nix-darwin/private/ssh.private" "$HOME/.ssh/config.private"
           '';
         };
 

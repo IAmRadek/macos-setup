@@ -72,6 +72,10 @@ in
           '';
         };
 
+        home.sessionVariables = {
+          SSH_AUTH_SOCK = "$HOME/.ssh/proton-pass-agent.sock";
+        };
+
         home.sessionPath = [
           "$HOME/Development/Go/bin"
           "$HOME/.local/bin"
@@ -85,9 +89,27 @@ in
         programs.ssh = {
           enable = true;
           extraConfig = ''
-            IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+            IdentityAgent "~/.ssh/proton-pass-agent.sock"
             Include ~/.ssh/config.private
           '';
+        };
+
+        launchd.agents.proton-pass-ssh-agent = {
+          enable = true;
+          config = {
+            Label = "com.protonpass.ssh-agent";
+            ProgramArguments = [
+              "${pkgs.proton-pass-cli}/bin/pass-cli"
+              "ssh-agent"
+              "start"
+              "--vault-name"
+              "SSH"
+              "--socket-path"
+              "/Users/${username}/.ssh/proton-pass-agent.sock"
+            ];
+            RunAtLoad = true;
+            KeepAlive = true;
+          };
         };
 
         imports = [

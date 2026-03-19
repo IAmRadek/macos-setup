@@ -102,7 +102,7 @@
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$AICHAT_CONFIG_DIR"
 
     $VERBOSE_ECHO "Fetching OPENROUTER_API_KEY from ProtonPass..."
-    API_KEY=$(${pkgs.proton-proton-pass-cli}/bin/proton-pass item view --vault-name Personal --item-title OpenRouter --field credentials 2>/dev/null || echo "")
+    API_KEY=$(${pkgs.proton-pass-cli}/bin/pass-cli item view --vault-name Personal --item-title OpenRouter --field credentials 2>/dev/null || echo "")
 
     if [ -n "$API_KEY" ]; then
       $DRY_RUN_CMD echo "OPENROUTER_API_KEY=$API_KEY" > "$AICHAT_CONFIG_DIR/.env"

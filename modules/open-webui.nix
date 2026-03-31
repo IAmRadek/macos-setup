@@ -5,13 +5,16 @@
   ...
 }:
 {
-  # Open WebUI — browser-based chat UI connecting to the local Ollama instance.
-  # Accessible at http://localhost:8080 after login.
+  # Open WebUI — installed via `uv tool install open-webui`.
+  # uv manages the virtualenv; the binary lands at ~/.local/bin/open-webui.
+  # Accessible at http://localhost:10001 after login.
   # Data (users, chats, settings) persists in ~/.local/share/open-webui.
 
-  home.packages = [ pkgs.open-webui ];
-
-  home.activation.createOpenWebUIDataDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.installOpenWebUI = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if ! "${pkgs.uv}/bin/uv" tool list 2>/dev/null | grep -q "^open-webui"; then
+      $VERBOSE_ECHO "Installing open-webui via uv tool install..."
+      $DRY_RUN_CMD "${pkgs.uv}/bin/uv" tool install open-webui
+    fi
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${config.home.homeDirectory}/.local/share/open-webui"
   '';
 
@@ -20,15 +23,19 @@
     config = {
       Label = "com.open-webui.serve";
       ProgramArguments = [
-        "${pkgs.open-webui}/bin/open-webui"
+        "${config.home.homeDirectory}/.local/bin/open-webui"
         "serve"
+        "--host"
+        "127.0.0.1"
+        "--port"
+        "10001"
       ];
       EnvironmentVariables = {
         OLLAMA_BASE_URL = "http://localhost:11434";
         DATA_DIR = "${config.home.homeDirectory}/.local/share/open-webui";
-        HOST = "127.0.0.1";
-        PORT = "10001";
+        HOME = "${config.home.homeDirectory}";
       };
+      WorkingDirectory = "${config.home.homeDirectory}/.local/share/open-webui";
       RunAtLoad = true;
       KeepAlive = true;
       StandardOutPath = "${config.home.homeDirectory}/Library/Logs/open-webui.log";

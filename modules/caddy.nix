@@ -13,12 +13,22 @@
 # Logs: /var/log/caddy.log  /var/log/caddy-error.log
 { pkgs, ... }:
 {
+  # NOTE: /etc/hosts entry for chat.local must be added once via `make hosts`.
+  # nix-darwin does not own /etc/hosts so the entry survives rebuilds.
+
+  # macOS ships with Apache httpd which grabs port 80 and blocks Caddy.
+  # Disable it permanently on every activation.
+  system.activationScripts.disableApacheHttpd.text = ''
+    if /bin/launchctl list | /usr/bin/grep -q "org.apache.httpd"; then
+      /bin/launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist 2>/dev/null || true
+    fi
+  '';
+
   environment.systemPackages = [ pkgs.caddy ];
 
   environment.etc."caddy/Caddyfile" = {
     text = ''
-      chat.dev {
-        tls internal
+      http://chat.local {
         reverse_proxy localhost:10001
       }
     '';

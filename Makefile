@@ -1,5 +1,5 @@
 .POSIX:
-.PHONY: default build update bootstrap
+.PHONY: default build update bootstrap hosts
 
 default: build
 
@@ -40,6 +40,13 @@ upgrade:
 
 update:
 	sudo darwin-rebuild switch --flake .#$(USER)
+
+hosts:
+	@/usr/bin/grep -qF "chat.local" /etc/hosts || \
+		(sudo sh -c 'echo "127.0.0.1 chat.local  # caddy local proxy" >> /etc/hosts' && \
+		sudo /usr/bin/dscacheutil -flushcache && \
+		echo "Added chat.local to /etc/hosts")
+	@/usr/bin/grep -F "chat.local" /etc/hosts
 
 cleanup:
 	nix-collect-garbage

@@ -46,7 +46,6 @@
     govulncheck
     gofumpt
     go-swag
-    gomarkdoc
     go-cover-treemap
 
     # Rust

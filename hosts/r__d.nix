@@ -4,6 +4,14 @@ let
   username = "r__d";
 in
 {
+  imports = [
+    ../modules/caddy.nix
+  ];
+
+  networking.hosts = {
+    "127.0.0.1" = [ "chat.dev" ];
+  };
+
   system.primaryUser = username;
   # TODO https://github.com/LnL7/nix-darwin/issues/682
   users.users.${username}.home = "/Users/${username}";
@@ -127,6 +135,10 @@ in
           ../modules/aichat.nix
           ../modules/navi.nix
           ../modules/claude.nix
+          # LLM stack
+          ../modules/ollama.nix
+          ../modules/open-webui.nix
+          ../modules/continue.nix
         ];
 
         # Configure nano with xdg.configFile

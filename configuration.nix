@@ -145,7 +145,6 @@
       "languagetool-desktop"
       "moom"
       "macwhisper"
-      "obsidian"
       "raycast" # Launcher
       "1password"
       "notion-calendar"

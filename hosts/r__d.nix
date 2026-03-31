@@ -131,6 +131,7 @@ in
           ../modules/aichat.nix
           ../modules/navi.nix
           ../modules/claude.nix
+          ../modules/knowledge.nix
           # LLM stack
           ../modules/ollama.nix
           ../modules/open-webui.nix

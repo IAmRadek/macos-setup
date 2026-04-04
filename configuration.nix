@@ -86,6 +86,7 @@
     eza
     dust
     duf
+    ghostscript
 
     # Web & Network
     curl # (already above, move here or keep in core)

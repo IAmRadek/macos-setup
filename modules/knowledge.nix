@@ -4,6 +4,7 @@
   home.activation.knowledgeVault = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     KNOWLEDGE_DIR="$HOME/Knowledge"
     GIT="${pkgs.git}/bin/git"
+    export GIT_SSH_COMMAND="/usr/bin/ssh"
 
     # Clone or pull the Knowledge vault
     if [ ! -d "$KNOWLEDGE_DIR/.git" ]; then

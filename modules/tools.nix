@@ -29,24 +29,40 @@ let
     };
   };
 
-  tm = pkgs.rustPlatform.buildRustPackage rec {
+  tmSrc = pkgs.fetchFromGitHub {
+    owner = "IAmRadek";
+    repo = "tm";
+    rev = "b9c06b73cac2796e9e30c9c13d10059f1d85efbd";
+    hash = "sha256-Dzf4TJiSquWk151CVxSdeWAVlno4gQ7VTCpg2Xx5qkY=";
+  };
+
+  tm = pkgs.rustPlatform.buildRustPackage {
     pname = "tm";
-    version = "0.0.1";
+    version = "0.1.0";
 
-    src = pkgs.fetchFromGitHub {
-      owner = "IAmRadek";
-      repo = "tm";
-      rev = "v${version}";
-      hash = "sha256-rFUzBBR/H7slnRJDDFcqA1SB9A9Tp4bdgTpDM4k041o=";
-    };
-
-    cargoHash = "sha256-0QhIiRLuiZ4tlUGAkOC711XJ9TRaxYvMIrkxIqPzfA8=";
-
-    nativeBuildInputs = [ pkgs.pkg-config ];
+    src = tmSrc;
+    cargoBuildFlags = [ "--package" "tm" ];
+    cargoLock.lockFile = "${tmSrc}/Cargo.lock";
 
     doCheck = false;
     meta = with lib; {
       description = "A minimal CLI time tracker for projects and tasks.";
+      homepage = "https://github.com/IAmRadek/tm";
+      license = licenses.mit;
+    };
+  };
+
+  tmDaemon = pkgs.rustPlatform.buildRustPackage {
+    pname = "tm-daemon";
+    version = "0.1.0";
+
+    src = tmSrc;
+    cargoBuildFlags = [ "--package" "tm-daemon" ];
+    cargoLock.lockFile = "${tmSrc}/Cargo.lock";
+
+    doCheck = false;
+    meta = with lib; {
+      description = "tm menu bar daemon for macOS";
       homepage = "https://github.com/IAmRadek/tm";
       license = licenses.mit;
     };
@@ -158,10 +174,23 @@ in
   home.packages = [
     git-pr
     tm
+    tmDaemon
     tmCurrentTask
     archiveWebpage
     (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))
   ];
+
+  launchd.agents.tm-daemon = {
+    enable = true;
+    config = {
+      Label = "com.iamradek.tm-daemon";
+      ProgramArguments = [ "${tmDaemon}/bin/tm-daemon" ];
+      RunAtLoad = true;
+      KeepAlive = true;
+      StandardOutPath = "/tmp/tm-daemon.log";
+      StandardErrorPath = "/tmp/tm-daemon.err";
+    };
+  };
 
   home.file.".zsh/completions/_colix".text = ''
     #compdef colix

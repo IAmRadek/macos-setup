@@ -31,7 +31,7 @@ in
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
           "/Applications/Firefox.app"
-          "${pkgs.kitty}/Applications/Kitty.app"
+          "${pkgs.alacritty}/Applications/Alacritty.app"
           "/Users/${username}/Applications/Goland.app"
           "/Applications/Discord.app"
           "/Applications/Zed.app"

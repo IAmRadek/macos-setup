@@ -104,7 +104,6 @@
 
     # Terminal Emulators
     alacritty
-    kitty
 
     # Docs, Presentations & Notes
     navi

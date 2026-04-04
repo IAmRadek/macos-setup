@@ -97,8 +97,11 @@ in
 
         programs.ssh = {
           enable = true;
+          enableDefaultConfig = false;
+          matchBlocks."*" = {
+            extraOptions.IdentityAgent = ''"~/.ssh/proton-pass-agent.sock"'';
+          };
           extraConfig = ''
-            IdentityAgent "~/.ssh/proton-pass-agent.sock"
             Include ~/.ssh/config.private
           '';
         };

@@ -32,24 +32,26 @@ in
     ]
     ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
 
-    userName = "Radosław Dejnek";
-    userEmail = "radek@dejnek.pl";
-
-    aliases = {
-      st = "status";
-      sync = "town sync";
-      append = "town append";
-      hack = "town hack";
-    };
     # SSH signing via 1Password
     signing = {
       key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIYnDm9RfWWUdae/MTzZps0KDhlDrDdWIrFFfoeWWulD";
       signByDefault = true;
+      format = null;
     };
 
     lfs.enable = true;
 
     settings = {
+      user.name = "Radosław Dejnek";
+      user.email = "radek@dejnek.pl";
+
+      alias = {
+        st = "status";
+        sync = "town sync";
+        append = "town append";
+        hack = "town hack";
+      };
+
       url."ssh://git@github.com".insteadOf = "https://github.com";
 
       gpg.format = "ssh";

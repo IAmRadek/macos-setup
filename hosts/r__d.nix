@@ -134,6 +134,7 @@ in
           ../modules/aichat.nix
           ../modules/navi.nix
           ../modules/claude.nix
+          ../modules/codex.nix
           ../modules/knowledge.nix
           # LLM stack
           ../modules/ollama.nix

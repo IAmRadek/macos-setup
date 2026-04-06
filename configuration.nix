@@ -98,6 +98,7 @@
     aichat
     ollama
     opencode
+    codex
 
     # Media
     ffmpeg

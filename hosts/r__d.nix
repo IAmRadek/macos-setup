@@ -6,6 +6,7 @@ in
 {
   imports = [
     ../modules/caddy.nix
+    ../modules/tailscale.nix
   ];
 
   system.primaryUser = username;

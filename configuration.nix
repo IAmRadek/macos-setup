@@ -66,6 +66,8 @@
     sops
     gnupg
     age
+    tailscale
+    tailscale-gui
 
     # Database
     postgresql
@@ -192,6 +194,7 @@
         pkgs._1password-cli
         pkgs.proton-pass-cli
         pkgs.proton-pass
+        pkgs.tailscale-gui
       ];
     in
     pkg: builtins.elem (lib.getName pkg) whitelist;

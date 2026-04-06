@@ -1,35 +1,38 @@
-{ ... }:
 {
-  home.file.".claude/commands/analyze-repo.md".text = ''
-    Analyze this repository and provide prioritized, actionable feedback.
-    Use the Explore subagent to thoroughly understand the codebase first, then cover:
-    Architecture & structure: does the layout make sense, is there clear separation of concerns, any obvious design issues?
-    Code quality: inconsistencies in style or patterns, dead code, overly complex areas, missing error handling.
-    Security: hardcoded secrets, unsafe inputs, dependency risks, anything that should be flagged.
-    Tech debt: areas that are brittle, poorly tested, or will cause pain as the project grows.
-    Before presenting findings, verify each one by re-reading the relevant code.
-    Remove any finding you cannot point to a specific file:line.
-    If a finding is based on an assumption about runtime behavior, mark it explicitly as unverified.
-    Output: a prioritized list grouped by severity (critical / important / minor). Be specific — include file:line references.
-    Skip generic advice that applies to every project.
+  config,
+  lib,
+  ...
+}:
+let
+  texts = import ./ai/texts.nix;
+  installSkill =
+    {
+      name,
+      source,
+    }:
+    let
+      targetDir = "${config.home.homeDirectory}/.claude/skills/${name}";
+      targetFile = "${targetDir}/SKILL.md";
+    in
+    ''
+      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${targetDir}"
+      if [ -L "${targetFile}" ] || [ -e "${targetFile}" ]; then
+        $DRY_RUN_CMD rm -f $VERBOSE_ARG "${targetFile}"
+      fi
+      $DRY_RUN_CMD install -m 0644 $VERBOSE_ARG "${source}" "${targetFile}"
+    '';
+in
+{
+  home.activation.installClaudeSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    ${installSkill {
+      name = "analyze-repo";
+      source = ./ai/skills/analyze-repo/SKILL.md;
+    }}
+    ${installSkill {
+      name = "ansible";
+      source = ./ai/skills/ansible/SKILL.md;
+    }}
   '';
 
-  home.file.".claude/CLAUDE.md".text = ''
-    - Terse, direct responses — skip preamble, filler, and trailing summaries
-    - No emojis unless asked
-    - Lead with the answer or action, not the reasoning
-    - When referencing code, include `file:line` for easy navigation
-    - Prefer CLI tools over training knowledge for API and library docs — they reflect the actual installed version and are always accurate
-    - Use man pages, doc, or help commands to when not sure about the params:
-        `go doc <pkg>`, `go doc <pkg>.<Symbol>`
-        `man <cmd>`
-        `<cmd> --help` / `<cmd> -h` for flags and usage
-        `tldr <cmd>` for concise practical examples
-    - Only fall back to training knowledge when no CLI tool is available.
-    - When working with Go: do not run `go test` — signal when tests should be run instead
-    - Use subagents (Agent tool) for expensive or broad tasks: codebase exploration, multi-file searches, research — keeps the main context clean
-    - Run independent subagents in parallel in a single message when possible
-    - Use the Explore subagent for open-ended codebase searches instead of chaining Grep/Glob calls in the main context
-    - Prefer foreground agents when their result is needed before proceeding; background agents for genuinely independent work
-  '';
+  home.file.".claude/CLAUDE.md".text = texts.assistantGuidance;
 }

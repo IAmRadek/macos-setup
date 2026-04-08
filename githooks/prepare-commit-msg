@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -u
+
+. "$(dirname "$0")/_lib"
+
+run_repo_hook prepare-commit-msg "$@"

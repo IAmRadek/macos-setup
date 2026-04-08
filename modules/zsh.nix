@@ -142,6 +142,23 @@
           compdef _helm helm 2>/dev/null
           compdef _git-town git-town 2>/dev/null
           compdef _watson watson 2>/dev/null
+
+
+          _ai-cmd() {
+            echo >&2  # newline so prompt is clean
+            printf 'AI cmd> ' >&2
+            local input
+            IFS= read -r input
+            [[ -z "$input" ]] && zle redisplay && return
+            local result
+            result=$(aichat --role %shell% --no-stream "$input" | tr -d '\n\r')
+            BUFFER="$result"
+            CURSOR=''${#BUFFER}
+            zle redisplay
+          }
+
+          zle -N _ai-cmd
+          bindkey '^Y' _ai-cmd
         '';
       in
       lib.mkMerge [
@@ -157,7 +174,7 @@
       # Starship configuration
       add_newline = false;
 
-      format = ''$directory$nix_shell$git_branch$git_status$golang$kubernetes''${custom.tm}$cmd_duration$line_break$character'';
+      format = "$directory$nix_shell$git_branch$git_status$golang$kubernetes\${custom.tm}$cmd_duration$line_break$character";
 
       character = {
         success_symbol = "[➜](bold green)";

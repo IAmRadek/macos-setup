@@ -46,8 +46,16 @@
   };
 
   system.activationScripts.configureBlockyDns.text = ''
-    for service in "Wi-Fi" "USB 10/100/1000 LAN" "Thunderbolt Ethernet Slot 2" "iPhone"; do
-      /usr/sbin/networksetup -setdnsservers "$service" 127.0.0.1 2>/dev/null || true
-    done
+    /usr/sbin/networksetup -listallnetworkservices 2>/dev/null \
+      | /usr/bin/tail -n +2 \
+      | while IFS= read -r service; do
+          case "$service" in
+            ""|\**)
+              continue
+              ;;
+          esac
+
+          /usr/sbin/networksetup -setdnsservers "$service" 127.0.0.1 2>/dev/null || true
+        done
   '';
 }

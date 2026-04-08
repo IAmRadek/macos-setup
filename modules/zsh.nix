@@ -143,12 +143,17 @@
           compdef _git-town git-town 2>/dev/null
           compdef _watson watson 2>/dev/null
 
-
           _ai-cmd() {
-            echo >&2  # newline so prompt is clean
+            zle -I
+            local saved=$(stty -g < /dev/tty)
+            stty sane < /dev/tty
             printf 'AI cmd> ' >&2
-            local input
-            IFS= read -r input
+            local input cancelled=0
+            trap 'cancelled=1; echo >&2' INT
+            IFS= read -r input < /dev/tty
+            trap - INT
+            stty "$saved" < /dev/tty
+            (( cancelled )) && zle redisplay && return
             [[ -z "$input" ]] && zle redisplay && return
             local result
             result=$(aichat --role %shell% --no-stream "$input" | tr -d '\n\r')
@@ -156,7 +161,6 @@
             CURSOR=''${#BUFFER}
             zle redisplay
           }
-
           zle -N _ai-cmd
           bindkey '^Y' _ai-cmd
         '';

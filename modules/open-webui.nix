@@ -7,7 +7,7 @@
 {
   # Open WebUI — installed via `uv tool install open-webui`.
   # uv manages the virtualenv; the binary lands at ~/.local/bin/open-webui.
-  # Accessible at http://localhost:10001 after login.
+  # Accessible at http://localhost:11001 after login.
   # Data (users, chats, settings) persists in ~/.local/share/open-webui.
 
   home.activation.installOpenWebUI = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -28,7 +28,7 @@
         "--host"
         "127.0.0.1"
         "--port"
-        "10001"
+        "11001"
       ];
       EnvironmentVariables = {
         OLLAMA_BASE_URL = "http://localhost:11434";

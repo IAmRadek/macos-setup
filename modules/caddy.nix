@@ -29,7 +29,7 @@
   environment.etc."caddy/Caddyfile" = {
     text = ''
       http://chat.local {
-        reverse_proxy localhost:10001
+        reverse_proxy localhost:11001
       }
     '';
   };

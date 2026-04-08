@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -u
 
+. "$(dirname "$0")/_lib"
+
 # Comma- or space-separated list of protected branches.
 # Default: master and main
 : "${GITHOOKS_PROTECTED_BRANCHES:=master main}"
@@ -9,7 +11,8 @@ BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)"
 BRANCH="${BRANCH:-}"
 
 if [[ -z "$BRANCH" || "$BRANCH" == "HEAD" ]]; then
-  exit 0
+  run_repo_hook pre-commit
+  exit $?
 fi
 
 IFS=' ,:' read -r -a PROTECTED <<<"$GITHOOKS_PROTECTED_BRANCHES"
@@ -70,3 +73,5 @@ if [[ -n "$STAGED_GO" ]]; then
     done
   fi
 fi
+
+run_repo_hook pre-commit

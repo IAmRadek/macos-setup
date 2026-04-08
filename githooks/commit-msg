@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -u
 
+. "$(dirname "$0")/_lib"
+
 # Allowed conventional commit types
 TYPE_GROUP='feat|fix|hotfix|chore|refactor|docs|style|test|ci|build|perf|revert'
 # Human-readable form for messages: feat, fix, ...
@@ -25,7 +27,8 @@ FIRST_LINE="$(head -n1 "$MSG_FILE")"
 
 # If it matches either pattern, we're good
 if [[ "$FIRST_LINE" =~ $CONV_PATTERN || "$FIRST_LINE" =~ $JIRA_PATTERN ]]; then
-  exit 0
+  run_repo_hook commit-msg "$MSG_FILE"
+  exit $?
 fi
 
 echo
@@ -49,7 +52,7 @@ while read -r -p "Do you really want to commit with that message? (y/n) " yn </d
   case "$yn" in
     [Yy])
       echo "Committing with non-standard message."
-      exit 0
+      break
       ;;
     [Nn])
       echo "Commit aborted."
@@ -60,3 +63,5 @@ while read -r -p "Do you really want to commit with that message? (y/n) " yn </d
       ;;
   esac
 done
+
+run_repo_hook commit-msg "$MSG_FILE"

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -u
 
+. "$(dirname "$0")/_lib"
+
 echo "[pre-push] Go checks"
 
 # --- config knobs (env overridable) -----------------------------------------
@@ -54,8 +56,12 @@ LOCAL_REF=""
 LOCAL_SHA=""
 REMOTE_REF=""
 REMOTE_SHA=""
+PRE_PUSH_STDIN="$(mktemp)"
+trap 'rm -f "$PRE_PUSH_STDIN"' EXIT
 
-if ! read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA; then
+cat >"$PRE_PUSH_STDIN"
+
+if ! IFS=' ' read -r LOCAL_REF LOCAL_SHA REMOTE_REF REMOTE_SHA <"$PRE_PUSH_STDIN"; then
   # No refs from git (edge cases like older git, weird invocation)
   # We'll just treat as if REMOTE_SHA is empty and fall back below.
   REMOTE_SHA=""
@@ -80,7 +86,8 @@ RANGE="${BASE_SHA}..HEAD"
 CHANGED_GO="$(git diff --name-only "$RANGE" -- '*.go' 2>/dev/null || true)"
 if [[ -z "$CHANGED_GO" ]]; then
   echo "[pre-push] No Go changes in $RANGE — skipping."
-  exit 0
+  run_repo_hook pre-push "$@" <"$PRE_PUSH_STDIN"
+  exit $?
 fi
 
 # Map changed files -> unique import paths
@@ -89,7 +96,8 @@ mapfile -t PKGS < <(printf "%s\n" "${PKG_DIRS[@]}" | xargs -r -n50 go list 2>/de
 
 if [[ ${#PKGS[@]} -eq 0 ]] || ! go list ./... >/dev/null 2>&1; then
   echo "[pre-push] No importable Go packages or not a module/workspace — skipping."
-  exit 0
+  run_repo_hook pre-push "$@" <"$PRE_PUSH_STDIN"
+  exit $?
 fi
 
 if [[ -f go.mod ]]; then
@@ -322,4 +330,4 @@ fi
 
 
 echo "[pre-push] OK"
-exit 0
+run_repo_hook pre-push "$@" <"$PRE_PUSH_STDIN"

@@ -68,6 +68,7 @@
     age
     tailscale
     tailscale-gui
+    google-cloud-sdk
 
     # Database
     postgresql
@@ -134,6 +135,7 @@
       # Browsers
       "google-chrome"
       "firefox"
+      "zen"
 
       # Development
       # "google-cloud-sdk"

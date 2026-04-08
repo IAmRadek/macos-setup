@@ -32,16 +32,19 @@ let
   tmSrc = pkgs.fetchFromGitHub {
     owner = "IAmRadek";
     repo = "tm";
-    rev = "b9c06b73cac2796e9e30c9c13d10059f1d85efbd";
-    hash = "sha256-Dzf4TJiSquWk151CVxSdeWAVlno4gQ7VTCpg2Xx5qkY=";
+    rev = "v0.3.0";
+    hash = "sha256-5uFp1P/u2+FekeqyzyGrdIQWxa9QEJexk0rv8UIPR5E=";
   };
 
   tm = pkgs.rustPlatform.buildRustPackage {
     pname = "tm";
-    version = "0.1.0";
+    version = "0.2.0";
 
     src = tmSrc;
-    cargoBuildFlags = [ "--package" "tm" ];
+    cargoBuildFlags = [
+      "--package"
+      "tm"
+    ];
     cargoLock.lockFile = "${tmSrc}/Cargo.lock";
 
     doCheck = false;
@@ -57,7 +60,10 @@ let
     version = "0.1.0";
 
     src = tmSrc;
-    cargoBuildFlags = [ "--package" "tm-daemon" ];
+    cargoBuildFlags = [
+      "--package"
+      "tm-daemon"
+    ];
     cargoLock.lockFile = "${tmSrc}/Cargo.lock";
 
     doCheck = false;

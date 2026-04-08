@@ -5,6 +5,7 @@ let
 in
 {
   imports = [
+    ../modules/blocky.nix
     ../modules/caddy.nix
     ../modules/tailscale.nix
   ];

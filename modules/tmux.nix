@@ -82,6 +82,22 @@
 
       bind-key -T prefix y split-window -p 35 \
         '$SHELL -lc "cmdai-tmux | tmux load-buffer -b ai_cmd - ; tmux paste-buffer -p -t {last} -b ai_cmd -d ; tmux kill-pane"'
+
+      _ai-cmd() {
+        echo >&2  # newline so prompt is clean
+        printf 'AI cmd> ' >&2
+        local input
+        IFS= read -r input
+        [[ -z "$input" ]] && zle redisplay && return
+        local result
+        result=$(aichat --role %shell% --no-stream "$input" | tr -d '\n\r')
+        BUFFER="$result"
+        CURSOR=''${#BUFFER}
+        zle redisplay
+      }
+
+      zle -N _ai-cmd
+      bindkey '^Y' _ai-cmd
     '';
   };
 

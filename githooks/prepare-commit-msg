@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -u
 
+echo "sadasds"
+
 . "$(dirname "$0")/_lib"
 
 run_repo_hook prepare-commit-msg "$@"

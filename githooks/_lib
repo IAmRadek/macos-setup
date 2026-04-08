@@ -6,7 +6,7 @@ run_repo_hook() {
 
   local repo_root local_hook
   repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || return 0
-  local_hook="${repo_root}/.githooks/${hook_name}"
+  local_hook="${repo_root}/.git/hooks/${hook_name}"
 
   [[ -f "$local_hook" ]] || return 0
 

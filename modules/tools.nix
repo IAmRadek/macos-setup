@@ -144,6 +144,7 @@ in
     tmCurrentTask
     mark
     (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))
+    (pkgs.writeShellScriptBin "ai-commit-msg" (builtins.readFile ../tools/ollama/ai-commit-msg.sh))
   ];
 
   launchd.agents.tm-daemon = {

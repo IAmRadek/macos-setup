@@ -50,6 +50,12 @@ in
         sync = "town sync";
         append = "town append";
         hack = "town hack";
+        dlog = "-c diff.external=difft log --ext-diff";
+        dshow = "-c diff.external=difft show --ext-diff";
+        ddiff = "-c diff.external=difft diff";
+        dl = "-c diff.external=difft log -p --ext-diff";
+        ds = "-c diff.external=difft show --ext-diff";
+        dft = "-c diff.external=difft diff";
       };
 
       url."ssh://git@github.com".insteadOf = "https://github.com";
@@ -68,7 +74,6 @@ in
         excludesFile = "${config.xdg.configHome}/git/ignore";
         attributesfile = "${config.xdg.configHome}/git/attributes";
         editor = "nano";
-        pager = "${pkgs.delta}/bin/delta";
         hooksPath = "${hooksDir}";
       };
 
@@ -99,13 +104,23 @@ in
         };
       };
 
-      interactive.diffFilter = "${pkgs.delta}/bin/delta --color-only";
-
       merge.conflictstyle = "diff3";
       merge.mergiraf.name = "mergiraf";
       merge.mergiraf.driver = "mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L";
 
-      diff.colorMoved = "default";
+      diff = {
+        colorMoved = "default";
+        external = "${pkgs.difftastic}/bin/difft";
+        tool = "difftastic";
+      };
+
+      difftool = {
+        prompt = false;
+        difftastic.cmd =
+          ''${pkgs.difftastic}/bin/difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
+      };
+
+      pager.difftool = true;
 
       push = {
         default = "current";
@@ -125,49 +140,6 @@ in
       };
     };
   };
-  programs.delta = {
-    enable = true;
-    enableGitIntegration = true;
-
-    options = {
-      navigate = true; # n / N to jump hunks
-      "side-by-side" = true;
-      features = "calochortus-lyallii";
-      dark = true;
-      "map-styles" = "bold purple => syntax magenta, bold cyan => syntax blue";
-
-      # Feature block below
-      "calochortus-lyallii" = {
-        "commit-decoration-style" = "none";
-        "dark" = "true";
-        "file-added-label" = "[+]";
-        "file-copied-label" = "[C]";
-        "file-decoration-style" = "none";
-        "file-modified-label" = "[M]";
-        "file-removed-label" = "[-]";
-        "file-renamed-label" = "[R]";
-        "file-style" = "232 bold 184";
-        "hunk-header-decoration-style" = "none";
-        "hunk-header-file-style" = "#999999";
-        "hunk-header-line-number-style" = "bold #03a4ff";
-        "hunk-header-style" = "file line-number syntax";
-        "line-numbers" = "true";
-        "line-numbers-left-style" = "black";
-        "line-numbers-minus-style" = "#B10036";
-        "line-numbers-plus-style" = "#03a4ff";
-        "line-numbers-right-style" = "black";
-        "line-numbers-zero-style" = "#999999";
-        "minus-emph-style" = "syntax bold #780000";
-        "minus-style" = "syntax #400000";
-        "plus-emph-style" = "syntax bold #007800";
-        "plus-style" = "syntax #004000";
-        "whitespace-error-style" = "#280050 reverse";
-        "zero-style" = "syntax";
-        "syntax-theme" = "Nord";
-      };
-    };
-  };
-
   home.activation.createGitPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.nix-darwin/private"
     $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${config.xdg.configHome}/git"

@@ -5,6 +5,11 @@
   ...
 }:
 
+let
+  googleCloudSdkWithPubsub = pkgs.google-cloud-sdk.withExtraComponents [
+    pkgs.google-cloud-sdk.components."pubsub-emulator"
+  ];
+in
 {
   system.primaryUser = lib.mkDefault "radoslawdejnek";
 
@@ -19,7 +24,7 @@
     gh
     mergiraf
     gitleaks
-    delta
+    difftastic
 
     # Core Utilities
     coreutils
@@ -68,7 +73,7 @@
     age
     tailscale
     tailscale-gui
-    google-cloud-sdk
+    googleCloudSdkWithPubsub
 
     # Database
     postgresql

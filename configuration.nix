@@ -65,6 +65,8 @@ in
     pnpm
     python3
     uv
+    playwright
+    playwright-driver
 
     # Infrastructure & Secrets
     ansible

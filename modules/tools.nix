@@ -5,15 +5,15 @@
 }:
 
 let
-  git-pr = pkgs.rustPlatform.buildRustPackage rec {
+  git-pr = pkgs.rustPlatform.buildRustPackage {
     pname = "git-pr";
-    version = "1.1.2";
+    version = "0.1.0";
 
     src = pkgs.fetchFromGitHub {
       owner = "IAmRadek";
       repo = "git-pr";
-      rev = "v${version}";
-      hash = "sha256-rZKZGoqt+INwgDc3WhIQYP55OetsB1aHJWjhRiIGNZE=";
+      rev = "main";
+      hash = "sha256-yjCUZ/4kdJrPPASS9A+Hm0kq2+DBcwV+TIM6zcehEDE=";
     };
 
     cargoHash = "sha256-dWb1m01PJsAnxj1fA4WnQU8JV9uD9UahZeUr3Go7aLc=";
@@ -32,8 +32,8 @@ let
   tmSrc = pkgs.fetchFromGitHub {
     owner = "IAmRadek";
     repo = "tm";
-    rev = "v0.3.0";
-    hash = "sha256-5uFp1P/u2+FekeqyzyGrdIQWxa9QEJexk0rv8UIPR5E=";
+    rev = "main";
+    hash = "sha256-u9qe/LtaQe+38ToEfaCQaj3BlDUnOyvV8OMor2Hgp1k=";
   };
 
   tm = pkgs.rustPlatform.buildRustPackage {

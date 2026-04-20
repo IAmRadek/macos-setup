@@ -128,6 +128,7 @@ in
         };
 
         imports = [
+
           ../modules/kitty.nix
           ../modules/alacritty.nix
           ../modules/zsh.nix
@@ -139,6 +140,7 @@ in
           ../modules/claude.nix
           ../modules/codex.nix
           ../modules/knowledge.nix
+          ../modules/zed.nix
           # LLM stack
           ../modules/ollama.nix
           ../modules/open-webui.nix

@@ -87,6 +87,7 @@ in
           ../modules/tools.nix
           ../modules/claude.nix
           ../modules/codex.nix
+          ../modules/zed.nix
         ];
 
         # Configure nano with xdg.configFile

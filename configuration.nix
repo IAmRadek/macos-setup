@@ -163,6 +163,7 @@ in
       "postman"
       "elgato-stream-deck"
       "alt-tab"
+      "menubar-apps/menubar-apps/pullbar"
 
       # Communication
       "slack"

@@ -50,6 +50,7 @@ in
         sync = "town sync";
         append = "town append";
         hack = "town hack";
+        ts = "town switch";
         dlog = "-c diff.external=difft log --ext-diff";
         dshow = "-c diff.external=difft show --ext-diff";
         ddiff = "-c diff.external=difft diff";
@@ -78,6 +79,7 @@ in
       };
 
       pull.rebase = false;
+      rebase.updateRefs = true;
 
       rerere.enabled = true;
 
@@ -116,8 +118,7 @@ in
 
       difftool = {
         prompt = false;
-        difftastic.cmd =
-          ''${pkgs.difftastic}/bin/difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
+        difftastic.cmd = ''${pkgs.difftastic}/bin/difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
       };
 
       pager.difftool = true;

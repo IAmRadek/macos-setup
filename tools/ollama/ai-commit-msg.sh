@@ -219,8 +219,8 @@ fi
 
 jq -n \
   --arg model "$MODEL" \
-  --arg system "$(cat "$system_file")" \
-  --arg user "$(cat "$user_file")" \
+  --rawfile system "$system_file" \
+  --rawfile user "$user_file" \
   '{
     model: $model,
     messages: [

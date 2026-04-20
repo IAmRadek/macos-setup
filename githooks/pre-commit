@@ -44,12 +44,12 @@ fi
 
 STAGED_GO=$(git diff --cached --name-only -- '*.go')
 if [[ -n "$STAGED_GO" ]]; then
-  echo "[pre-commit] gofumpt / goimports on staged Go files…"
-  echo "$STAGED_GO" | xargs -r gofumpt -w
-  echo "$STAGED_GO" | xargs -r goimports -w
+  #echo "[pre-commit] gofumpt / goimports on staged Go files…"
+  #echo "$STAGED_GO" | xargs -r gofumpt -w
+  #echo "$STAGED_GO" | xargs -r goimports -w
 
   # Re-stage files after formatting
-  echo "$STAGED_GO" | xargs -r git add
+  #echo "$STAGED_GO" | xargs -r git add
 
   FILES_WITH_PRINTLN="$(git grep --cached -l -- 'fmt\.Println' -- '*.go' || true)"
   if [[ -n "$FILES_WITH_PRINTLN" ]]; then

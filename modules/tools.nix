@@ -13,7 +13,7 @@ let
       owner = "IAmRadek";
       repo = "git-pr";
       rev = "main";
-      hash = "sha256-yjCUZ/4kdJrPPASS9A+Hm0kq2+DBcwV+TIM6zcehEDE=";
+      hash = "sha256-5cfhRBHhV93QmiRK69ENRyn1w/AiQTNGzY2Ttj8Jxqw=";
     };
 
     cargoHash = "sha256-dWb1m01PJsAnxj1fA4WnQU8JV9uD9UahZeUr3Go7aLc=";

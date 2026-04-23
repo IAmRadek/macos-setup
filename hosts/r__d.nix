@@ -85,6 +85,7 @@ in
         };
 
         home.sessionVariables = {
+          DFT_PARSE_ERROR_LIMIT = "100";
           SSH_AUTH_SOCK = "$HOME/.ssh/proton-pass-agent.sock";
         };
 
@@ -103,6 +104,11 @@ in
           enableDefaultConfig = false;
           matchBlocks."*" = {
             extraOptions.IdentityAgent = ''"~/.ssh/proton-pass-agent.sock"'';
+          };
+          matchBlocks.homelab = {
+            hostname = "10.10.0.100";
+            user = "homelab";
+            forwardAgent = true;
           };
           extraConfig = ''
             Include ~/.ssh/config.private
@@ -124,6 +130,21 @@ in
             ];
             RunAtLoad = true;
             KeepAlive = true;
+          };
+        };
+
+        launchd.agents.spotifyd = {
+          enable = true;
+          config = {
+            Label = "com.spotifyd.service";
+            ProgramArguments = [
+              "${pkgs.spotifyd}/bin/spotifyd"
+              "--no-daemon"
+            ];
+            RunAtLoad = true;
+            KeepAlive = true;
+            StandardOutPath = "/Users/${username}/Library/Logs/spotifyd.log";
+            StandardErrorPath = "/Users/${username}/Library/Logs/spotifyd-error.log";
           };
         };
 

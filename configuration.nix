@@ -76,6 +76,7 @@ in
     tailscale
     tailscale-gui
     googleCloudSdkWithPubsub
+    google-cloud-sql-proxy
 
     # Database
     postgresql
@@ -112,6 +113,7 @@ in
 
     # Media
     ffmpeg
+    spotifyd
 
     # Terminal Emulators
     alacritty

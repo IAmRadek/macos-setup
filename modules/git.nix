@@ -118,7 +118,7 @@ in
 
       difftool = {
         prompt = false;
-        difftastic.cmd = ''${pkgs.difftastic}/bin/difft "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
+        difftastic.cmd = ''${pkgs.difftastic}/bin/difft --parse-error-limit 100 "$MERGED" "$LOCAL" "abcdef1" "100644" "$REMOTE" "abcdef2" "100644"'';
       };
 
       pager.difftool = true;

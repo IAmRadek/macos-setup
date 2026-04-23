@@ -224,6 +224,10 @@ in
     _colix "$@"
   '';
 
+  home.file.".npmrc".text = ''
+    ignore-scripts=true
+  '';
+
   home.file.".runbooks/new.sh".source = ../tools/runbooks/new.sh;
   home.activation.mySymlinks = lib.mkAfter ''
     ln -sf ~/.nix-darwin/tools/navi/cheats ~/.local/share/navi/cheats/local

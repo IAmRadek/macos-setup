@@ -182,6 +182,7 @@ in
       "obsidian"
       "textual"
       "claude-code"
+      "little-snitch"
     ];
 
     taps = [ ];
@@ -266,6 +267,10 @@ in
   fonts.packages = [
     pkgs.nerd-fonts.jetbrains-mono
   ];
+
+  security.pam.services.sudo_local.touchIdAuth = true;
+
+  environment.variables.HOMEBREW_NO_ANALYTICS = "1";
 
   # Create /etc/zshrc that loads the nix-darwin environment
   programs = {

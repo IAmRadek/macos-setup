@@ -133,24 +133,10 @@ in
           };
         };
 
-        launchd.agents.spotifyd = {
-          enable = true;
-          config = {
-            Label = "com.spotifyd.service";
-            ProgramArguments = [
-              "${pkgs.spotifyd}/bin/spotifyd"
-              "--no-daemon"
-            ];
-            RunAtLoad = true;
-            KeepAlive = true;
-            StandardOutPath = "/Users/${username}/Library/Logs/spotifyd.log";
-            StandardErrorPath = "/Users/${username}/Library/Logs/spotifyd-error.log";
-          };
-        };
-
         imports = [
 
           ../modules/kitty.nix
+          ../modules/media.nix
           ../modules/alacritty.nix
           ../modules/zsh.nix
           ../modules/tmux.nix

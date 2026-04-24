@@ -113,8 +113,6 @@ in
 
     # Media
     ffmpeg
-    spotifyd
-
     # Terminal Emulators
     alacritty
 

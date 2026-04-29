@@ -2,7 +2,7 @@
 
 let
   spotifyPlayerPackage = pkgs.spotify-player.override {
-    withMediaControl = false;
+    withMediaControl = true;
   };
 in
 {
@@ -10,29 +10,14 @@ in
     enable = true;
     package = spotifyPlayerPackage;
     settings = {
-      enable_streaming = "DaemonOnly";
-      enable_media_control = false;
-      default_device = "spotify-player";
+      enable_media_control = true;
+      default_device = "RD's Macbook";
       device = {
-        name = "spotify-player";
+        name = "RD's Macbook";
         audio_cache = false;
         normalization = false;
+        enable_streaming = true;
       };
-    };
-  };
-
-  launchd.agents.spotify-player = {
-    enable = true;
-    config = {
-      Label = "com.spotify-player.service";
-      ProgramArguments = [
-        "${spotifyPlayerPackage}/bin/spotify_player"
-        "--daemon"
-      ];
-      RunAtLoad = true;
-      KeepAlive = true;
-      StandardOutPath = "${config.home.homeDirectory}/Library/Logs/spotify-player.log";
-      StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/spotify-player-error.log";
     };
   };
 }

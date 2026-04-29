@@ -32,6 +32,10 @@ in
       name = "ansible";
       source = ./ai/skills/ansible/SKILL.md;
     }}
+    ${installSkill {
+      name = "write";
+      source = ./ai/skills/write/SKILL.md;
+    }}
   '';
 
   home.file.".codex/AGENTS.md".text = texts.assistantGuidance;

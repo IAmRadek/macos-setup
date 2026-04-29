@@ -62,6 +62,7 @@ in
 
     # JavaScript / Python
     nodejs
+    bun
     pnpm
     python3
     uv

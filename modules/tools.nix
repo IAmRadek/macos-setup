@@ -33,7 +33,7 @@ let
     owner = "IAmRadek";
     repo = "tm";
     rev = "main";
-    hash = "sha256-pPsxGHv4+GTqrchJnqH7bsdvHCECmGuLdB49bsTVKXY=";
+    hash = "sha256-3gT5WcjYzo0TmcorcHSqHjPxFaGYd29AdsvgK+KU2v8=";
   };
 
   tm = pkgs.rustPlatform.buildRustPackage {

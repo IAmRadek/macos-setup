@@ -92,16 +92,27 @@
         {
           key = "Right";
           mods = "Alt";
-          chars = "\\u001BF";
+          chars = builtins.fromJSON ''"\u001Bf"'';
         }
         {
           key = "Left";
           mods = "Alt";
-          chars = "\\u001BB";
+          chars = builtins.fromJSON ''"\u001Bb"'';
+        }
+        {
+          key = "Right";
+          mods = "Command";
+          chars = builtins.fromJSON ''"\u0005"'';
+        }
+        {
+          key = "Left";
+          mods = "Command";
+          chars = builtins.fromJSON ''"\u0001"'';
         }
       ];
 
       window = {
+        option_as_alt = "Both";
         dynamic_padding = true;
         padding = {
           x = 10;

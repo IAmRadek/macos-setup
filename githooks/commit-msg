@@ -22,11 +22,13 @@ CONV_PATTERN="^(${TYPE_GROUP})(\\([^)]+\\))?(!)?: .+"
 #   [PROJ-123] type(scope)!: message
 JIRA_PATTERN="^\\[[A-Z][A-Z0-9]+-[0-9]+\\] (${TYPE_GROUP})(\\([^)]+\\))?(!)?: .+"
 
+MERGE_PATTERN="^Merge (branch|pull request|remote-tracking branch) "
+
 MSG_FILE="$1"
 FIRST_LINE="$(head -n1 "$MSG_FILE")"
 
 # If it matches either pattern, we're good
-if [[ "$FIRST_LINE" =~ $CONV_PATTERN || "$FIRST_LINE" =~ $JIRA_PATTERN ]]; then
+if [[ "$FIRST_LINE" =~ $MERGE_PATTERN || "$FIRST_LINE" =~ $CONV_PATTERN || "$FIRST_LINE" =~ $JIRA_PATTERN ]]; then
   run_repo_hook commit-msg "$MSG_FILE"
   exit $?
 fi

@@ -34,6 +34,7 @@ in
     watch
     fzf
     tmux
+    btop
 
     # Containers & Kubernetes
     docker
@@ -182,6 +183,7 @@ in
       "textual"
       "claude-code"
       "little-snitch"
+      "coteditor"
     ];
 
     taps = [ ];

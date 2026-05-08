@@ -137,6 +137,7 @@ in
           ../modules/kitty.nix
           ../modules/media.nix
           ../modules/alacritty.nix
+          ../modules/ghostty.nix
           ../modules/zsh.nix
           ../modules/tmux.nix
           ../modules/git.nix

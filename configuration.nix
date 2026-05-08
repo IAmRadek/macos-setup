@@ -117,6 +117,7 @@ in
     ffmpeg
     # Terminal Emulators
     alacritty
+    ghostty-bin
 
     # Docs, Presentations & Notes
     navi
@@ -125,6 +126,7 @@ in
     presenterm
     hugo
     tldr
+    chafa
 
     # Load Testing
     k6

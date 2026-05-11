@@ -8,6 +8,7 @@
     settings = {
       font-family = "JetBrainsMono Nerd Font";
       font-size = 12;
+      font-thicken = true;
 
       term = "xterm-256color";
 
@@ -38,7 +39,7 @@
         "15=#FFFFFF"
       ];
 
-      macos-option-as-alt = "both";
+      macos-option-as-alt = true;
 
       window-padding-x = 10;
       window-padding-y = 10;

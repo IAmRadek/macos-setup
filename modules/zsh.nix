@@ -49,8 +49,8 @@
         '';
         zshConfig = lib.mkOrder 1000 ''
           # Set nano as default editor
-          export EDITOR="zed"
-          export VISUAL="zed"
+          export EDITOR="cot"
+          export VISUAL="cot"
 
           # Fix for testcontainers with colima (https://github.com/testcontainers/testcontainers-go/issues/2952)
           export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock

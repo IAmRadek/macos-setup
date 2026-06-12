@@ -64,6 +64,9 @@ in
           gitTownCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             ${pkgs.git-town}/bin/git-town completions zsh > "$HOME/.cache/zsh/_git-town"
           '';
+          hCloudCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            /opt/homebrew/bin/hcloud completion zsh > "$HOME/.cache/zsh/_hcloud"
+          '';
 
           helmCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm"

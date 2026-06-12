@@ -13,7 +13,7 @@ let
       owner = "IAmRadek";
       repo = "git-pr";
       rev = "main";
-      hash = "sha256-5cfhRBHhV93QmiRK69ENRyn1w/AiQTNGzY2Ttj8Jxqw=";
+      hash = "sha256-77LutfEsuHkMmBN1+Tosl88rHvg2eQ52207KATXeDQ4=";
     };
 
     cargoHash = "sha256-dWb1m01PJsAnxj1fA4WnQU8JV9uD9UahZeUr3Go7aLc=";
@@ -33,7 +33,7 @@ let
     owner = "IAmRadek";
     repo = "tm";
     rev = "main";
-    hash = "sha256-3gT5WcjYzo0TmcorcHSqHjPxFaGYd29AdsvgK+KU2v8=";
+    hash = "sha256-LFczM8fGd66+mRZjV6SELMPZrpVCqjwEy+wFzo8GKK0=";
   };
 
   tm = pkgs.rustPlatform.buildRustPackage {

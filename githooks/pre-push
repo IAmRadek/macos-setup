@@ -90,9 +90,17 @@ if [[ -z "$CHANGED_GO" ]]; then
   exit $?
 fi
 
-# Map changed files -> unique import paths
-mapfile -t PKG_DIRS < <(printf "%s\n" "$CHANGED_GO" | xargs -r -n1 dirname | sort -u)
-mapfile -t PKGS < <(printf "%s\n" "${PKG_DIRS[@]}" | xargs -r -n50 go list 2>/dev/null | sort -u)
+# Map changed files -> unique import paths. Avoid mapfile/readarray: macOS
+# /usr/bin/env bash may resolve to Bash 3.2, which does not provide it.
+PKG_DIRS=()
+while IFS= read -r dir; do
+  [[ -n "$dir" ]] && PKG_DIRS+=("$dir")
+done < <(printf "%s\n" "$CHANGED_GO" | xargs -r -n1 dirname | sort -u)
+
+PKGS=()
+while IFS= read -r pkg; do
+  [[ -n "$pkg" ]] && PKGS+=("$pkg")
+done < <(printf "%s\n" "${PKG_DIRS[@]}" | xargs -r -n50 go list 2>/dev/null | sort -u)
 
 if [[ ${#PKGS[@]} -eq 0 ]] || ! go list ./... >/dev/null 2>&1; then
   echo "[pre-push] No importable Go packages or not a module/workspace — skipping."

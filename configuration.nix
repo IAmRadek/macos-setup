@@ -25,6 +25,7 @@ in
     mergiraf
     gitleaks
     difftastic
+    github-mcp-server
 
     # Core Utilities
     coreutils
@@ -35,6 +36,7 @@ in
     fzf
     tmux
     btop
+    go-task
 
     # Containers & Kubernetes
     docker
@@ -42,6 +44,7 @@ in
     colima
     kubectl
     k3d
+    mutagen
 
     # Go
     go
@@ -79,6 +82,7 @@ in
     tailscale-gui
     googleCloudSdkWithPubsub
     google-cloud-sql-proxy
+    autossh
 
     # Database
     postgresql
@@ -188,11 +192,15 @@ in
       "coteditor"
     ];
 
-    taps = [ ];
+    taps = [
+      "ThreeDotsLabs/tap"
+    ];
 
     # Some CLI tools are better from Homebrew
     brews = [
       "helm"
+      "tdl"
+      "hcloud"
       # macOS-specific tools that integrate deeply with the system
       # "mas"  # Mac App Store CLI
     ];

@@ -53,8 +53,7 @@
           export VISUAL="cot"
 
           # Fix for testcontainers with colima (https://github.com/testcontainers/testcontainers-go/issues/2952)
-          export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
-          export DOCKER_HOST="unix://''${HOME}/.colima/docker.sock"
+          export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="unix://''${HOME}/.colima/docker.sock"
 
           # Define zinit home directory
           ZINIT_HOME="$HOME/.zinit"
@@ -178,7 +177,7 @@
       # Starship configuration
       add_newline = false;
 
-      format = "$directory$nix_shell$git_branch$git_status$golang$kubernetes\${custom.tm}$cmd_duration$line_break$character";
+      format = "$directory$nix_shell$git_branch$git_status$golang$kubernetes$docker_context\${custom.tm}$cmd_duration$line_break$character";
 
       character = {
         success_symbol = "[➜](bold green)";
@@ -221,6 +220,13 @@
 
       kubernetes = {
         format = ''\[[$cluster:$context](dimmed green)\]'';
+        disabled = false;
+      };
+
+      docker_context = {
+        format = ''\[[$symbol$context]($style)\]'';
+        symbol = "🐳 ";
+        style = "dimmed blue";
         disabled = false;
       };
 

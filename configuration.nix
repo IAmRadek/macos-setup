@@ -72,6 +72,7 @@ in
     uv
     playwright
     playwright-driver
+    tailwindcss
 
     # Infrastructure & Secrets
     ansible
@@ -83,6 +84,7 @@ in
     googleCloudSdkWithPubsub
     google-cloud-sql-proxy
     autossh
+    infisical
 
     # Database
     postgresql
@@ -104,6 +106,7 @@ in
     dust
     duf
     ghostscript
+    helix
 
     # Web & Network
     curl # (already above, move here or keep in core)

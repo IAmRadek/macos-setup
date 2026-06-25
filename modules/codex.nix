@@ -9,10 +9,16 @@ let
     {
       name,
       source,
+      extraSources ? [ ],
     }:
     let
       targetDir = "${config.home.homeDirectory}/.codex/skills/${name}";
       targetFile = "${targetDir}/SKILL.md";
+      installExtraSource =
+        extraSource:
+        ''
+          $DRY_RUN_CMD install -m 0644 $VERBOSE_ARG "${extraSource}" "${targetDir}/${baseNameOf extraSource}"
+        '';
     in
     ''
       $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${targetDir}"
@@ -20,6 +26,7 @@ let
         $DRY_RUN_CMD rm -f $VERBOSE_ARG "${targetFile}"
       fi
       $DRY_RUN_CMD install -m 0644 $VERBOSE_ARG "${source}" "${targetFile}"
+      ${lib.concatMapStrings installExtraSource extraSources}
     '';
 in
 {
@@ -31,6 +38,15 @@ in
     ${installSkill {
       name = "ansible";
       source = ./ai/skills/ansible/SKILL.md;
+    }}
+    ${installSkill {
+      name = "grill-me";
+      source = ./ai/skills/grill-me/SKILL.md;
+    }}
+    ${installSkill {
+      name = "idiomatic-go";
+      source = ./ai/skills/idiomatic-go/SKILL.md;
+      extraSources = [ ./ai/skills/idiomatic-go/style-guide.md ];
     }}
     ${installSkill {
       name = "write";

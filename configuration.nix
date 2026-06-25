@@ -196,7 +196,6 @@ in
     ];
 
     taps = [
-      "ThreeDotsLabs/tap"
     ];
 
     # Some CLI tools are better from Homebrew

@@ -83,6 +83,7 @@ in
           ../modules/alacritty.nix
           ../modules/zsh.nix
           ../modules/tmux.nix
+          ../modules/nvim.nix
           ../modules/git.nix
           ../modules/tools.nix
           ../modules/claude.nix

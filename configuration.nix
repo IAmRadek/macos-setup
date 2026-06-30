@@ -35,6 +35,7 @@ in
     watch
     fzf
     tmux
+    neovim
     btop
     go-task
 
@@ -113,6 +114,7 @@ in
     hurl
     w3m-full
     monolith
+    httpie
 
     # AI / LLM
     aichat
@@ -201,7 +203,6 @@ in
     # Some CLI tools are better from Homebrew
     brews = [
       "helm"
-      "tdl"
       "hcloud"
       # macOS-specific tools that integrate deeply with the system
       # "mas"  # Mac App Store CLI

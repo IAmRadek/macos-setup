@@ -109,6 +109,31 @@
           mods = "Command";
           chars = builtins.fromJSON ''"\u0001"'';
         }
+        {
+          key = "P";
+          mods = "Command";
+          chars = builtins.fromJSON ''"\u0010"'';
+        }
+        {
+          key = "Backspace";
+          mods = "Control";
+          chars = builtins.fromJSON ''"\u0017"'';
+        }
+        {
+          key = "Backspace";
+          mods = "Command";
+          chars = builtins.fromJSON ''"\u0017"'';
+        }
+        {
+          key = "Delete";
+          mods = "Control";
+          chars = builtins.fromJSON ''"\u001B[3;5~"'';
+        }
+        {
+          key = "Delete";
+          mods = "Command";
+          chars = builtins.fromJSON ''"\u0017"'';
+        }
       ];
 
       window = {

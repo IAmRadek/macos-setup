@@ -50,6 +50,11 @@
         "alt+left=text:\\x1bb"
         "super+right=text:\\x05"
         "super+left=text:\\x01"
+        "super+p=text:\\x10"
+        "ctrl+backspace=text:\\x17"
+        "super+backspace=text:\\x17"
+        "ctrl+delete=text:\\x1b[3;5~"
+        "super+delete=text:\\x17"
       ];
     };
   };

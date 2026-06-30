@@ -109,6 +109,11 @@ in
       # word jumps
       "alt+right" = "send_text all \\x1bF";
       "alt+left" = "send_text all \\x1bB";
+      "cmd+p" = "send_text all \\x10";
+      "ctrl+backspace" = "send_text all \\x17";
+      "cmd+backspace" = "send_text all \\x17";
+      "ctrl+delete" = "send_text all \\x1b[3;5~";
+      "cmd+delete" = "send_text all \\x17";
 
       "cmd+f" =
         "launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id";

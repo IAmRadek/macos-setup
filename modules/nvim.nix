@@ -19,6 +19,7 @@
       nvim-lspconfig
       blink-cmp
       conform-nvim
+      which-key-nvim
       (nvim-treesitter.withPlugins (
         parsers: with parsers; [
           go
@@ -33,6 +34,9 @@
     initLua = ''
       vim.g.loaded_netrw = 1
       vim.g.loaded_netrwPlugin = 1
+
+      vim.g.mapleader = " "
+      vim.g.maplocalleader = " "
 
       vim.g.everforest_background = "medium"
       vim.g.everforest_enable_italic = 1
@@ -113,10 +117,14 @@
         },
       })
 
+      require("which-key").setup({
+        preset = "helix",
+      })
+
       local blink = require("blink.cmp")
       blink.setup({
         keymap = {
-          preset = "default",
+          preset = "super-tab",
           ["<C-Space>"] = { "show", "show_documentation", "hide_documentation" },
         },
         completion = {
@@ -245,9 +253,55 @@
       map("n", "<F2>", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
       map("n", "<F5>", vim.lsp.codelens.run, vim.tbl_extend("force", opts, { desc = "Run code lens" }))
       map("n", "<F12>", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "Go to definition" }))
+      map("n", "<M-Left>", "<C-o>", vim.tbl_extend("force", opts, { desc = "Go back" }))
+      map("n", "<M-Right>", "<C-i>", vim.tbl_extend("force", opts, { desc = "Go forward" }))
+      map("i", "<M-Left>", "<C-o><C-o>", vim.tbl_extend("force", opts, { desc = "Go back" }))
+      map("i", "<M-Right>", "<C-o><C-i>", vim.tbl_extend("force", opts, { desc = "Go forward" }))
       map("n", "<S-F12>", "<cmd>FzfLua lsp_references<CR>", vim.tbl_extend("force", opts, { desc = "Find references" }))
       map("n", "<C-.>", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "Code action" }))
       map("n", "<C-d>", vim.diagnostic.open_float, vim.tbl_extend("force", opts, { desc = "Show diagnostic" }))
+
+      local wk = require("which-key")
+      wk.add({
+        { "<leader>f", group = "Find" },
+        { "<leader>ff", "<cmd>FzfLua files<CR>", desc = "Files" },
+        { "<leader>fg", "<cmd>FzfLua live_grep<CR>", desc = "Grep in project" },
+        { "<leader>fr", "<cmd>FzfLua lsp_references<CR>", desc = "References" },
+        { "<leader>f/", "<cmd>FzfLua blines<CR>", desc = "Find in current file" },
+
+        { "<leader>g", group = "Go to" },
+        { "<leader>gd", vim.lsp.buf.definition, desc = "Definition" },
+        { "<leader>gi", vim.lsp.buf.implementation, desc = "Implementation" },
+        { "<leader>gt", vim.lsp.buf.type_definition, desc = "Type definition" },
+        { "<leader>gb", function() vim.cmd("normal! \15") end, desc = "Back (previous position)" },
+        { "<leader>gf", function() vim.cmd("normal! \9") end, desc = "Forward" },
+
+        { "<leader>c", group = "Code" },
+        { "<leader>ca", vim.lsp.buf.code_action, desc = "Action" },
+        { "<leader>cr", vim.lsp.buf.rename, desc = "Rename" },
+        { "<leader>cl", vim.lsp.codelens.run, desc = "Run code lens" },
+        { "<leader>ck", vim.lsp.buf.hover, desc = "Show docs" },
+
+        { "<leader>d", vim.diagnostic.open_float, desc = "Diagnostic" },
+
+        { "<leader>e", group = "Explorer" },
+        { "<leader>eo", "<cmd>NvimTreeFocus<CR>", desc = "Focus tree" },
+        { "<leader>eb", "<cmd>NvimTreeToggle<CR>", desc = "Toggle tree" },
+
+        { "<leader>w", "<cmd>write<CR>", desc = "Save" },
+        { "<leader>q", "<cmd>confirm quit<CR>", desc = "Quit" },
+        { "<leader>n", "<cmd>enew<CR>", desc = "New file" },
+      })
+
+      local function show_menu()
+        wk.show({ keys = "<leader>", loop = true })
+      end
+
+      map({ "n", "v" }, "<Space>", "<Nop>", opts)
+      map("n", "?", show_menu, vim.tbl_extend("force", opts, { desc = "Command menu" }))
+      map("n", "<F1>", show_menu, vim.tbl_extend("force", opts, { desc = "Command menu" }))
+      map("i", "<F1>", show_menu, vim.tbl_extend("force", opts, { desc = "Command menu" }))
+      map("v", "<F1>", show_menu, vim.tbl_extend("force", opts, { desc = "Command menu" }))
 
       map("n", "<C-n>", "<cmd>enew<CR>", vim.tbl_extend("force", opts, { desc = "New file" }))
       map("i", "<C-n>", "<Esc><cmd>enew<CR>", vim.tbl_extend("force", opts, { desc = "New file" }))

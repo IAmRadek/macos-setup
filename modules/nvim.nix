@@ -20,6 +20,7 @@
       blink-cmp
       conform-nvim
       which-key-nvim
+      gitsigns-nvim
       (nvim-treesitter.withPlugins (
         parsers: with parsers; [
           go
@@ -119,6 +120,18 @@
 
       require("which-key").setup({
         preset = "helix",
+      })
+
+      require("gitsigns").setup({
+        signs = {
+          add = { text = "┃" },
+          change = { text = "┃" },
+          delete = { text = "▁" },
+          topdelete = { text = "▔" },
+          changedelete = { text = "┃" },
+          untracked = { text = "┆" },
+        },
+        current_line_blame = false,
       })
 
       local blink = require("blink.cmp")
@@ -273,8 +286,8 @@
         { "<leader>gd", vim.lsp.buf.definition, desc = "Definition" },
         { "<leader>gi", vim.lsp.buf.implementation, desc = "Implementation" },
         { "<leader>gt", vim.lsp.buf.type_definition, desc = "Type definition" },
-        { "<leader>gb", function() vim.cmd("normal! \15") end, desc = "Back (previous position)" },
-        { "<leader>gf", function() vim.cmd("normal! \9") end, desc = "Forward" },
+        { "<leader>gb", function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", false) end, desc = "Back (previous position)" },
+        { "<leader>gf", function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-i>", true, false, true), "n", false) end, desc = "Forward" },
 
         { "<leader>c", group = "Code" },
         { "<leader>ca", vim.lsp.buf.code_action, desc = "Action" },
@@ -287,6 +300,16 @@
         { "<leader>e", group = "Explorer" },
         { "<leader>eo", "<cmd>NvimTreeFocus<CR>", desc = "Focus tree" },
         { "<leader>eb", "<cmd>NvimTreeToggle<CR>", desc = "Toggle tree" },
+
+        { "<leader>h", group = "Git" },
+        { "<leader>hp", function() require("gitsigns").preview_hunk() end, desc = "Preview change" },
+        { "<leader>hr", function() require("gitsigns").reset_hunk() end, desc = "Rollback change" },
+        { "<leader>hs", function() require("gitsigns").stage_hunk() end, desc = "Stage change" },
+        { "<leader>hb", function() require("gitsigns").blame_line({ full = true }) end, desc = "Blame line" },
+        { "<leader>hn", function() require("gitsigns").nav_hunk("next") end, desc = "Next change" },
+        { "<leader>hN", function() require("gitsigns").nav_hunk("prev") end, desc = "Previous change" },
+        { "<leader>hd", function() require("gitsigns").diffthis() end, desc = "Diff this file" },
+        { "<leader>hB", function() require("gitsigns").toggle_current_line_blame() end, desc = "Toggle inline blame" },
 
         { "<leader>w", "<cmd>write<CR>", desc = "Save" },
         { "<leader>q", "<cmd>confirm quit<CR>", desc = "Quit" },

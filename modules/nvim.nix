@@ -21,6 +21,7 @@
       conform-nvim
       which-key-nvim
       gitsigns-nvim
+      bufferline-nvim
       (nvim-treesitter.withPlugins (
         parsers: with parsers; [
           go
@@ -134,6 +135,22 @@
         current_line_blame = false,
       })
 
+      require("bufferline").setup({
+        options = {
+          diagnostics = "nvim_lsp",
+          separator_style = "thin",
+          show_close_icon = false,
+          truncate_names = false,
+          max_name_length = 60,
+          name_formatter = function(buf)
+            return vim.fn.fnamemodify(buf.path, ":.")
+          end,
+          offsets = {
+            { filetype = "NvimTree", text = "Explorer", highlight = "Directory", separator = true },
+          },
+        },
+      })
+
       local blink = require("blink.cmp")
       blink.setup({
         keymap = {
@@ -194,7 +211,6 @@
             codelenses = {
               generate = true,
               regenerate_cgo = true,
-              run_govulncheck = true,
               test = true,
               tidy = true,
               upgrade_dependency = true,
@@ -301,6 +317,14 @@
         { "<leader>eo", "<cmd>NvimTreeFocus<CR>", desc = "Focus tree" },
         { "<leader>eb", "<cmd>NvimTreeToggle<CR>", desc = "Toggle tree" },
 
+        { "<leader>b", group = "Buffers" },
+        { "<leader>bb", "<cmd>FzfLua buffers<CR>", desc = "Open files" },
+        { "<leader>br", "<cmd>FzfLua oldfiles<CR>", desc = "Recent files" },
+        { "<leader>bn", "<cmd>BufferLineCycleNext<CR>", desc = "Next file" },
+        { "<leader>bp", "<cmd>BufferLineCyclePrev<CR>", desc = "Previous file" },
+        { "<leader>bd", "<cmd>bdelete<CR>", desc = "Close file" },
+        { "<leader>bo", "<cmd>BufferLineCloseOthers<CR>", desc = "Close others" },
+
         { "<leader>h", group = "Git" },
         { "<leader>hp", function() require("gitsigns").preview_hunk() end, desc = "Preview change" },
         { "<leader>hr", function() require("gitsigns").reset_hunk() end, desc = "Rollback change" },
@@ -332,6 +356,11 @@
       map("i", "<C-o>", "<Esc><cmd>NvimTreeFocus<CR>", vim.tbl_extend("force", opts, { desc = "Focus file manager" }))
       map("n", "<C-b>", "<cmd>NvimTreeToggle<CR>", vim.tbl_extend("force", opts, { desc = "Toggle file manager" }))
       map("i", "<C-b>", "<Esc><cmd>NvimTreeToggle<CR>", vim.tbl_extend("force", opts, { desc = "Toggle file manager" }))
+
+      map("n", "<C-Tab>", "<cmd>BufferLineCycleNext<CR>", vim.tbl_extend("force", opts, { desc = "Next file" }))
+      map("n", "<C-S-Tab>", "<cmd>BufferLineCyclePrev<CR>", vim.tbl_extend("force", opts, { desc = "Previous file" }))
+      map("i", "<C-Tab>", "<cmd>BufferLineCycleNext<CR>", vim.tbl_extend("force", opts, { desc = "Next file" }))
+      map("i", "<C-S-Tab>", "<cmd>BufferLineCyclePrev<CR>", vim.tbl_extend("force", opts, { desc = "Previous file" }))
 
       vim.api.nvim_create_autocmd("VimEnter", {
         callback = function(data)

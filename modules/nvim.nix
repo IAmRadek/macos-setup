@@ -9,6 +9,8 @@
       gopls
       gotools
       gofumpt
+      ripgrep
+      fd
     ];
 
     plugins = with pkgs.vimPlugins; [
@@ -22,6 +24,18 @@
       which-key-nvim
       gitsigns-nvim
       bufferline-nvim
+      render-markdown-nvim
+      claudecode-nvim
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "gesture-nvim";
+        version = "eb1e075";
+        src = pkgs.fetchFromGitHub {
+          owner = "notomo";
+          repo = "gesture.nvim";
+          rev = "eb1e0753837371205df04ff2427b27c0cb1047d5";
+          hash = "sha256-wU/a/r9MqyASbq80QH3zH5I8Us/FqrTPLAs7YV3ucpo=";
+        };
+      })
       (nvim-treesitter.withPlugins (
         parsers: with parsers; [
           go
@@ -29,6 +43,8 @@
           gosum
           gowork
           gotmpl
+          markdown
+          markdown_inline
         ]
       ))
     ];
@@ -57,6 +73,7 @@
       vim.opt.ignorecase = true
       vim.opt.smartcase = true
       vim.opt.undofile = true
+      vim.opt.autoread = true
       vim.opt.confirm = true
       vim.opt.updatetime = 250
       vim.opt.splitright = true
@@ -66,6 +83,12 @@
       vim.opt.shiftwidth = 2
 
       vim.cmd.colorscheme("everforest")
+
+      -- Pronounced current-line highlight (override everforest's subtle default).
+      vim.opt.cursorline = true
+      vim.opt.cursorlineopt = "number,line"
+      vim.api.nvim_set_hl(0, "CursorLine", { bg = "#3a464c" })
+      vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#e69875", bold = true })
 
       require("nvim-tree").setup({
         view = {
@@ -85,6 +108,13 @@
         },
         filters = {
           dotfiles = false,
+          git_ignored = false,
+        },
+        update_focused_file = {
+          enable = true,
+        },
+        filesystem_watchers = {
+          enable = true,
         },
         actions = {
           open_file = {
@@ -150,6 +180,8 @@
           },
         },
       })
+
+      require("render-markdown").setup({})
 
       local blink = require("blink.cmp")
       blink.setup({
@@ -242,6 +274,15 @@
       local map = vim.keymap.set
       local opts = { noremap = true, silent = true }
 
+      local function goto_line()
+        vim.ui.input({ prompt = "Go to line: " }, function(input)
+          if input and input:match("^%d+$") then
+            local line = math.min(tonumber(input), vim.api.nvim_buf_line_count(0))
+            vim.api.nvim_win_set_cursor(0, { line, 0 })
+          end
+        end)
+      end
+
       map("n", "<C-s>", "<cmd>write<CR>", vim.tbl_extend("force", opts, { desc = "Save" }))
       map("i", "<C-s>", "<C-o>:write<CR>", vim.tbl_extend("force", opts, { desc = "Save" }))
       map("v", "<C-s>", "<Esc><cmd>write<CR>", vim.tbl_extend("force", opts, { desc = "Save" }))
@@ -267,6 +308,10 @@
       map("v", "<C-v>", "\"+P", vim.tbl_extend("force", opts, { desc = "Paste" }))
       map("i", "<C-v>", "<C-r>+", vim.tbl_extend("force", opts, { desc = "Paste" }))
 
+      map("n", "<C-S-k>", '"_dd', vim.tbl_extend("force", opts, { desc = "Delete line" }))
+      map("i", "<C-S-k>", '<cmd>normal! "_dd<CR>', vim.tbl_extend("force", opts, { desc = "Delete line" }))
+      map("v", "<C-S-k>", '"_d', vim.tbl_extend("force", opts, { desc = "Delete selection" }))
+
       map("i", "<C-BS>", "<C-w>", vim.tbl_extend("force", opts, { desc = "Delete previous word" }))
       map("i", "<C-h>", "<C-w>", vim.tbl_extend("force", opts, { desc = "Delete previous word" }))
       map("i", "<C-u>", "<C-w>", vim.tbl_extend("force", opts, { desc = "Delete previous word" }))
@@ -281,27 +326,61 @@
       map("n", "<C-Space>", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Show docs" }))
       map("n", "<F2>", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Rename symbol" }))
       map("n", "<F5>", vim.lsp.codelens.run, vim.tbl_extend("force", opts, { desc = "Run code lens" }))
-      map("n", "<F12>", vim.lsp.buf.definition, vim.tbl_extend("force", opts, { desc = "Go to definition" }))
       map("n", "<M-Left>", "<C-o>", vim.tbl_extend("force", opts, { desc = "Go back" }))
       map("n", "<M-Right>", "<C-i>", vim.tbl_extend("force", opts, { desc = "Go forward" }))
       map("i", "<M-Left>", "<C-o><C-o>", vim.tbl_extend("force", opts, { desc = "Go back" }))
       map("i", "<M-Right>", "<C-o><C-i>", vim.tbl_extend("force", opts, { desc = "Go forward" }))
-      map("n", "<S-F12>", "<cmd>FzfLua lsp_references<CR>", vim.tbl_extend("force", opts, { desc = "Find references" }))
       map("n", "<C-.>", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "Code action" }))
+
+      map("n", "<A-LeftMouse>", "<LeftMouse><cmd>lua vim.lsp.buf.definition()<CR>", vim.tbl_extend("force", opts, { desc = "Go to definition (Opt+click)" }))
+      map("n", "<A-S-LeftMouse>", "<LeftMouse><cmd>FzfLua lsp_references<CR>", vim.tbl_extend("force", opts, { desc = "Find references (Opt+Shift+click)" }))
       map("n", "<C-d>", vim.diagnostic.open_float, vim.tbl_extend("force", opts, { desc = "Show diagnostic" }))
+
+      -- Mouse gestures: hold Shift + drag one finger left/right for back/forward.
+      -- Shift is used so a plain left-drag still selects text. (mouse-shift-capture=always in Ghostty)
+      local gesture = require("gesture")
+      gesture.register({
+        name = "back",
+        inputs = { gesture.left() },
+        action = function()
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", false)
+        end,
+      })
+      gesture.register({
+        name = "forward",
+        inputs = { gesture.right() },
+        action = function()
+          vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-i>", true, false, true), "n", false)
+        end,
+      })
+      -- Neutralize the Shift-press so it only positions the cursor (stays in normal
+      -- mode) instead of starting a Select-mode selection, so the drag map below fires.
+      map("n", "<S-LeftMouse>", "<LeftMouse>", vim.tbl_extend("force", opts, { desc = "Gesture start" }))
+      map("n", "<S-LeftDrag>", function() require("gesture").draw() end, vim.tbl_extend("force", opts, { desc = "Draw gesture" }))
+      map("n", "<S-LeftRelease>", function() require("gesture").finish() end, vim.tbl_extend("force", opts, { desc = "Finish gesture" }))
+
+      -- Claude Code: connects the `claude` CLI to nvim as an IDE (WebSocket/MCP),
+      -- so its edits show up as native diffs you accept/reject — like the GoLand plugin.
+      require("claudecode").setup({
+        terminal_cmd = "/opt/homebrew/bin/claude",
+      })
 
       local wk = require("which-key")
       wk.add({
         { "<leader>f", group = "Find" },
         { "<leader>ff", "<cmd>FzfLua files<CR>", desc = "Files" },
+        { "<leader>fa", function() require("fzf-lua").files({ fd_opts = "--color=never --type f --hidden --follow --no-ignore --exclude .git" }) end, desc = "Files (incl. ignored)" },
         { "<leader>fg", "<cmd>FzfLua live_grep<CR>", desc = "Grep in project" },
-        { "<leader>fr", "<cmd>FzfLua lsp_references<CR>", desc = "References" },
+        { "<leader>fr", "<cmd>FzfLua lsp_references<CR>", desc = "References (all usages)" },
+        { "<leader>fc", function() require("fzf-lua").lsp_incoming_calls() end, desc = "Callers (incoming calls)" },
+        { "<leader>fC", function() require("fzf-lua").lsp_outgoing_calls() end, desc = "Callees (outgoing calls)" },
         { "<leader>f/", "<cmd>FzfLua blines<CR>", desc = "Find in current file" },
 
         { "<leader>g", group = "Go to" },
         { "<leader>gd", vim.lsp.buf.definition, desc = "Definition" },
         { "<leader>gi", vim.lsp.buf.implementation, desc = "Implementation" },
         { "<leader>gt", vim.lsp.buf.type_definition, desc = "Type definition" },
+        { "<leader>gl", goto_line, desc = "Go to line" },
         { "<leader>gb", function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-o>", true, false, true), "n", false) end, desc = "Back (previous position)" },
         { "<leader>gf", function() vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-i>", true, false, true), "n", false) end, desc = "Forward" },
 
@@ -316,6 +395,7 @@
         { "<leader>e", group = "Explorer" },
         { "<leader>eo", "<cmd>NvimTreeFocus<CR>", desc = "Focus tree" },
         { "<leader>eb", "<cmd>NvimTreeToggle<CR>", desc = "Toggle tree" },
+        { "<leader>er", "<cmd>NvimTreeRefresh<CR>", desc = "Refresh tree" },
 
         { "<leader>b", group = "Buffers" },
         { "<leader>bb", "<cmd>FzfLua buffers<CR>", desc = "Open files" },
@@ -334,6 +414,17 @@
         { "<leader>hN", function() require("gitsigns").nav_hunk("prev") end, desc = "Previous change" },
         { "<leader>hd", function() require("gitsigns").diffthis() end, desc = "Diff this file" },
         { "<leader>hB", function() require("gitsigns").toggle_current_line_blame() end, desc = "Toggle inline blame" },
+
+        { "<leader>a", group = "AI / Claude" },
+        { "<leader>ac", "<cmd>ClaudeCode<CR>", desc = "Toggle Claude" },
+        { "<leader>af", "<cmd>ClaudeCodeFocus<CR>", desc = "Focus Claude" },
+        { "<leader>ar", "<cmd>ClaudeCode --resume<CR>", desc = "Resume session" },
+        { "<leader>aC", "<cmd>ClaudeCode --continue<CR>", desc = "Continue session" },
+        { "<leader>am", "<cmd>ClaudeCodeSelectModel<CR>", desc = "Select model" },
+        { "<leader>ab", "<cmd>ClaudeCodeAdd %<CR>", desc = "Add current buffer to context" },
+        { "<leader>as", "<cmd>ClaudeCodeSend<CR>", desc = "Send selection", mode = "v" },
+        { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<CR>", desc = "Accept diff" },
+        { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<CR>", desc = "Deny diff" },
 
         { "<leader>w", "<cmd>write<CR>", desc = "Save" },
         { "<leader>q", "<cmd>confirm quit<CR>", desc = "Quit" },
@@ -357,11 +448,6 @@
       map("n", "<C-b>", "<cmd>NvimTreeToggle<CR>", vim.tbl_extend("force", opts, { desc = "Toggle file manager" }))
       map("i", "<C-b>", "<Esc><cmd>NvimTreeToggle<CR>", vim.tbl_extend("force", opts, { desc = "Toggle file manager" }))
 
-      map("n", "<C-Tab>", "<cmd>BufferLineCycleNext<CR>", vim.tbl_extend("force", opts, { desc = "Next file" }))
-      map("n", "<C-S-Tab>", "<cmd>BufferLineCyclePrev<CR>", vim.tbl_extend("force", opts, { desc = "Previous file" }))
-      map("i", "<C-Tab>", "<cmd>BufferLineCycleNext<CR>", vim.tbl_extend("force", opts, { desc = "Next file" }))
-      map("i", "<C-S-Tab>", "<cmd>BufferLineCyclePrev<CR>", vim.tbl_extend("force", opts, { desc = "Previous file" }))
-
       vim.api.nvim_create_autocmd("VimEnter", {
         callback = function(data)
           local api = require("nvim-tree.api")
@@ -382,6 +468,14 @@
         pattern = { "*.go", "go.mod", "go.work" },
         callback = function()
           vim.lsp.codelens.refresh({ bufnr = 0 })
+        end,
+      })
+
+      vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "TermClose", "TermLeave" }, {
+        callback = function()
+          if vim.o.buftype == "" and vim.fn.mode() ~= "c" then
+            vim.cmd("checktime")
+          end
         end,
       })
     '';

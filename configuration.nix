@@ -184,6 +184,7 @@ in
       "signal"
       "whatsapp"
       "discord"
+      "thunderbird"
       # "zoom"
 
       # Media
@@ -269,6 +270,36 @@ in
         AppleInterfaceStyle = "Dark";
       };
     };
+
+    # Spotlight: keep it as an app launcher, not a file search.
+    # Enables the Applications category (plus harmless menu utilities) and
+    # disables every file category so documents/images/PDFs/etc. don't show up.
+    # Note: this controls what Spotlight *searches/shows*; the volume metadata
+    # index (mds) still runs — macOS can't index "apps only".
+    defaults.CustomUserPreferences."com.apple.Spotlight".orderedItems = [
+      { enabled = true;  name = "APPLICATIONS"; }
+      { enabled = true;  name = "MENU_EXPRESSION"; }         # Calculator
+      { enabled = true;  name = "MENU_DEFINITION"; }         # Dictionary
+      { enabled = true;  name = "MENU_CONVERSION"; }         # Unit conversion
+      { enabled = true;  name = "SYSTEM_PREFS"; }            # System Settings panes
+      { enabled = false; name = "MENU_SPOTLIGHT_SUGGESTIONS"; }
+      { enabled = false; name = "MENU_WEBSEARCH"; }
+      { enabled = false; name = "DOCUMENTS"; }
+      { enabled = false; name = "DIRECTORIES"; }
+      { enabled = false; name = "PRESENTATIONS"; }
+      { enabled = false; name = "SPREADSHEETS"; }
+      { enabled = false; name = "PDF"; }
+      { enabled = false; name = "MESSAGES"; }
+      { enabled = false; name = "CONTACT"; }
+      { enabled = false; name = "EVENT_TODO"; }
+      { enabled = false; name = "IMAGES"; }
+      { enabled = false; name = "BOOKMARKS"; }
+      { enabled = false; name = "MUSIC"; }
+      { enabled = false; name = "MOVIES"; }
+      { enabled = false; name = "FONTS"; }
+      { enabled = false; name = "SOURCE"; }
+      { enabled = false; name = "MENU_OTHER"; }
+    ];
   };
 
   # Fix nixbld group GID mismatch

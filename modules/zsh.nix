@@ -43,6 +43,10 @@
           if [[ -n $TMUX ]]; then
             stty icrnl -inlcr -igncr 2>/dev/null
           fi
+
+          # Disable Ctrl-S/Ctrl-Q flow control so Cmd+S (Ctrl-S) doesn't freeze
+          # the terminal at the shell prompt (XOFF). Frees Ctrl-S for editors.
+          stty -ixon 2>/dev/null
         '';
         zshConfigLateInit = lib.mkOrder 2000 ''
           # zprof

@@ -40,6 +40,7 @@
       ];
 
       macos-option-as-alt = true;
+      mouse-shift-capture = "always";
 
       window-padding-x = 10;
       window-padding-y = 10;
@@ -51,6 +52,12 @@
         "super+right=text:\\x05"
         "super+left=text:\\x01"
         "super+p=text:\\x10"
+        "super+s=text:\\x13"
+        "super+z=text:\\x1a"
+        "super+y=text:\\x19"
+        "super+x=text:\\x18"
+        "super+a=text:\\x01"
+        "super+f=text:\\x06"
         "ctrl+backspace=text:\\x17"
         "super+backspace=text:\\x17"
         "ctrl+delete=text:\\x1b[3;5~"

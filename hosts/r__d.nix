@@ -132,7 +132,6 @@ in
 
         imports = [
 
-          ../modules/kitty.nix
           ../modules/alacritty.nix
           ../modules/ghostty.nix
           ../modules/zsh.nix

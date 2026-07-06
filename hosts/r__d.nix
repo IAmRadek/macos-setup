@@ -71,13 +71,6 @@ in
             /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm"
           '';
 
-          nbCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            # Fetch once; skip the network on every subsequent rebuild.
-            if [ ! -f "$HOME/.cache/zsh/_nb" ]; then
-              $DRY_RUN_CMD ${pkgs.curl}/bin/curl -L https://raw.githubusercontent.com/xwmx/nb/master/etc/nb-completion.zsh -o $HOME/.cache/zsh/_nb
-            fi
-          '';
-
           sshPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.nix-darwin/private"
             $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.ssh"
@@ -106,10 +99,10 @@ in
         programs.ssh = {
           enable = true;
           enableDefaultConfig = false;
-          matchBlocks."*" = {
-            extraOptions.IdentityAgent = ''"~/.ssh/proton-pass-agent.sock"'';
+          settings."*" = {
+            identityAgent = ''"~/.ssh/proton-pass-agent.sock"'';
           };
-          matchBlocks.homelab = {
+          settings.homelab = {
             hostname = "10.10.0.100";
             user = "homelab";
             forwardAgent = true;

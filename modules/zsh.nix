@@ -142,7 +142,6 @@
           # Ensure compinit is properly initialized for zinit
           compinit -u -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
 
-          compdef _nb nb 2>/dev/null
           compdef _helm helm 2>/dev/null
           compdef _git-town git-town 2>/dev/null
           compdef _watson watson 2>/dev/null

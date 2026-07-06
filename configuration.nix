@@ -131,7 +131,6 @@ in
     # Docs, Presentations & Notes
     navi
     glow
-    nb
     presenterm
     hugo
     tldr

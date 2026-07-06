@@ -5,7 +5,6 @@ let
 in
 {
   imports = [
-    ../modules/caddy.nix
     ../modules/tailscale.nix
   ];
 
@@ -73,7 +72,10 @@ in
           '';
 
           nbCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            ${pkgs.curl}/bin/curl -L https://raw.githubusercontent.com/xwmx/nb/master/etc/nb-completion.zsh -o $HOME/.cache/zsh/_nb
+            # Fetch once; skip the network on every subsequent rebuild.
+            if [ ! -f "$HOME/.cache/zsh/_nb" ]; then
+              $DRY_RUN_CMD ${pkgs.curl}/bin/curl -L https://raw.githubusercontent.com/xwmx/nb/master/etc/nb-completion.zsh -o $HOME/.cache/zsh/_nb
+            fi
           '';
 
           sshPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -138,7 +140,6 @@ in
         imports = [
 
           ../modules/kitty.nix
-          ../modules/media.nix
           ../modules/alacritty.nix
           ../modules/ghostty.nix
           ../modules/zsh.nix
@@ -150,12 +151,9 @@ in
           ../modules/navi.nix
           ../modules/claude.nix
           ../modules/codex.nix
-          ../modules/knowledge.nix
           ../modules/zed.nix
           # LLM stack
           ../modules/ollama.nix
-          ../modules/open-webui.nix
-          ../modules/continue.nix
         ];
 
         # Configure nano with xdg.configFile

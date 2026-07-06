@@ -25,6 +25,9 @@
       gitsigns-nvim
       bufferline-nvim
       render-markdown-nvim
+      trouble-nvim
+      vim-dadbod
+      vim-dadbod-ui
       claudecode-nvim
       (pkgs.vimUtils.buildVimPlugin {
         pname = "gesture-nvim";
@@ -365,6 +368,18 @@
         terminal_cmd = "/opt/homebrew/bin/claude",
       })
 
+      -- Trouble: a persistent "Problems" panel — all diagnostics grouped by file,
+      -- live-updating, jump-to-code. Also renders quickfix/loclist/lsp/symbols.
+      require("trouble").setup({})
+
+      -- dadbod-ui: database client (sqlite/postgres/mysql/...). tpope-style, so
+      -- configured via vim.g. Toggle the drawer with :DBUIToggle (Space D u).
+      -- Add saved connections here, e.g.:
+      --   vim.g.dbs = { { name = "local", url = "sqlite:" .. vim.fn.expand("~/app.db") } }
+      vim.g.db_ui_use_nerd_fonts = 1
+      vim.g.db_ui_show_database_icon = 1
+      vim.g.db_ui_win_position = "left"
+
       local wk = require("which-key")
       wk.add({
         { "<leader>f", group = "Find" },
@@ -414,6 +429,25 @@
         { "<leader>hN", function() require("gitsigns").nav_hunk("prev") end, desc = "Previous change" },
         { "<leader>hd", function() require("gitsigns").diffthis() end, desc = "Diff this file" },
         { "<leader>hB", function() require("gitsigns").toggle_current_line_blame() end, desc = "Toggle inline blame" },
+
+        { "<leader>x", group = "Problems" },
+        { "<leader>xx", "<cmd>Trouble diagnostics toggle filter.buf=0<CR>", desc = "Problems (this file)" },
+        { "<leader>xX", "<cmd>Trouble diagnostics toggle<CR>", desc = "Problems (workspace)" },
+        { "<leader>xq", "<cmd>Trouble qflist toggle<CR>", desc = "Quickfix panel" },
+        { "<leader>xl", "<cmd>Trouble loclist toggle<CR>", desc = "Location list panel" },
+        { "<leader>xs", "<cmd>Trouble symbols toggle focus=false<CR>", desc = "Symbols outline" },
+        { "<leader>xv", function()
+            vim.cmd("compiler go")
+            vim.cmd("cexpr system('go vet ./...')")
+            vim.cmd("Trouble qflist open")
+          end, desc = "Vet project → panel" },
+
+        { "<leader>D", group = "Database" },
+        { "<leader>Du", "<cmd>DBUIToggle<CR>", desc = "Toggle DB drawer" },
+        { "<leader>Da", "<cmd>DBUIAddConnection<CR>", desc = "Add connection" },
+        { "<leader>Df", "<cmd>DBUIFindBuffer<CR>", desc = "Find query buffer" },
+        { "<leader>Dr", "<cmd>DBUIRenameBuffer<CR>", desc = "Rename query buffer" },
+        { "<leader>Dl", "<cmd>DBUILastQueryInfo<CR>", desc = "Last query info" },
 
         { "<leader>a", group = "AI / Claude" },
         { "<leader>ac", "<cmd>ClaudeCode<CR>", desc = "Toggle Claude" },

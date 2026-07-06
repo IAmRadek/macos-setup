@@ -63,6 +63,36 @@ Leader = `Space`. Open the menu with **`?`** or **`F1`**, then type the letters 
 | `Space h d` | Diff this file |
 | `Space h B` | Toggle inline blame |
 
+### `Space x` — Problems (trouble.nvim)
+A persistent panel listing diagnostics grouped by file, live-updating; `Enter` jumps to code. `q` closes the panel.
+
+| Keys | Action |
+|---|---|
+| `Space x x` | Problems in this file |
+| `Space x X` | Problems across workspace |
+| `Space x q` | Quickfix as panel |
+| `Space x l` | Location list as panel |
+| `Space x s` | Symbols outline (follows buffer) |
+| `Space x v` | `go vet ./...` whole project → panel |
+
+> Note: LSP (gopls) only reports problems for **open files + their packages**. `Space x v` runs `go vet` over the whole module into quickfix for a true project-wide sweep — swap in `golangci-lint run` if you prefer.
+
+### `Space D` — Database (dadbod-ui)
+A DB client drawer (sqlite/postgres/mysql/…). SQLite works out of the box; postgres/mysql need `psql`/`mysql` on PATH.
+
+| Keys | Action |
+|---|---|
+| `Space D u` | Toggle DB drawer |
+| `Space D a` | Add a connection (prompts for URL) |
+| `Space D f` | Find/switch query buffer |
+| `Space D r` | Rename query buffer |
+| `Space D l` | Last query info |
+
+**Inside the drawer:** `Enter`/`o` expand a connection → database → tables. Open a table to preview it, or open a scratch SQL buffer, write a query, and run it with **`Space S`** (normal, whole buffer) or select SQL + **`Space S`** (visual). Results open in a split.
+
+**Saved connections:** add them in `modules/nvim.nix` via `vim.g.dbs`, e.g.
+`vim.g.dbs = { { name = "local", url = "sqlite:" .. vim.fn.expand("~/app.db") } }`. Or add ad-hoc with `Space D a`.
+
 ### `Space a` — AI / Claude Code
 Connects the `claude` CLI to nvim as an IDE (WebSocket/MCP) — edits appear as native accept/reject diffs, like the GoLand plugin.
 

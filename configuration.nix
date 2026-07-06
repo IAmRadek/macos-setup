@@ -145,9 +145,11 @@ in
   homebrew = {
     enable = true;
     onActivation = {
-      autoUpdate = true;
+      # Don't hit the network / upgrade casks on every rebuild — do it
+      # deliberately with `brew update && brew upgrade` when you want to.
+      autoUpdate = false;
       cleanup = "uninstall";
-      upgrade = true;
+      upgrade = false;
     };
 
     # GUI Apps
@@ -241,6 +243,20 @@ in
         "@admin"
       ];
     };
+
+    # Weekly garbage collection: drop generations older than 14 days.
+    gc = {
+      automatic = true;
+      interval = {
+        Weekday = 0;
+        Hour = 3;
+        Minute = 0;
+      };
+      options = "--delete-older-than 14d";
+    };
+
+    # Deduplicate the store via hardlinks after each build.
+    optimise.automatic = true;
   };
 
   system = {

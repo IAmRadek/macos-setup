@@ -16,7 +16,6 @@ in
   environment.systemPackages = with pkgs; [
     # Nix
     nixd
-    nil
 
     # Version Control
     git
@@ -45,7 +44,6 @@ in
     colima
     kubectl
     k3d
-    mutagen
 
     # Go
     go
@@ -67,7 +65,6 @@ in
 
     # JavaScript / Python
     nodejs
-    bun
     pnpm
     python3
     uv
@@ -81,15 +78,12 @@ in
     gnupg
     age
     tailscale
-    tailscale-gui
     googleCloudSdkWithPubsub
     google-cloud-sql-proxy
-    autossh
     infisical
 
     # Database
     postgresql
-    duckdb
 
     # Security & Auth
     _1password-cli
@@ -102,18 +96,13 @@ in
     jq
     ripgrep
     fd
-    ansifilter
     eza
     dust
     duf
     ghostscript
-    helix
 
     # Web & Network
     curl # (already above, move here or keep in core)
-    hurl
-    w3m-full
-    monolith
     httpie
 
     # AI / LLM
@@ -129,12 +118,10 @@ in
     ghostty-bin
 
     # Docs, Presentations & Notes
-    navi
     glow
     presenterm
     hugo
     tldr
-    chafa
 
     # Load Testing
     k6
@@ -155,7 +142,6 @@ in
     casks = [
       # Browsers
       "google-chrome"
-      "firefox"
       "zen"
 
       # Development
@@ -176,13 +162,11 @@ in
       "notion-calendar"
       "postman"
       "elgato-stream-deck"
-      "alt-tab"
       "menubar-apps/menubar-apps/pullbar"
 
       # Communication
       "slack"
       "telegram"
-      "signal"
       "whatsapp"
       "discord"
       "thunderbird"
@@ -193,8 +177,6 @@ in
       # "vlc"
       #
       "obsidian"
-      "textual"
-      "claude-code"
       "little-snitch"
       "coteditor"
     ];
@@ -223,7 +205,6 @@ in
         pkgs._1password-cli
         pkgs.proton-pass-cli
         pkgs.proton-pass
-        pkgs.tailscale-gui
       ];
     in
     pkg: builtins.elem (lib.getName pkg) whitelist;

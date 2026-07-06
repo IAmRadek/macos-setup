@@ -20,27 +20,6 @@ let
   '';
 in
 {
-  home.file.".config/kitty/navi_select.py".text = ''
-    from kitty.boss import Boss
-    import subprocess
-
-    NAVI = "${pkgs.navi}/bin/navi"
-
-    def main(args):
-        result = subprocess.run([NAVI, "--print"], capture_output=True, text=True)
-        if result.returncode != 0:
-            return ""
-        return result.stdout
-
-    def handle_result(args, answer, target_window_id, boss: Boss):
-        text = answer.strip()
-        if not text:
-            return
-        w = boss.window_id_map.get(target_window_id)
-        if w is not None:
-            w.paste_text(text)
-  '';
-
   home.file.".config/kitty/scroll_mark.py".source = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/trygveaa/kitty-kitten-search/refs/heads/master/scroll_mark.py";
     sha256 = "1a1l7sp2x247da8fr54wwq7ffm987wjal9nw2f38q956v3cfknzi";
@@ -118,7 +97,6 @@ in
       "cmd+f" =
         "launch --location=hsplit --allow-remote-control kitty +kitten search.py @active-kitty-window-id";
 
-      "ctrl+s>c" = "kitten navi_select.py";
       "ctrl+s>g" =
         "launch --type=overlay --cwd=current --keep-focus ${kubeContextPopup}/bin/kube-context-popup";
 

@@ -31,7 +31,7 @@ in
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
           "/Applications/Zen.app"
-          "${pkgs.alacritty}/Applications/Alacritty.app"
+          "${pkgs.ghostty-bin}/Applications/Ghostty.app"
           "/Users/${username}/Applications/Goland.app"
           "/Applications/Slack.app"
           "/Applications/Discord.app"
@@ -141,7 +141,6 @@ in
           ../modules/git.nix
           ../modules/tools.nix
           ../modules/aichat.nix
-          ../modules/navi.nix
           ../modules/claude.nix
           ../modules/codex.nix
           ../modules/zed.nix

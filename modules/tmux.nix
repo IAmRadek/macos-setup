@@ -74,11 +74,7 @@
       set -g window-status-current-format '#I:#(pwd="#{pane_current_path}"; echo ''${pwd###*/})#F'
       set -g status-interval 10
 
-      # ---- AI / navi binds ----
-
-      unbind-key -T prefix c
-      bind-key -T prefix c split-window -p 35 \
-        '$SHELL -lc "navi --print | tmux load-buffer -b navi_tmp - ; tmux paste-buffer -p -t {last} -b navi_tmp -d ; tmux kill-pane"'
+      # ---- AI binds ----
 
       bind-key -T prefix y split-window -p 35 \
         '$SHELL -lc "cmdai-tmux | tmux load-buffer -b ai_cmd - ; tmux paste-buffer -p -t {last} -b ai_cmd -d ; tmux kill-pane"'

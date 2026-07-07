@@ -89,7 +89,6 @@ in
     _1password-cli
     oath-toolkit
     nmap
-    proton-pass
     proton-pass-cli
 
     # File & Text Tools
@@ -110,6 +109,7 @@ in
     ollama
     opencode
     codex
+    claude-code
 
     # Media
     ffmpeg
@@ -126,6 +126,8 @@ in
     # Load Testing
     k6
   ];
+
+  nixpkgs.config.allowUnfree = true;
 
   # GUI Applications
   homebrew = {
@@ -204,7 +206,6 @@ in
         pkgs.google-chrome
         pkgs._1password-cli
         pkgs.proton-pass-cli
-        pkgs.proton-pass
       ];
     in
     pkg: builtins.elem (lib.getName pkg) whitelist;

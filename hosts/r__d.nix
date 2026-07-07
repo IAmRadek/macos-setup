@@ -79,6 +79,21 @@ in
             fi
             $DRY_RUN_CMD ln -sf $VERBOSE_ARG "$HOME/.nix-darwin/private/ssh.private" "$HOME/.ssh/config.private"
           '';
+
+          # Disable the pinch-to-Launchpad / "Apps" gestures so the pinch can be
+          # re-bound to Raycast in BetterTouchTool (see README). On macOS 26 (Tahoe)
+          # it's the FIVE-finger pinch that opens the launcher; the four-finger key
+          # is disabled too for good measure. macOS stores trackpad gestures per-host
+          # (ByHost / -currentHost), which nix-darwin's system.defaults cannot reach,
+          # so write them here as the user. 0 = off. Reload with `killall Dock` or a
+          # log out/in.
+          disableLaunchpadPinch = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+            for d in com.apple.AppleMultitouchTrackpad com.apple.driver.AppleBluetoothMultitouch.trackpad; do
+              for k in TrackpadFourFingerPinchGesture TrackpadFiveFingerPinchGesture; do
+                $DRY_RUN_CMD /usr/bin/defaults -currentHost write "$d" "$k" -int 0
+              done
+            done
+          '';
         };
 
         home.sessionVariables = {

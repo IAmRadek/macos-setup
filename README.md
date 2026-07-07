@@ -56,3 +56,26 @@ Check your hostname with: `hostname -s`
 uv tools install mcpdoc
 
 ```
+
+## Manual setup (outside Nix)
+
+### BetterTouchTool — trackpad gestures
+
+BetterTouchTool (BTT) is **not managed by Nix** — its gestures live in its own
+database (`~/Library/Application Support/BetterTouchTool`), so they must be
+configured manually in the BTT UI and won't survive a fresh machine via the flake.
+
+**Pinch-to-Raycast:** the trackpad pinch (thumb + fingers) normally opens the
+Launchpad / "Apps" launcher. On macOS 26 (Tahoe) it's the **five-finger** pinch that
+does this. Those gestures are disabled by the `disableLaunchpadPinch` home-manager
+activation in `hosts/r__d.nix` (both the four- and five-finger keys). Note macOS
+stores trackpad gestures **per-host** (ByHost / `defaults -currentHost`), which
+nix-darwin's `system.defaults` cannot reach — so they're written as the user with
+`defaults -currentHost write … 0` and applied via `killall Dock` or a log out/in.
+Then re-bind the pinch to Raycast in BTT:
+
+1. **BetterTouchTool → Trackpad** → add a gesture: *4 Finger Pinch In* (a.k.a. TipTap).
+2. Assign the action **Activate Application → Raycast** (or *Execute Terminal
+   Command (async)* → `open raycast://`).
+
+If you ever want Launchpad's pinch back, flip `TrackpadFourFingerPinchGesture` to `2`.

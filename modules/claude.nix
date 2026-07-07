@@ -40,6 +40,10 @@ in
       source = ./ai/skills/ansible/SKILL.md;
     }}
     ${installSkill {
+      name = "cynefin";
+      source = ./ai/skills/cynefin/SKILL.md;
+    }}
+    ${installSkill {
       name = "grill-me";
       source = ./ai/skills/grill-me/SKILL.md;
     }}

@@ -9,6 +9,19 @@
       gopls
       gotools
       gofumpt
+      # Rust toolchain + LSP/formatter/linter.
+      rustc
+      cargo
+      rust-analyzer
+      rustfmt
+      clippy
+      # TypeScript / React / JS: runtime, servers, formatter.
+      nodejs
+      typescript
+      typescript-language-server
+      vscode-langservers-extracted # eslint, json, html, css servers
+      tailwindcss-language-server
+      prettier
       ripgrep
       fd
     ];
@@ -46,6 +59,14 @@
           gosum
           gowork
           gotmpl
+          rust
+          toml
+          javascript
+          typescript
+          tsx
+          json
+          css
+          html
           markdown
           markdown_inline
         ]
@@ -84,6 +105,10 @@
       vim.opt.expandtab = true
       vim.opt.tabstop = 2
       vim.opt.shiftwidth = 2
+
+      -- Let Left/Right arrows wrap across line boundaries (prev/next line),
+      -- in normal/visual (<,>) and insert ([,]) modes.
+      vim.opt.whichwrap:append("<,>,[,]")
 
       vim.cmd.colorscheme("everforest")
 
@@ -127,12 +152,20 @@
       })
 
       vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "go", "gomod", "gosum", "gowork", "gotmpl" },
+        pattern = {
+          "go", "gomod", "gosum", "gowork", "gotmpl", "rust", "toml",
+          "javascript", "javascriptreact", "typescript", "typescriptreact",
+          "json", "jsonc", "css", "scss", "html",
+        },
         callback = function()
           pcall(vim.treesitter.start)
           vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
         end,
       })
+
+      -- Point rust-analyzer at the Nix-provided stdlib source so "go to
+      -- definition" into std/core works without a rustup component.
+      vim.env.RUST_SRC_PATH = "${pkgs.rustPlatform.rustLibSrc}"
 
       local fzf_lua = require("fzf-lua")
       fzf_lua.setup({
@@ -257,17 +290,182 @@
       })
       vim.lsp.enable("gopls")
 
+      vim.lsp.config("rust_analyzer", {
+        -- Pin to the Nix binary by store path. Otherwise the rustup shim on
+        -- ~/.cargo/bin intercepts, can't find a rust-analyzer component, and
+        -- ping-pongs with the Nix binary until "infinite recursion detected".
+        cmd = { "${pkgs.rust-analyzer}/bin/rust-analyzer" },
+        capabilities = blink.get_lsp_capabilities(),
+        settings = {
+          ["rust-analyzer"] = {
+            cargo = {
+              allFeatures = true,
+              buildScripts = { enable = true },
+              loadOutDirsFromCheck = true,
+            },
+            procMacro = {
+              enable = true,
+            },
+            -- Run clippy (not just cargo check) on save for richer lints.
+            checkOnSave = true,
+            check = {
+              command = "clippy",
+              extraArgs = { "--no-deps" },
+            },
+            diagnostics = {
+              enable = true,
+              experimental = { enable = true },
+            },
+            inlayHints = {
+              bindingModeHints = { enable = true },
+              closureReturnTypeHints = { enable = "always" },
+              lifetimeElisionHints = { enable = "skip_trivial", useParameterNames = true },
+              parameterHints = { enable = true },
+              typeHints = { enable = true },
+            },
+            lens = {
+              enable = true,
+              references = { adt = { enable = true }, method = { enable = true } },
+              implementations = { enable = true },
+              run = { enable = true },
+            },
+            completion = {
+              callable = { snippets = "fill_arguments" },
+              postfix = { enable = true },
+              fullFunctionSignatures = { enable = true },
+            },
+            imports = {
+              granularity = { group = "module" },
+              prefix = "self",
+            },
+            hover = {
+              actions = { enable = true },
+              memoryLayout = { enable = true },
+            },
+            files = {
+              excludeDirs = { ".git", "target", "node_modules" },
+            },
+          },
+        },
+      })
+      vim.lsp.enable("rust_analyzer")
+
+      -- rust-analyzer's "Run" code lens (and <F5>) hands back a "runnable"
+      -- and expects the editor to execute it. Neovim has no built-in handler,
+      -- so wire one that runs the cargo invocation in a terminal split.
+      local function run_rust_runnable(runnable)
+        local a = runnable.args
+        local cmd = { a.overrideCargo or "cargo" }
+        vim.list_extend(cmd, a.cargoArgs or {})
+        vim.list_extend(cmd, a.cargoExtraArgs or {})
+        if a.executableArgs and #a.executableArgs > 0 then
+          table.insert(cmd, "--")
+          vim.list_extend(cmd, a.executableArgs)
+        end
+        vim.cmd("botright 15split | enew")
+        vim.fn.jobstart(cmd, { term = true, cwd = a.workspaceRoot })
+        vim.cmd("startinsert")
+      end
+
+      vim.lsp.commands["rust-analyzer.runSingle"] = function(command)
+        run_rust_runnable(command.arguments[1])
+      end
+      -- No DAP configured, so treat "Debug" as a plain run for now.
+      vim.lsp.commands["rust-analyzer.debugSingle"] = function(command)
+        run_rust_runnable(command.arguments[1])
+      end
+
+      -- TypeScript / JavaScript / React ------------------------------------
+      local ts_inlay_hints = {
+        includeInlayParameterNameHints = "all",
+        includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+        includeInlayFunctionParameterTypeHints = true,
+        includeInlayVariableTypeHints = true,
+        includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+        includeInlayPropertyDeclarationTypeHints = true,
+        includeInlayFunctionLikeReturnTypeHints = true,
+        includeInlayEnumMemberValueHints = true,
+      }
+      vim.lsp.config("ts_ls", {
+        capabilities = blink.get_lsp_capabilities(),
+        settings = {
+          typescript = {
+            inlayHints = ts_inlay_hints,
+            suggest = { completeFunctionCalls = true },
+            updateImportsOnFileMove = { enabled = "always" },
+          },
+          javascript = {
+            inlayHints = ts_inlay_hints,
+            suggest = { completeFunctionCalls = true },
+            updateImportsOnFileMove = { enabled = "always" },
+          },
+          completions = { completeFunctionCalls = true },
+        },
+      })
+      vim.lsp.enable("ts_ls")
+
+      -- ESLint: diagnostics + fix-on-save (see BufWritePre autocmd below).
+      vim.lsp.config("eslint", {
+        capabilities = blink.get_lsp_capabilities(),
+        settings = {
+          workingDirectories = { mode = "auto" },
+        },
+      })
+      vim.lsp.enable("eslint")
+
+      -- Tailwind, plus JSON/CSS/HTML from vscode-langservers-extracted.
+      vim.lsp.config("tailwindcss", {
+        capabilities = blink.get_lsp_capabilities(),
+      })
+      vim.lsp.enable("tailwindcss")
+
+      vim.lsp.config("jsonls", { capabilities = blink.get_lsp_capabilities() })
+      vim.lsp.enable("jsonls")
+      vim.lsp.config("cssls", { capabilities = blink.get_lsp_capabilities() })
+      vim.lsp.enable("cssls")
+      vim.lsp.config("html", { capabilities = blink.get_lsp_capabilities() })
+      vim.lsp.enable("html")
+
+      -- Run `eslint --fix` on save when the ESLint server is attached.
+      -- Registered before conform's own BufWritePre so lint-fixes land first
+      -- and Prettier formats the result afterward.
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = { "*.js", "*.jsx", "*.ts", "*.tsx", "*.mjs", "*.cjs" },
+        callback = function(args)
+          if #vim.lsp.get_clients({ bufnr = args.buf, name = "eslint" }) > 0 then
+            pcall(vim.cmd, "EslintFixAll")
+          end
+        end,
+      })
+
       require("conform").setup({
         formatters_by_ft = {
           go = { "goimports", "gofumpt" },
           gomod = { "gofmt" },
           gowork = { "gofmt" },
+          rust = { "rustfmt" },
+          javascript = { "prettier" },
+          javascriptreact = { "prettier" },
+          typescript = { "prettier" },
+          typescriptreact = { "prettier" },
+          json = { "prettier" },
+          jsonc = { "prettier" },
+          css = { "prettier" },
+          scss = { "prettier" },
+          html = { "prettier" },
+          yaml = { "prettier" },
         },
         format_on_save = function(bufnr)
           local ft = vim.bo[bufnr].filetype
-          if ft == "go" or ft == "gomod" or ft == "gowork" then
+          local prettier_fts = {
+            javascript = true, javascriptreact = true,
+            typescript = true, typescriptreact = true,
+            json = true, jsonc = true, css = true, scss = true,
+            html = true, yaml = true,
+          }
+          if ft == "go" or ft == "gomod" or ft == "gowork" or ft == "rust" or prettier_fts[ft] then
             return {
-              timeout_ms = 1000,
+              timeout_ms = 2000,
               lsp_format = "fallback",
             }
           end
@@ -499,9 +697,19 @@
       })
 
       vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-        pattern = { "*.go", "go.mod", "go.work" },
+        pattern = { "*.go", "go.mod", "go.work", "*.rs" },
         callback = function()
           vim.lsp.codelens.refresh({ bufnr = 0 })
+        end,
+      })
+
+      -- Turn on inlay hints for any server that provides them (rust-analyzer).
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          if client and client:supports_method("textDocument/inlayHint") then
+            vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
+          end
         end,
       })
 

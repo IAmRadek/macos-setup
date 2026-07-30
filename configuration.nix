@@ -95,6 +95,7 @@ in
     jq
     ripgrep
     fd
+    tree
     eza
     dust
     duf
@@ -103,6 +104,7 @@ in
     # Web & Network
     curl # (already above, move here or keep in core)
     httpie
+    halloy
 
     # AI / LLM
     aichat
@@ -113,6 +115,7 @@ in
 
     # Media
     ffmpeg
+    transmission_4-mac
     # Terminal Emulators
     alacritty
     ghostty-bin
@@ -155,7 +158,6 @@ in
       "vlc"
 
       # Utilities
-      # "rectangle"  # Window managemen
       "languagetool-desktop"
       "moom"
       "macwhisper"

@@ -33,6 +33,7 @@ in
           "/Applications/Zen.app"
           "${pkgs.ghostty-bin}/Applications/Ghostty.app"
           "/Users/${username}/Applications/Goland.app"
+          "/Users/${username}/Applications/RustRover.app"
           "/Applications/Slack.app"
           "/Applications/Discord.app"
           { spacer.small = true; }
@@ -158,6 +159,7 @@ in
           ../modules/claude.nix
           ../modules/codex.nix
           ../modules/zed.nix
+          ../modules/halloy.nix
           # LLM stack
           ../modules/ollama.nix
         ];

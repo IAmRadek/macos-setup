@@ -51,6 +51,7 @@
         "alt+left=text:\\x1bb"
         "super+right=text:\\x05"
         "super+left=text:\\x01"
+        "super+n=text:\\x0e"
         "super+p=text:\\x10"
         "super+s=text:\\x13"
         "super+z=text:\\x1a"

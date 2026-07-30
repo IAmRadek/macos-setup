@@ -53,6 +53,10 @@ in
       extraSources = [ ./ai/skills/idiomatic-go/style-guide.md ];
     }}
     ${installSkill {
+      name = "pairing";
+      source = ./ai/skills/pairing/SKILL.md;
+    }}
+    ${installSkill {
       name = "write";
       source = ./ai/skills/write/SKILL.md;
     }}

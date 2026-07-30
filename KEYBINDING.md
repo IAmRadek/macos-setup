@@ -88,7 +88,10 @@ A DB client drawer (sqlite/postgres/mysql/…). SQLite works out of the box; pos
 | `Space D r` | Rename query buffer |
 | `Space D l` | Last query info |
 
-**Inside the drawer:** `Enter`/`o` expand a connection → database → tables. Open a table to preview it, or open a scratch SQL buffer, write a query, and run it with **`Space S`** (normal, whole buffer) or select SQL + **`Space S`** (visual). Results open in a split.
+**Inside the drawer:** `Enter`/`o` expand a connection → database → tables. Open a table to preview it, 
+or open a scratch SQL buffer, write a query, and run it with **`Space S`** (normal, whole buffer) or select SQL + **`Space S`** (visual). 
+
+Results open in a split.
 
 **Saved connections:** add them in `modules/nvim.nix` via `vim.g.dbs`, e.g.
 `vim.g.dbs = { { name = "local", url = "sqlite:" .. vim.fn.expand("~/app.db") } }`. Or add ad-hoc with `Space D a`.

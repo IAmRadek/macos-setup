@@ -27,7 +27,16 @@
     ];
 
     plugins = with pkgs.vimPlugins; [
-      everforest
+      (pkgs.vimUtils.buildVimPlugin {
+        pname = "flexoki-neovim";
+        version = "c3e2251";
+        src = pkgs.fetchFromGitHub {
+          owner = "kepano";
+          repo = "flexoki-neovim";
+          rev = "c3e2251e813d29d885a7cbbe9808a7af234d845d";
+          hash = "sha256-TlBP99MBAT/H0Uut1MF8SnIDoeetcdHLKrWal2oO2Ug=";
+        };
+      })
       nvim-tree-lua
       nvim-web-devicons
       fzf-lua
@@ -39,6 +48,7 @@
       bufferline-nvim
       render-markdown-nvim
       trouble-nvim
+      treesj
       vim-dadbod
       vim-dadbod-ui
       claudecode-nvim
@@ -80,18 +90,17 @@
       vim.g.mapleader = " "
       vim.g.maplocalleader = " "
 
-      vim.g.everforest_background = "medium"
-      vim.g.everforest_enable_italic = 1
-      vim.g.everforest_better_performance = 1
-
       vim.opt.termguicolors = true
       vim.opt.background = "dark"
       vim.opt.mouse = "a"
+      -- No horizontal wheel/trackpad scrolling (it would scroll into empty space
+      -- past long lines). Reach long lines by moving the cursor, which is bounded.
+      vim.opt.mousescroll = "ver:3,hor:0"
       vim.opt.clipboard = "unnamedplus"
       vim.opt.keymodel = "startsel"
       vim.opt.selectmode = "mouse,key"
       vim.opt.number = true
-      vim.opt.relativenumber = false
+      vim.opt.relativenumber = true -- required so the statuscolumn refreshes on cursor move
       vim.opt.signcolumn = "yes"
       vim.opt.wrap = false
       vim.opt.ignorecase = true
@@ -110,13 +119,37 @@
       -- in normal/visual (<,>) and insert ([,]) modes.
       vim.opt.whichwrap:append("<,>,[,]")
 
-      vim.cmd.colorscheme("everforest")
+      -- Two number columns: absolute (left) then relative (right, next to text).
+      -- The current line shows 0 in the relative column.
+      _G.dual_statuscol = function()
+        -- Skip non-file windows (nvim-tree, terminals, Trouble, dbui, help): no
+        -- line numbers there. buftype is empty only for real file buffers.
+        local buf = vim.api.nvim_win_get_buf(vim.g.statusline_winid)
+        if vim.bo[buf].buftype ~= "" then
+          return ""
+        end
+        return table.concat({
+          "%s", -- sign column (gitsigns, diagnostics)
+          "%=", -- push numbers to the right, next to the text
+          string.format("%3d ", vim.v.lnum), -- absolute
+          string.format("%2d ", vim.v.relnum), -- relative
+        })
+      end
+      vim.opt.statuscolumn = "%!v:lua.dual_statuscol()"
 
-      -- Pronounced current-line highlight (override everforest's subtle default).
+      vim.cmd.colorscheme("flexoki-dark")
+
+      -- Pronounced current-line highlight (override the theme's subtle default).
+      -- Colors from the Flexoki dark palette: bg-800 + orange-400 accent.
       vim.opt.cursorline = true
       vim.opt.cursorlineopt = "number,line"
-      vim.api.nvim_set_hl(0, "CursorLine", { bg = "#3a464c" })
-      vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#e69875", bold = true })
+      vim.api.nvim_set_hl(0, "CursorLine", { bg = "#343331" })
+      vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#DA702C", bold = true })
+
+      -- Visual ruler at column 120 (guide only — no hard wrapping). Faint tint
+      -- from the Flexoki dark palette so it reads as a thin line.
+      vim.opt.colorcolumn = "120"
+      vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#1C1B1A" })
 
       require("nvim-tree").setup({
         view = {
@@ -201,6 +234,45 @@
         current_line_blame = false,
       })
 
+      -- Close a tab (buffer). When closing the focused tab, move to the next
+      -- one in bufferline's visual order first (or the previous, if it was the
+      -- last — no wrap); closing a non-focused tab leaves the cursor put. If it
+      -- was the only tab, drop to an empty buffer so the window stays.
+      -- Shared by <leader>bd, the bufferline "x", and :q (via SmartQuit).
+      _G.close_tab = function(bufnr, force)
+        bufnr = bufnr or vim.api.nvim_get_current_buf()
+        if bufnr == vim.api.nvim_get_current_buf() then
+          local ids = {}
+          local ok, bl = pcall(require, "bufferline")
+          if ok then
+            for _, e in ipairs(bl.get_elements().elements) do
+              ids[#ids + 1] = e.id
+            end
+          end
+          if #ids == 0 then
+            for _, b in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+              ids[#ids + 1] = b.bufnr
+            end
+          end
+          if #ids > 1 then
+            local idx
+            for i, id in ipairs(ids) do
+              if id == bufnr then
+                idx = i
+                break
+              end
+            end
+            local target = idx and (ids[idx + 1] or ids[idx - 1])
+            if target then
+              vim.api.nvim_set_current_buf(target)
+            end
+          else
+            vim.cmd("enew")
+          end
+        end
+        vim.cmd((force and "bdelete! " or "confirm bdelete ") .. bufnr)
+      end
+
       require("bufferline").setup({
         options = {
           diagnostics = "nvim_lsp",
@@ -208,6 +280,9 @@
           show_close_icon = false,
           truncate_names = false,
           max_name_length = 60,
+          -- Make the per-tab "x" (and middle-click) use our neighbor-focus close.
+          close_command = function(bufnr) _G.close_tab(bufnr) end,
+          middle_mouse_command = function(bufnr) _G.close_tab(bufnr) end,
           name_formatter = function(buf)
             return vim.fn.fnamemodify(buf.path, ":.")
           end,
@@ -218,6 +293,11 @@
       })
 
       require("render-markdown").setup({})
+
+      -- treesj: split a call's arguments (or struct/array/object) onto separate
+      -- lines, or join them back — like GoLand's "put arguments on separate
+      -- lines". Treesitter-based, so it works for Go/Rust/TS/JS alike.
+      require("treesj").setup({ use_default_keymaps = false })
 
       local blink = require("blink.cmp")
       blink.setup({
@@ -484,6 +564,53 @@
         end)
       end
 
+      -- Prompt for a path and create the file, making any missing parent
+      -- directories. Relative paths resolve against the current working dir.
+      local function new_file()
+        vim.ui.input({ prompt = "New file: ", completion = "file" }, function(input)
+          if not input or input == "" then
+            return
+          end
+          local path = vim.fn.fnamemodify(input, ":p")
+          vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+          vim.cmd.edit(vim.fn.fnameescape(path))
+          -- Persist an empty file so it exists on disk and shows in the tree.
+          if vim.fn.filereadable(path) == 0 then
+            vim.cmd.write()
+          end
+        end)
+      end
+
+      -- Close the focused tab (see _G.close_tab above for the behavior).
+      local function close_buffer()
+        _G.close_tab(vim.api.nvim_get_current_buf())
+      end
+
+      -- Make a bare :q close the current tab (with neighbor focus) when it's the
+      -- only editor window, but keep normal window-close semantics inside a
+      -- split or a special buffer (tree, terminal, panels). The cnoreabbrev only
+      -- fires when the whole command line is exactly "q", so :q!, :qa, :wq, and
+      -- ranged commands are untouched.
+      _G.smart_quit = function(force)
+        if vim.bo.buftype ~= "" then
+          vim.cmd(force and "quit!" or "quit")
+          return
+        end
+        local wins = vim.tbl_filter(function(w)
+          return vim.api.nvim_win_get_config(w).relative == ""
+            and vim.bo[vim.api.nvim_win_get_buf(w)].filetype ~= "NvimTree"
+        end, vim.api.nvim_tabpage_list_wins(0))
+        if #wins > 1 then
+          vim.cmd(force and "quit!" or "quit")
+        else
+          _G.close_tab(vim.api.nvim_get_current_buf(), force)
+        end
+      end
+      vim.api.nvim_create_user_command("SmartQuit", function(o)
+        _G.smart_quit(o.bang)
+      end, { bang = true })
+      vim.cmd([[cnoreabbrev <expr> q (getcmdtype() == ':' && getcmdline() ==# 'q') ? 'SmartQuit' : 'q']])
+
       map("n", "<C-s>", "<cmd>write<CR>", vim.tbl_extend("force", opts, { desc = "Save" }))
       map("i", "<C-s>", "<C-o>:write<CR>", vim.tbl_extend("force", opts, { desc = "Save" }))
       map("v", "<C-s>", "<Esc><cmd>write<CR>", vim.tbl_extend("force", opts, { desc = "Save" }))
@@ -603,6 +730,11 @@
         { "<leader>cl", vim.lsp.codelens.run, desc = "Run code lens" },
         { "<leader>ck", vim.lsp.buf.hover, desc = "Show docs" },
 
+        { "<leader>j", group = "Split / Join" },
+        { "<leader>js", function() require("treesj").split() end, desc = "Split (args to separate lines)" },
+        { "<leader>jj", function() require("treesj").join() end, desc = "Join (args to one line)" },
+        { "<leader>jt", function() require("treesj").toggle() end, desc = "Toggle split/join" },
+
         { "<leader>d", vim.diagnostic.open_float, desc = "Diagnostic" },
 
         { "<leader>e", group = "Explorer" },
@@ -615,7 +747,7 @@
         { "<leader>br", "<cmd>FzfLua oldfiles<CR>", desc = "Recent files" },
         { "<leader>bn", "<cmd>BufferLineCycleNext<CR>", desc = "Next file" },
         { "<leader>bp", "<cmd>BufferLineCyclePrev<CR>", desc = "Previous file" },
-        { "<leader>bd", "<cmd>bdelete<CR>", desc = "Close file" },
+        { "<leader>bd", close_buffer, desc = "Close file" },
         { "<leader>bo", "<cmd>BufferLineCloseOthers<CR>", desc = "Close others" },
 
         { "<leader>h", group = "Git" },
@@ -660,7 +792,7 @@
 
         { "<leader>w", "<cmd>write<CR>", desc = "Save" },
         { "<leader>q", "<cmd>confirm quit<CR>", desc = "Quit" },
-        { "<leader>n", "<cmd>enew<CR>", desc = "New file" },
+        { "<leader>n", new_file, desc = "New file" },
       })
 
       local function show_menu()
@@ -673,8 +805,8 @@
       map("i", "<F1>", show_menu, vim.tbl_extend("force", opts, { desc = "Command menu" }))
       map("v", "<F1>", show_menu, vim.tbl_extend("force", opts, { desc = "Command menu" }))
 
-      map("n", "<C-n>", "<cmd>enew<CR>", vim.tbl_extend("force", opts, { desc = "New file" }))
-      map("i", "<C-n>", "<Esc><cmd>enew<CR>", vim.tbl_extend("force", opts, { desc = "New file" }))
+      map("n", "<C-n>", new_file, vim.tbl_extend("force", opts, { desc = "New file" }))
+      map("i", "<C-n>", new_file, vim.tbl_extend("force", opts, { desc = "New file" }))
       map("n", "<C-o>", "<cmd>NvimTreeFocus<CR>", vim.tbl_extend("force", opts, { desc = "Focus file manager" }))
       map("i", "<C-o>", "<Esc><cmd>NvimTreeFocus<CR>", vim.tbl_extend("force", opts, { desc = "Focus file manager" }))
       map("n", "<C-b>", "<cmd>NvimTreeToggle<CR>", vim.tbl_extend("force", opts, { desc = "Toggle file manager" }))

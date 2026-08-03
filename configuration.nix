@@ -112,6 +112,7 @@ in
     opencode
     codex
     claude-code
+    pi-coding-agent
 
     # Media
     ffmpeg

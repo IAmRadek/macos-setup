@@ -158,6 +158,7 @@ in
           ../modules/aichat.nix
           ../modules/claude.nix
           ../modules/codex.nix
+          ../modules/pi.nix
           ../modules/zed.nix
           ../modules/halloy.nix
           # LLM stack

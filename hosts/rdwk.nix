@@ -88,6 +88,7 @@ in
           ../modules/tools.nix
           ../modules/claude.nix
           ../modules/codex.nix
+          ../modules/pi.nix
           ../modules/zed.nix
         ];
 

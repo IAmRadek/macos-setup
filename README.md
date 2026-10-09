@@ -16,14 +16,16 @@ This configuration sets up:
 Run this one-liner to automatically install everything:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh | bash -s -- personal
 ```
 
 Or if you prefer wget:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh | bash -s -- personal
 ```
+
+Use `work` in place of `personal` for the work machine.
 
 This script will:
 - Clone the repository to `~/macos-setup`
@@ -35,18 +37,21 @@ This script will:
 
 ## Updating
 
-To update all packages and flake inputs:
+To apply the configuration for the current machine:
 ```bash
 system-update
 ```
 
+To update the flake inputs, run `make upgrade`.
+
 ## Host Configuration
 
-The hostname used for the configuration is "rdwk". If your hostname is different, either:
-1. Change your hostname: `sudo scutil --set HostName rdkw`
-2. Or update the `darwinConfigurations` name in `flake.nix` to match your hostname
+Each machine has a configuration in `flake.nix` and a make target. The hostname and the user name of the machine do not matter.
 
-Check your hostname with: `hostname -s`
+| Make target            | Flake configuration | Host file          |
+|------------------------|---------------------|--------------------|
+| `make switch-personal` | `r__d`              | `hosts/r__d.nix`   |
+| `make switch-work`     | `rdwk`              | `hosts/rdwk.nix`   |
 
 
 ## Additional tools:

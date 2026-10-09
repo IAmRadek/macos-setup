@@ -121,8 +121,8 @@ install_setup() {
         print_info "Non-interactive mode: Proceeding with installation..."
     fi
 
-    print_info "Running make command..."
-    make
+    print_info "Running make switch-$PROFILE..."
+    make "switch-$PROFILE"
 
     print_success "Installation completed successfully!"
 }
@@ -164,13 +164,20 @@ print_next_steps() {
     echo "2. Test Nix: nix-shell -p hello --command hello"
     echo "3. View configuration: cd $INSTALL_DIR"
     echo "4. Make changes: edit configuration.nix"
-    echo "5. Apply changes: darwin-rebuild switch --flake .#$USER"
+    echo "5. Apply changes: make switch-$PROFILE"
     echo ""
     echo "For more information, see: $INSTALL_DIR/README.md"
 }
 
 main() {
     print_header
+
+    PROFILE="${1:-}"
+    if [[ "$PROFILE" != "personal" && "$PROFILE" != "work" ]]; then
+        print_error "Usage: install.sh personal|work"
+        echo "  curl -fsSL https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh | bash -s -- personal"
+        exit 1
+    fi
 
     print_info "Checking system requirements..."
     check_macos

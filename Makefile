@@ -1,7 +1,9 @@
 .POSIX:
-.PHONY: default build update bootstrap hosts
+.PHONY: default switch-personal switch-work upgrade hosts cleanup
 
-default: build
+default:
+	@echo "Usage: make switch-personal | make switch-work"
+	@exit 1
 
 /nix:
 	curl -L https://nixos.org/nix/install | sh
@@ -20,26 +22,20 @@ default: build
 #	@echo "Hostname set successfully. You may need to restart your terminal."
 #	touch .hostname-set
 
-bootstrap: /nix /opt/homebrew/bin/brew
-	@echo "Bootstrapping nix-darwin with flake..."
-	sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(USER)
-	@echo "Bootstrap complete! darwin-rebuild is now available."
+switch-personal: HOST = r__d
+switch-work: HOST = rdwk
 
-build: bootstrap
-	@if [ -f /run/current-system/sw/bin/darwin-rebuild ]; then \
-		echo "Using installed darwin-rebuild..."; \
-		sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .#$(USER); \
+# First run has no darwin-rebuild yet, so it comes from nix run
+switch-personal switch-work: /nix /opt/homebrew/bin/brew
+	@if [ -x /run/current-system/sw/bin/darwin-rebuild ]; then \
+		sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .#$(HOST); \
 	else \
-		echo "darwin-rebuild not found, using nix run..."; \
-		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(USER); \
+		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(HOST); \
 	fi
 
 upgrade:
 	git pull
 	nix flake update
-
-update:
-	sudo darwin-rebuild switch --flake .#$(USER)
 
 hosts:
 	@/usr/bin/grep -qF "chat.local" /etc/hosts || \

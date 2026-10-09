@@ -23,6 +23,16 @@
       url = "github:IAmRadek/tmux-k8s-context-switcher";
       flake = false;
     };
+
+    # zsh plugins missing from nixpkgs
+    zsh-autoquoter = {
+      url = "github:ianthehenry/zsh-autoquoter";
+      flake = false;
+    };
+    fzf-tab-source = {
+      url = "github:Freed-Wu/fzf-tab-source";
+      flake = false;
+    };
   };
 
   outputs =

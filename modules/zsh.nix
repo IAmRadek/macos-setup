@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  inputs,
   ...
 }:
 {
@@ -61,33 +62,15 @@
           export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="unix://''${HOME}/.colima/default/docker.sock"
           export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
 
-          # Define zinit home directory
-          ZINIT_HOME="$HOME/.zinit"
-
-          # Check if zinit is installed, if not, install it
-          if [[ ! -d "$ZINIT_HOME" ]]; then
-            print -P "%F{33}▓▒░ %F{220}Installing %F{33}ZINIT%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
-            mkdir -p "$ZINIT_HOME"
-            git clone https://github.com/zdharma-continuum/zinit "$ZINIT_HOME/bin"
-            print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b"
-          fi
-
-          # Source zinit
-          source "$ZINIT_HOME/bin/zinit.zsh"
           export PKG_CONFIG_PATH=${pkgs.openssl.dev}/lib/pkgconfig
 
           # Essential plugins
-          zinit ice lucid wait"1"; zinit light zdharma-continuum/fast-syntax-highlighting
-          zinit light zsh-users/zsh-autosuggestions
-          zinit ice lucid wait"1"; zinit light Aloxaf/fzf-tab
-          zinit ice lucid wait"2"; zinit light Freed-Wu/fzf-tab-source
-          zinit ice lucid wait"1"; zinit light mfaerevaag/wd
-          zinit ice lucid wait"1"; zinit light ianthehenry/zsh-autoquoter
+          source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
           ZAQ_PREFIXES=('git commit -m' 'g commit -m' 'watch')
 
           # History substring search for better history navigation
-          zinit light zsh-users/zsh-history-substring-search
+          source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh
 
           # Configure autosuggestions
           bindkey '^ ' autosuggest-execute                        # Ctrl+Space to execute suggestion
@@ -140,8 +123,14 @@
           zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01'
           zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
 
-          # Ensure compinit is properly initialized for zinit
           compinit -u -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
+
+          # Plugins that hook into completion or widgets load after compinit
+          source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
+          source ${inputs.fzf-tab-source}/fzf-tab-source.plugin.zsh
+          source ${pkgs.zsh-wd}/share/wd/wd.plugin.zsh
+          source ${inputs.zsh-autoquoter}/zsh-autoquoter.zsh
+          source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 
           compdef _helm helm 2>/dev/null
           compdef _git-town git-town 2>/dev/null

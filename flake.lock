@@ -21,6 +21,22 @@
         "type": "github"
       }
     },
+    "fzf-tab-source": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784646919,
+        "narHash": "sha256-d7+yKrHp4Vcl5WlQfQ/UMNK5j3wz8Ls168Cuj1LYTgI=",
+        "owner": "Freed-Wu",
+        "repo": "fzf-tab-source",
+        "rev": "3253ab5afa76cadd944a2775eb750321a64f6b8b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Freed-Wu",
+        "repo": "fzf-tab-source",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -77,10 +93,12 @@
     "root": {
       "inputs": {
         "darwin": "darwin",
+        "fzf-tab-source": "fzf-tab-source",
         "home-manager": "home-manager",
         "kube-tmux": "kube-tmux",
         "nixpkgs": "nixpkgs",
-        "tmux-k8s-context-switcher": "tmux-k8s-context-switcher"
+        "tmux-k8s-context-switcher": "tmux-k8s-context-switcher",
+        "zsh-autoquoter": "zsh-autoquoter"
       }
     },
     "tmux-k8s-context-switcher": {
@@ -96,6 +114,22 @@
       "original": {
         "owner": "IAmRadek",
         "repo": "tmux-k8s-context-switcher",
+        "type": "github"
+      }
+    },
+    "zsh-autoquoter": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1695877068,
+        "narHash": "sha256-CdyKIGxOnWGWPeBuNz067zp8/a394H0Ec2h3CA3oIx0=",
+        "owner": "ianthehenry",
+        "repo": "zsh-autoquoter",
+        "rev": "9e3b1b216bf7b61a9807a242bae730b5fc232a44",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ianthehenry",
+        "repo": "zsh-autoquoter",
         "type": "github"
       }
     }

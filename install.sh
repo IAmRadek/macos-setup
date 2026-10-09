@@ -127,40 +127,30 @@ install_setup() {
     print_success "Installation completed successfully!"
 }
 
-initialize_1password_cli() {
-    # Try to open 1Password app
-    print_info "Opening 1Password app..."
-    open -a "1Password" 2>/dev/null || print_warning "Could not open 1Password automatically"
+initialize_proton_pass_cli() {
+    # Proton Pass CLI is used for secrets during rebuilds and as the SSH agent
+    print_info "Please complete Proton Pass CLI setup using 'pass-cli login'..."
+    print_info "This will open a browser to authenticate the CLI with your Proton account"
 
-    # Initialize 1Password CLI signin
-    print_info "Please complete 1Password CLI setup using 'op signin'..."
-    print_info "This will authenticate the CLI with your 1Password account"
-    print_info ""
-    print_info "Steps:"
-    print_info "1. Sign in to 1Password app"
-    print_info "2. Remember to enable CLI support in Settings"
-    print_info ""
-
-    # Interactive setup for op signin
     if [[ -t 0 ]]; then
         echo ""
-        read -p "Would you like to run 'op signin' now? (Y/n): " -r </dev/tty
+        read -p "Would you like to run 'pass-cli login' now? (Y/n): " -r </dev/tty
         if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-            print_info "Running op signin..."
-            op signin
+            print_info "Running pass-cli login..."
+            pass-cli login
 
             # Verify CLI is working
-            if op vault list &>/dev/null; then
-                print_success "1Password CLI is configured and ready!"
+            if pass-cli vault list &>/dev/null; then
+                print_success "Proton Pass CLI is configured and ready!"
             else
-                print_warning "1Password CLI setup may not be complete"
+                print_warning "Proton Pass CLI setup may not be complete"
             fi
         else
-            print_info "Skipping 1Password CLI setup for now"
-            print_info "You can run 'op signin' later to complete setup"
+            print_info "Skipping Proton Pass CLI setup for now"
+            print_info "You can run 'pass-cli login' later to complete setup"
         fi
     else
-        print_info "Non-interactive mode: Please run 'op signin' manually to complete 1Password CLI setup"
+        print_info "Non-interactive mode: Please run 'pass-cli login' manually to complete Proton Pass CLI setup"
     fi
 }
 
@@ -174,7 +164,7 @@ print_next_steps() {
     echo "2. Test Nix: nix-shell -p hello --command hello"
     echo "3. View configuration: cd $INSTALL_DIR"
     echo "4. Make changes: edit configuration.nix"
-    echo "5. Apply changes: darwin-rebuild switch --flake .#$(USER)"
+    echo "5. Apply changes: darwin-rebuild switch --flake .#$USER"
     echo ""
     echo "For more information, see: $INSTALL_DIR/README.md"
 }
@@ -190,7 +180,7 @@ main() {
 
     clone_repository
     install_setup
-    initialize_1password_cli
+    initialize_proton_pass_cli
     print_next_steps
 }
 

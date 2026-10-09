@@ -32,7 +32,7 @@ in
     ]
     ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
 
-    # SSH signing via 1Password
+    # SSH signing via the SSH agent
     signing = {
       key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIYnDm9RfWWUdae/MTzZps0KDhlDrDdWIrFFfoeWWulD";
       signByDefault = true;
@@ -64,7 +64,6 @@ in
       gpg.format = "ssh";
       gpg = {
         "ssh" = {
-          # program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
           allowedSignersFile = "${config.xdg.configHome}/git/allowed_signers";
         };
       };

@@ -90,7 +90,6 @@ in
     postgresql
 
     # Security & Auth
-    _1password-cli
     oath-toolkit
     nmap
     proton-pass-cli
@@ -167,7 +166,6 @@ in
       "moom"
       "macwhisper"
       "raycast" # Launcher
-      "1password"
       "notion-calendar"
       "postman"
       "elgato-stream-deck"
@@ -212,7 +210,6 @@ in
     let
       whitelist = map lib.getName [
         pkgs.google-chrome
-        pkgs._1password-cli
         pkgs.proton-pass-cli
       ];
     in
@@ -261,7 +258,6 @@ in
           # "/Users/radoslawdejnek/Applications/Goland.app"
           # "${pkgs.alacritty}/Applications/Alacritty.app"
           # "/Applications/Zed.app"
-          # "/Applications/1Password.app"
         ];
         persistent-others = [ ];
       };

@@ -28,7 +28,7 @@ wget -qO- https://raw.githubusercontent.com/IAmRadek/macos-setup/main/install.sh
 Use `work` in place of `personal` for the work machine.
 
 This script will:
-- Clone the repository to `~/macos-setup`
+- Clone the repository to `~/.nix-darwin`
 - Install Nix
 - Install nix-darwin
 - Install Homebrew (required by nix-darwin)

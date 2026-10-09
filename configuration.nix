@@ -11,8 +11,6 @@ let
   ];
 in
 {
-  system.primaryUser = lib.mkDefault "radoslawdejnek";
-
   environment.systemPackages = with pkgs; [
     # Nix
     nixd

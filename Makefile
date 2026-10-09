@@ -24,13 +24,14 @@ default:
 
 switch-personal: HOST = r__d
 switch-work: HOST = rdwk
+switch-work: IMPURE = --impure
 
 # First run has no darwin-rebuild yet, so it comes from nix run
 switch-personal switch-work: /nix /opt/homebrew/bin/brew
 	@if [ -x /run/current-system/sw/bin/darwin-rebuild ]; then \
-		sudo /run/current-system/sw/bin/darwin-rebuild switch --flake .#$(HOST); \
+		sudo /run/current-system/sw/bin/darwin-rebuild switch $(IMPURE) --flake .#$(HOST); \
 	else \
-		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch --flake .#$(HOST); \
+		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch $(IMPURE) --flake .#$(HOST); \
 	fi
 
 upgrade:

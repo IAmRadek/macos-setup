@@ -1,7 +1,12 @@
 { pkgs, ... }:
 
 let
-  username = "radoslawdejnek";
+  # The user who ran sudo; needs --impure (see Makefile)
+  username =
+    let
+      u = builtins.getEnv "SUDO_USER";
+    in
+    if u == "" then throw "rdwk: SUDO_USER is empty; run `make switch-work`" else u;
 in
 {
   system.primaryUser = username;

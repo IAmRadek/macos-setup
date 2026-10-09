@@ -67,7 +67,6 @@ in
       {
         home.sessionVariables = {
           DFT_PARSE_ERROR_LIMIT = "100";
-          SSH_AUTH_SOCK = "$HOME/.ssh/proton-pass-ssh-agent.sock";
         };
 
         home.sessionPath = [
@@ -79,38 +78,10 @@ in
 
         home.file.".hushlogin".text = "";
 
-        programs.ssh = {
-          enable = true;
-          enableDefaultConfig = false;
-          settings."*" = {
-            identityAgent = ''"~/.ssh/proton-pass-ssh-agent.sock"'';
-          };
-          settings.homelab = {
-            hostname = "10.10.0.100";
-            user = "homelab";
-            forwardAgent = true;
-          };
-          extraConfig = ''
-            Include ~/.nix-darwin/private/ssh.private
-          '';
-        };
-
-        launchd.agents.proton-pass-ssh-agent = {
-          enable = true;
-          config = {
-            Label = "com.protonpass.ssh-agent";
-            ProgramArguments = [
-              "${pkgs.proton-pass-cli}/bin/pass-cli"
-              "ssh-agent"
-              "start"
-              "--vault-name"
-              "SSH"
-              "--socket-path"
-              "/Users/${username}/.ssh/proton-pass-ssh-agent.sock"
-            ];
-            RunAtLoad = true;
-            KeepAlive = true;
-          };
+        programs.ssh.settings.homelab = {
+          hostname = "10.10.0.100";
+          user = "homelab";
+          forwardAgent = true;
         };
 
         imports = [

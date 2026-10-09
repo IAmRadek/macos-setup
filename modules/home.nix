@@ -1,7 +1,42 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
+let
+  sshAgentSocket = "${config.home.homeDirectory}/.ssh/proton-pass-ssh-agent.sock";
+in
 {
   home.stateVersion = "22.11";
   programs.home-manager.enable = true;
+
+  # SSH keys come from the "SSH" vault in Proton Pass; needs `pass-cli login`
+  home.sessionVariables.SSH_AUTH_SOCK = sshAgentSocket;
+
+  programs.ssh = {
+    enable = true;
+    enableDefaultConfig = false;
+    settings."*" = {
+      identityAgent = ''"${sshAgentSocket}"'';
+    };
+    extraConfig = ''
+      Include ~/.nix-darwin/private/ssh.private
+    '';
+  };
+
+  launchd.agents.proton-pass-ssh-agent = {
+    enable = true;
+    config = {
+      Label = "com.protonpass.ssh-agent";
+      ProgramArguments = [
+        "${pkgs.proton-pass-cli}/bin/pass-cli"
+        "ssh-agent"
+        "start"
+        "--vault-name"
+        "SSH"
+        "--socket-path"
+        sshAgentSocket
+      ];
+      RunAtLoad = true;
+      KeepAlive = true;
+    };
+  };
 
   home.sessionPath = [
     "$HOME/.local/bin"

@@ -31,6 +31,9 @@ switch-personal switch-work: /nix /opt/homebrew/bin/brew
 	@if [ -x /run/current-system/sw/bin/darwin-rebuild ]; then \
 		sudo /run/current-system/sw/bin/darwin-rebuild switch $(IMPURE) --flake .#$(HOST); \
 	else \
+		for f in /etc/bashrc /etc/zshrc; do \
+			if [ -e $$f ] && [ ! -e $$f.before-nix-darwin ]; then sudo mv $$f $$f.before-nix-darwin; fi; \
+		done; \
 		sudo /nix/var/nix/profiles/default/bin/nix --experimental-features 'nix-command flakes' run nix-darwin -- switch $(IMPURE) --flake .#$(HOST); \
 	fi
 

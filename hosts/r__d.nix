@@ -4,15 +4,22 @@ let
   username = "r__d";
 in
 {
-  imports = [
-    ../modules/tailscale.nix
-  ];
-
   system.primaryUser = username;
   # TODO https://github.com/LnL7/nix-darwin/issues/682
   users.users.${username}.home = "/Users/${username}";
 
-  homebrew = { };
+  environment.systemPackages = with pkgs; [
+    infisical
+    hugo
+  ];
+
+  homebrew.casks = [
+    "whatsapp"
+    "telegram"
+    "discord"
+    "little-snitch"
+    "elgato-stream-deck"
+  ];
 
   system = {
     defaults = {
@@ -59,10 +66,6 @@ in
       { pkgs, lib, ... }:
       {
         home.activation = {
-          hCloudCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            /opt/homebrew/bin/hcloud completion zsh > "$HOME/.cache/zsh/_hcloud"
-          '';
-
           sshPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.nix-darwin/private"
             $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.ssh"
@@ -138,10 +141,6 @@ in
 
         imports = [
           ../modules/ghostty.nix
-          ../modules/aichat.nix
-          ../modules/halloy.nix
-          # LLM stack
-          ../modules/ollama.nix
         ];
       };
   };

@@ -11,6 +11,10 @@ let
   ];
 in
 {
+  imports = [
+    ./modules/tailscale.nix
+  ];
+
   environment.systemPackages = with pkgs; [
     # Nix
     nixd
@@ -83,7 +87,6 @@ in
     tailscale
     googleCloudSdkWithPubsub
     google-cloud-sql-proxy
-    infisical
 
     # Database
     postgresql
@@ -106,7 +109,6 @@ in
     # Web & Network
     curl # (already above, move here or keep in core)
     httpie
-    halloy
 
     # AI / LLM
     aichat
@@ -126,7 +128,6 @@ in
     # Docs, Presentations & Notes
     glow
     presenterm
-    hugo
     tldr
 
     # Load Testing
@@ -168,7 +169,6 @@ in
       "raycast" # Launcher
       "notion-calendar"
       "postman"
-      "elgato-stream-deck"
       "menubar-apps/menubar-apps/pullbar"
       "pearcleaner"
       "proton-pass"
@@ -178,18 +178,12 @@ in
 
       # Communication
       "slack"
-      "telegram"
-      "whatsapp"
-      "discord"
-      "thunderbird"
       # "zoom"
 
       # Media
       "spotify"
       # "vlc"
       #
-      "obsidian"
-      "little-snitch"
       "coteditor"
     ];
 

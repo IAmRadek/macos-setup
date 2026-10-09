@@ -19,6 +19,10 @@
     helmCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm"
     '';
+
+    hCloudCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      /opt/homebrew/bin/hcloud completion zsh > "$HOME/.cache/zsh/_hcloud"
+    '';
   };
 
   home.sessionPath = [
@@ -36,6 +40,9 @@
     ./codex.nix
     ./pi.nix
     ./zed.nix
+    ./aichat.nix
+    # LLM stack
+    ./ollama.nix
   ];
 
   # Configure nano with xdg.configFile

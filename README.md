@@ -70,13 +70,20 @@ BetterTouchTool (BTT) is **not managed by Nix** — its gestures live in its own
 database (`~/Library/Application Support/BetterTouchTool`), so they must be
 configured manually in the BTT UI and won't survive a fresh machine via the flake.
 
-**Pinch-to-Raycast:** the trackpad pinch (thumb + fingers) normally opens the
-Launchpad / "Apps" launcher. On macOS 26 (Tahoe) it's the **five-finger** pinch that
-does this. Those gestures are disabled by the `disableLaunchpadPinch` home-manager
-activation in `hosts/r__d.nix` (both the four- and five-finger keys). Note macOS
-stores trackpad gestures **per-host** (ByHost / `defaults -currentHost`), which
-nix-darwin's `system.defaults` cannot reach — so they're written as the user with
-`defaults -currentHost write … 0` and applied via `killall Dock` or a log out/in.
+**Pinch-to-Raycast:** on macOS 26 (Tahoe), the five-finger trackpad pinch opens
+the Launchpad "Apps" launcher. macOS stores trackpad gestures per host
+(`defaults -currentHost`), and nix-darwin cannot set them. Run this one time
+on each new machine to disable the four-finger and five-finger pinch:
+
+```bash
+for d in com.apple.AppleMultitouchTrackpad com.apple.driver.AppleBluetoothMultitouch.trackpad; do
+  for k in TrackpadFourFingerPinchGesture TrackpadFiveFingerPinchGesture; do
+    defaults -currentHost write "$d" "$k" -int 0
+  done
+done
+killall Dock
+```
+
 Then re-bind the pinch to Raycast in BTT:
 
 1. **BetterTouchTool → Trackpad** → add a gesture: *4 Finger Pinch In* (a.k.a. TipTap).

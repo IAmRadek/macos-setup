@@ -36,6 +36,7 @@
           precmd_functions+=(show_startup_time)
 
           ZCACHEDIR="$HOME/.cache/zsh"
+          mkdir -p "$ZCACHEDIR"
           autoload -Uz compinit
 
           # Fix CR/LF only when running inside tmux

@@ -1,29 +1,7 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
   home.stateVersion = "22.11";
   programs.home-manager.enable = true;
-
-  # Create Development directory structure
-  home.activation = {
-    createDevDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/Development/github.com
-      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/tmux/plugins
-      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.cache/zsh
-      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.runbooks
-    '';
-
-    gitTownCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      ${pkgs.git-town}/bin/git-town completions zsh > "$HOME/.cache/zsh/_git-town"
-    '';
-
-    helmCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm"
-    '';
-
-    hCloudCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      /opt/homebrew/bin/hcloud completion zsh > "$HOME/.cache/zsh/_hcloud"
-    '';
-  };
 
   home.sessionPath = [
     "$HOME/.local/bin"
@@ -38,7 +16,6 @@
     ./tools.nix
     ./claude.nix
     ./codex.nix
-    ./pi.nix
     ./zed.nix
     ./aichat.nix
     # LLM stack

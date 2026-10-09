@@ -46,6 +46,7 @@ in
     docker-credential-helpers
     colima
     kubectl
+    kubernetes-helm
     k3d
 
     # Go
@@ -85,6 +86,7 @@ in
     gnupg
     age
     tailscale
+    hcloud
     googleCloudSdkWithPubsub
     google-cloud-sql-proxy
 
@@ -192,8 +194,6 @@ in
 
     # Some CLI tools are better from Homebrew
     brews = [
-      "helm"
-      "hcloud"
       # macOS-specific tools that integrate deeply with the system
       # "mas"  # Mac App Store CLI
     ];

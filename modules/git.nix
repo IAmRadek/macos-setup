@@ -28,7 +28,7 @@ in
     enable = true;
 
     includes = [
-      { path = "${config.xdg.configHome}/git/config.private"; }
+      { path = "~/.nix-darwin/private/git.private"; }
     ]
     ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
 
@@ -140,12 +140,4 @@ in
       };
     };
   };
-  home.activation.createGitPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "$HOME/.nix-darwin/private"
-    $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${config.xdg.configHome}/git"
-    if [ ! -f "$HOME/.nix-darwin/private/git.private" ]; then
-      $DRY_RUN_CMD touch $VERBOSE_ARG "$HOME/.nix-darwin/private/git.private"
-    fi
-    $DRY_RUN_CMD ln -sf $VERBOSE_ARG "$HOME/.nix-darwin/private/git.private" "${config.xdg.configHome}/git/config.private"
-  '';
 }

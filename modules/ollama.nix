@@ -1,7 +1,6 @@
 {
   pkgs,
   config,
-  lib,
   ...
 }:
 {
@@ -9,10 +8,6 @@
   #   ollama pull qwen3:30b-a3b
   #   ollama pull qwen2.5-coder:14b
   #   ollama pull qwen3-embedding:8b
-
-  home.activation.createOllamaModelDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    $DRY_RUN_CMD mkdir -p $VERBOSE_ARG "${config.home.homeDirectory}/.ollama/models"
-  '';
 
   launchd.agents.ollama = {
     enable = true;

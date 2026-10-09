@@ -63,6 +63,10 @@ in
     openssl
     pkg-config
 
+    # Wasm
+    twiggy
+    binaryen
+
     # JavaScript / Python
     nodejs
     pnpm
@@ -70,7 +74,7 @@ in
     uv
     playwright
     playwright-driver
-    tailwindcss
+    tailwindcss_4
 
     # Infrastructure & Secrets
     ansible
@@ -168,6 +172,7 @@ in
       "postman"
       "elgato-stream-deck"
       "menubar-apps/menubar-apps/pullbar"
+      "pearcleaner"
 
       # Communication
       "slack"

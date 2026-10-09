@@ -57,7 +57,8 @@
           export VISUAL="cot"
 
           # Fix for testcontainers with colima (https://github.com/testcontainers/testcontainers-go/issues/2952)
-          export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="unix://''${HOME}/.colima/docker.sock"
+          export TESTCONTAINERS_RYUK_DISABLED=true
+          export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="unix://''${HOME}/.colima/default/docker.sock"
           export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
 
           # Define zinit home directory

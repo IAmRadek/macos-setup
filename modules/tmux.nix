@@ -27,6 +27,7 @@
     extraConfig = ''
       set -ag terminal-overrides ",xterm-256color:RGB"
       setw -g xterm-keys on
+      set -g extended-keys on
 
       # Sync some env vars from attaching client
       set-option -g update-environment "PATH SSH_AUTH_SOCK DISPLAY WINDOWID XAUTHORITY ZDOTDIR"

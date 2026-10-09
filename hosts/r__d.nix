@@ -43,6 +43,28 @@ in
     };
   };
 
+  nix.linux-builder = {
+    enable = true;
+    maxJobs = 4;
+    supportedFeatures = [
+      "kvm"
+      "benchmark"
+      "big-parallel"
+      "nixos-test"
+    ];
+    config = {
+      virtualisation = {
+        cores = 6;
+        darwin-builder.diskSize = 60 * 1024;   # two VM store images + test payloads
+        darwin-builder.memorySize = 8 * 1024;
+      };
+    };
+  };
+
+  # Let the builder pull from cache.nixos.org itself instead of routing
+  # every dependency through your Mac. Currently false.
+  nix.settings.builders-use-substitutes = true;
+
   home-manager = {
     useUserPackages = true;
     useGlobalPkgs = true;
@@ -99,7 +121,7 @@ in
 
         home.sessionVariables = {
           DFT_PARSE_ERROR_LIMIT = "100";
-          SSH_AUTH_SOCK = "$HOME/.ssh/proton-pass-agent.sock";
+          SSH_AUTH_SOCK = "$HOME/.ssh/proton-pass-ssh-agent.sock";
         };
 
         home.sessionPath = [
@@ -116,7 +138,7 @@ in
           enable = true;
           enableDefaultConfig = false;
           settings."*" = {
-            identityAgent = ''"~/.ssh/proton-pass-agent.sock"'';
+            identityAgent = ''"~/.ssh/proton-pass-ssh-agent.sock"'';
           };
           settings.homelab = {
             hostname = "10.10.0.100";
@@ -139,7 +161,7 @@ in
               "--vault-name"
               "SSH"
               "--socket-path"
-              "/Users/${username}/.ssh/proton-pass-agent.sock"
+              "/Users/${username}/.ssh/proton-pass-ssh-agent.sock"
             ];
             RunAtLoad = true;
             KeepAlive = true;

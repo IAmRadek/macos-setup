@@ -3,23 +3,47 @@
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": false,
-    "swift-lsp@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "maister@maister-plugins": true,
-    "maister-copilot@maister-plugins": true
+    "ponytail@ponytail": true,
+    "simple-english@simple-english": true,
+    "radek-skills@iamradek-skills": true
   },
   "extraKnownMarketplaces": {
+    "iamradek-skills": {
+      "source": {
+        "source": "github",
+        "repo": "IAmRadek/skills"
+      }
+    },
     "maister-plugins": {
       "source": {
         "source": "github",
         "repo": "SkillPanel/maister"
+      }
+    },
+    "ponytail-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    },
+    "simple-english": {
+      "source": {
+        "source": "github",
+        "repo": "AminBlg/SimpleEnglish"
       }
     }
   },
   "effortLevel": "high",
   "tui": "fullscreen",
   "autoMemoryEnabled": false,
-  "voiceEnabled": true,
+  "voiceEnabled": false,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
   "hooks": {
     "PreToolUse": [
       {

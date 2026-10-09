@@ -29,35 +29,35 @@ let
     '';
 in
 {
-  home.activation.installPiSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    ${installSkill {
-      name = "analyze-repo";
-      source = ./ai/skills/analyze-repo/SKILL.md;
-    }}
-    ${installSkill {
-      name = "ansible";
-      source = ./ai/skills/ansible/SKILL.md;
-    }}
-    ${installSkill {
-      name = "cynefin";
-      source = ./ai/skills/cynefin/SKILL.md;
-    }}
-    ${installSkill {
-      name = "grill-me";
-      source = ./ai/skills/grill-me/SKILL.md;
-    }}
-    ${installSkill {
-      name = "idiomatic-go";
-      source = ./ai/skills/idiomatic-go/SKILL.md;
-      extraSources = [ ./ai/skills/idiomatic-go/style-guide.md ];
-    }}
-    ${installSkill {
-      name = "pairing";
-      source = ./ai/skills/pairing/SKILL.md;
-    }}
-    ${installSkill {
-      name = "write";
-      source = ./ai/skills/write/SKILL.md;
-    }}
-  '';
+  # home.activation.installPiSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  #   ${installSkill {
+  #     name = "analyze-repo";
+  #     source = ./ai/skills/analyze-repo/SKILL.md;
+  #   }}
+  #   ${installSkill {
+  #     name = "ansible";
+  #     source = ./ai/skills/ansible/SKILL.md;
+  #   }}
+  #   ${installSkill {
+  #     name = "cynefin";
+  #     source = ./ai/skills/cynefin/SKILL.md;
+  #   }}
+  #   ${installSkill {
+  #     name = "grill-me";
+  #     source = ./ai/skills/grill-me/SKILL.md;
+  #   }}
+  #   ${installSkill {
+  #     name = "idiomatic-go";
+  #     source = ./ai/skills/idiomatic-go/SKILL.md;
+  #     extraSources = [ ./ai/skills/idiomatic-go/style-guide.md ];
+  #   }}
+  #   ${installSkill {
+  #     name = "pairing";
+  #     source = ./ai/skills/pairing/SKILL.md;
+  #   }}
+  #   ${installSkill {
+  #     name = "write";
+  #     source = ./ai/skills/write/SKILL.md;
+  #   }}
+  # '';
 }

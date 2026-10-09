@@ -25,6 +25,7 @@ in
     github-mcp-server
 
     # Core Utilities
+    starship
     coreutils
     curl
     wget
@@ -249,6 +250,11 @@ in
   };
 
   system = {
+    # Changes CapsLock to Control
+    keyboard = {
+      enableKeyMapping = true;
+      remapCapsLockToControl = true;
+    };
     defaults = {
       dock = {
         autohide = true;

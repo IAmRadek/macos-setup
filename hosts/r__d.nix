@@ -12,22 +12,11 @@ in
   # TODO https://github.com/LnL7/nix-darwin/issues/682
   users.users.${username}.home = "/Users/${username}";
 
-  environment.systemPackages = with pkgs; [
-    starship
-  ];
-
   homebrew = { };
 
   system = {
-    # Changes CapsLock to Control
-    keyboard = {
-      enableKeyMapping = true;
-      remapCapsLockToControl = true;
-    };
     defaults = {
       dock = {
-        autohide = true;
-        show-recents = false;
         # Only these stay in Dock — everything else disappears
         persistent-apps = [
           "/Applications/Zen.app"
@@ -66,32 +55,12 @@ in
   nix.settings.builders-use-substitutes = true;
 
   home-manager = {
-    useUserPackages = true;
-    useGlobalPkgs = true;
     users.${username} =
       { pkgs, lib, ... }:
       {
-        home.stateVersion = "22.11";
-        programs.home-manager.enable = true;
-
-        # Create Development directory structure
         home.activation = {
-          createDevDirectories = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/Development/github.com
-            $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/tmux/plugins
-            $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.cache/zsh
-            $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.runbooks
-          '';
-
-          gitTownCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            ${pkgs.git-town}/bin/git-town completions zsh > "$HOME/.cache/zsh/_git-town"
-          '';
           hCloudCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
             /opt/homebrew/bin/hcloud completion zsh > "$HOME/.cache/zsh/_hcloud"
-          '';
-
-          helmCompletion = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-            /opt/homebrew/bin/helm completion zsh > "$HOME/.cache/zsh/_helm"
           '';
 
           sshPrivateConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
@@ -126,7 +95,6 @@ in
 
         home.sessionPath = [
           "$HOME/Development/Go/bin"
-          "$HOME/.local/bin"
           "$HOME/Library/Application Support/JetBrains/Toolbox/scripts"
         ];
 
@@ -169,44 +137,12 @@ in
         };
 
         imports = [
-
-          ../modules/alacritty.nix
           ../modules/ghostty.nix
-          ../modules/zsh.nix
-          ../modules/tmux.nix
-          ../modules/nvim.nix
-          ../modules/git.nix
-          ../modules/tools.nix
           ../modules/aichat.nix
-          ../modules/claude.nix
-          ../modules/codex.nix
-          ../modules/pi.nix
-          ../modules/zed.nix
           ../modules/halloy.nix
           # LLM stack
           ../modules/ollama.nix
         ];
-
-        # Configure nano with xdg.configFile
-        xdg.configFile."nano/nanorc".text = ''
-          # Display line numbers
-          set linenumbers
-
-          # Use auto-indentation
-          set autoindent
-
-          # Display cursor position in the status bar
-          set constantshow
-
-          # Enable mouse support
-          set mouse
-
-          # Don't wrap text at the end of the line
-          set nowrap
-
-          # Syntax highlighting
-          include "${pkgs.nano}/share/nano/*.nanorc"
-        '';
       };
   };
 }

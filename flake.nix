@@ -33,27 +33,30 @@
       home-manager,
       ...
     }@inputs:
+    let
+      mkHost =
+        host:
+        darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
+          modules = [
+            ./configuration.nix
+            home-manager.darwinModules.home-manager
+            {
+              home-manager = {
+                useUserPackages = true;
+                useGlobalPkgs = true;
+                extraSpecialArgs = { inherit inputs; };
+                sharedModules = [ ./modules/home.nix ];
+              };
+            }
+            host
+          ];
+        };
+    in
     {
       darwinConfigurations = {
-        "rdwk" = darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          modules = [
-            ./configuration.nix
-            home-manager.darwinModules.home-manager
-            { home-manager.extraSpecialArgs = { inherit inputs; }; }
-            ./hosts/rdwk.nix
-          ];
-        };
-
-        "r__d" = darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          modules = [
-            ./configuration.nix
-            home-manager.darwinModules.home-manager
-            { home-manager.extraSpecialArgs = { inherit inputs; }; }
-            ./hosts/r__d.nix
-          ];
-        };
+        "rdwk" = mkHost ./hosts/rdwk.nix;
+        "r__d" = mkHost ./hosts/r__d.nix;
       };
     };
 }

@@ -13,6 +13,16 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # tmux plugins; `nix flake update` fetches the latest commit
+    kube-tmux = {
+      url = "github:jonmosco/kube-tmux";
+      flake = false;
+    };
+    tmux-k8s-context-switcher = {
+      url = "github:IAmRadek/tmux-k8s-context-switcher";
+      flake = false;
+    };
   };
 
   outputs =
@@ -21,7 +31,8 @@
       nixpkgs,
       darwin,
       home-manager,
-    }:
+      ...
+    }@inputs:
     {
       darwinConfigurations = {
         "rdwk" = darwin.lib.darwinSystem {
@@ -29,6 +40,7 @@
           modules = [
             ./configuration.nix
             home-manager.darwinModules.home-manager
+            { home-manager.extraSpecialArgs = { inherit inputs; }; }
             ./hosts/rdwk.nix
           ];
         };
@@ -38,6 +50,7 @@
           modules = [
             ./configuration.nix
             home-manager.darwinModules.home-manager
+            { home-manager.extraSpecialArgs = { inherit inputs; }; }
             ./hosts/r__d.nix
           ];
         };

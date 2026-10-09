@@ -42,6 +42,22 @@
         "type": "github"
       }
     },
+    "kube-tmux": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779714285,
+        "narHash": "sha256-l1wjg2ReWKCI7h/K11vvX2ykYTs/mVD+tfz/mQsjn/E=",
+        "owner": "jonmosco",
+        "repo": "kube-tmux",
+        "rev": "8b7e1d127c16b6dc87ff5743f4d775b245198b69",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jonmosco",
+        "repo": "kube-tmux",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1790238896,
@@ -62,7 +78,25 @@
       "inputs": {
         "darwin": "darwin",
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
+        "kube-tmux": "kube-tmux",
+        "nixpkgs": "nixpkgs",
+        "tmux-k8s-context-switcher": "tmux-k8s-context-switcher"
+      }
+    },
+    "tmux-k8s-context-switcher": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1636023515,
+        "narHash": "sha256-QtR1KUUjYCRcOnDB0+otR+mxtlWLZ5dkDtuaSgEOFJ4=",
+        "owner": "IAmRadek",
+        "repo": "tmux-k8s-context-switcher",
+        "rev": "31c7c96e9d93ab48af9df7b92468f0cf76c10c33",
+        "type": "github"
+      },
+      "original": {
+        "owner": "IAmRadek",
+        "repo": "tmux-k8s-context-switcher",
+        "type": "github"
       }
     }
   },

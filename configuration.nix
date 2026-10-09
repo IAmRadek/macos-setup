@@ -155,6 +155,7 @@ in
       # "google-cloud-sdk"
       "jetbrains-toolbox"
       "zed"
+      "claude"
       # "docker"  # Docker Desktop
       #
       "vlc"
@@ -169,6 +170,10 @@ in
       "elgato-stream-deck"
       "menubar-apps/menubar-apps/pullbar"
       "pearcleaner"
+      "proton-pass"
+      "anarlog"
+      "istat-menus"
+      "macs-fan-control"
 
       # Communication
       "slack"

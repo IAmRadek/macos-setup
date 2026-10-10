@@ -318,6 +318,13 @@ in
     pkgs.nerd-fonts.jetbrains-mono
   ];
 
+  # Chooses the ssh key per request; keys come from the Proton Pass agent (modules/home.nix)
+  services.whoami = {
+    enable = true;
+    upstream = "${config.system.primaryUserHome}/.ssh/proton-pass-ssh-agent.sock";
+    socket = "${config.system.primaryUserHome}/.ssh/whoami.sock";
+  };
+
   security.pam.services.sudo_local.touchIdAuth = true;
   security.pam.services.sudo_local.reattach = true;
 

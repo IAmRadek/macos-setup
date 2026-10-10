@@ -24,6 +24,12 @@
       flake = false;
     };
 
+    # ssh-agent proxy for choosing the ssh key
+    whoami = {
+      url = "github:IAmRadek/whoami";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # zsh plugins missing from nixpkgs
     zsh-autoquoter = {
       url = "github:ianthehenry/zsh-autoquoter";
@@ -50,6 +56,7 @@
           system = "aarch64-darwin";
           modules = [
             ./configuration.nix
+            inputs.whoami.darwinModules.default
             home-manager.darwinModules.home-manager
             {
               home-manager = {

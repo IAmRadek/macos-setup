@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  osConfig,
+  pkgs,
+  ...
+}:
 let
   sshAgentSocket = "${config.home.homeDirectory}/.ssh/proton-pass-ssh-agent.sock";
 in
@@ -6,14 +11,15 @@ in
   home.stateVersion = "22.11";
   programs.home-manager.enable = true;
 
-  # SSH keys come from the "SSH" vault in Proton Pass; needs `pass-cli login`
-  home.sessionVariables.SSH_AUTH_SOCK = sshAgentSocket;
+  # SSH keys come from the "SSH" vault in Proton Pass; needs `pass-cli login`.
+  # ssh talks to whoami, which forwards to the Proton Pass agent.
+  home.sessionVariables.SSH_AUTH_SOCK = osConfig.services.whoami.socket;
 
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
     settings."*" = {
-      identityAgent = ''"${sshAgentSocket}"'';
+      identityAgent = ''"${osConfig.services.whoami.socket}"'';
     };
     extraConfig = ''
       Include ~/.nix-darwin/private/ssh.private

@@ -98,6 +98,7 @@
         "kube-tmux": "kube-tmux",
         "nixpkgs": "nixpkgs",
         "tmux-k8s-context-switcher": "tmux-k8s-context-switcher",
+        "whoami": "whoami",
         "zsh-autoquoter": "zsh-autoquoter"
       }
     },
@@ -114,6 +115,26 @@
       "original": {
         "owner": "IAmRadek",
         "repo": "tmux-k8s-context-switcher",
+        "type": "github"
+      }
+    },
+    "whoami": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791650936,
+        "narHash": "sha256-9H9bERFEoV2LKfPkwSg/SQ/yR4NvcctgGlwu19AVMHA=",
+        "owner": "IAmRadek",
+        "repo": "whoami",
+        "rev": "0097e6039e8838addb15f68cff823f1b4374598b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "IAmRadek",
+        "repo": "whoami",
         "type": "github"
       }
     },

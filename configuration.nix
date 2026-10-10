@@ -66,6 +66,7 @@ in
     rust-analyzer
     openssl
     pkg-config
+    cmake
 
     # Wasm
     twiggy

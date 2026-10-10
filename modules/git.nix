@@ -32,9 +32,8 @@ in
     ]
     ++ lib.optional (builtins.pathExists ./git.private) { path = ./git.private; };
 
-    # SSH signing via the SSH agent
+    # SSH signing with the first key from the SSH agent (gpg.ssh.defaultKeyCommand)
     signing = {
-      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIYnDm9RfWWUdae/MTzZps0KDhlDrDdWIrFFfoeWWulD";
       signByDefault = true;
       format = null;
     };
@@ -65,6 +64,7 @@ in
       gpg = {
         "ssh" = {
           allowedSignersFile = "${config.xdg.configHome}/git/allowed_signers";
+          defaultKeyCommand = "ssh-add -L";
         };
       };
 

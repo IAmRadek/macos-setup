@@ -15,6 +15,8 @@ in
   # ssh talks to whoami, which forwards to the Proton Pass agent.
   home.sessionVariables.SSH_AUTH_SOCK = osConfig.services.whoami.socket;
 
+  home.sessionVariables.SOPS_AGE_KEY_CMD = "${pkgs.proton-pass-cli}/bin/pass-cli item view --vault-name Personal --item-title AGE-SECRET-KEY --field Note";
+
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;

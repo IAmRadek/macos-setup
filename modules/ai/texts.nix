@@ -49,8 +49,14 @@
     - Silverbullet is my notes store. Prefer it for storing and retrieving insights: decisions, findings, gotchas, how-tos.
     - Search it before answering questions about my past work, setups, or decisions.
     - Store a note when I ask, or propose one when an insight is worth keeping. Don't store without asking.
+    - Mark only words you wrote yourself as AI text. Words I dictate or paste, and you only save, get no mark.
+    - A page with only your words: add `tags: ai` to its frontmatter.
+    - A page that holds any of my words: never add `tags: ai`, and mark only your own blocks.
+    - A block of your words (paragraph or list item): end it with `#ai -- @ai`. The signature goes last.
+    - A code block you wrote: put a one-line paragraph above it that ends with `#ai -- @ai`.
+    - If you edit one of my blocks, leave it unmarked and tell me what you changed.
+    - Never remove my marks or my text from a page.
     - Never store sensitive information: secrets, tokens, passwords, keys, credentials, personal data, or customer data.
-      If an insight depends on one, store a reference to where it lives (e.g. the Proton Pass item), not the value.
 
     # Output
 

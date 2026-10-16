@@ -44,6 +44,10 @@
     "commit": "",
     "pr": ""
   },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
   "hooks": {
     "PreToolUse": [
       {

@@ -15,6 +15,12 @@ in
 
   homebrew = { };
 
+  environment.systemPackages = with pkgs; [
+    openvpn
+  ];
+
+  homebrew.casks = [];
+
   home-manager.users.${username} =
     { pkgs, ... }:
     {

@@ -19,7 +19,25 @@ in
     openvpn
   ];
 
-  homebrew.casks = [];
+  system = {
+    defaults = {
+      dock = {
+        # Only these stay in Dock — everything else disappears
+        persistent-apps = [
+          "/Applications/Zen.app"
+          "${pkgs.ghostty-bin}/Applications/Ghostty.app"
+          "/Users/${username}/Applications/Goland.app"
+          "/Applications/Microsoft Teams.app"
+          { spacer.small = true; }
+        ];
+        persistent-others = [ ];
+      };
+    };
+  };
+
+  homebrew.casks = [
+    "openvpn-connect"
+  ];
 
   home-manager.users.${username} =
     { pkgs, ... }:

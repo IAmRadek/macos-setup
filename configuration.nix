@@ -119,13 +119,10 @@ in
     opencode
     codex
     claude-code
-    pi-coding-agent
 
     # Media
     ffmpeg
-    transmission_4-mac
     # Terminal Emulators
-    alacritty
     ghostty-bin
 
     # Docs, Presentations & Notes
@@ -162,8 +159,6 @@ in
       "zed"
       "claude"
       # "docker"  # Docker Desktop
-      #
-      "vlc"
 
       # Utilities
       "languagetool-desktop"
@@ -173,14 +168,12 @@ in
       "notion-calendar"
       "postman"
       "menubar-apps/menubar-apps/pullbar"
-      "pearcleaner"
       "proton-pass"
       "anarlog"
       "istat-menus"
       "macs-fan-control"
 
       # Communication
-      "slack"
       # "zoom"
 
       # Media

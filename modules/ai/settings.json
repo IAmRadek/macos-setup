@@ -2,11 +2,7 @@
   "model": "opus[1m]",
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": false,
-    "swift-lsp@claude-plugins-official": false,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "maister@maister-plugins": true,
-    "ponytail@ponytail": true,
     "simple-english@simple-english": true,
     "radek-skills@iamradek-skills": true
   },
@@ -15,18 +11,6 @@
       "source": {
         "source": "github",
         "repo": "IAmRadek/skills"
-      }
-    },
-    "maister-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "SkillPanel/maister"
-      }
-    },
-    "ponytail-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "DietrichGebert/ponytail"
       }
     },
     "simple-english": {

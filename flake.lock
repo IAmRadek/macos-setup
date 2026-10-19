@@ -125,11 +125,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792415330,
-        "narHash": "sha256-ajwzXbVB8BBv73f2Ns0bST/MW8bZDP4TCFe77ceDXcU=",
+        "lastModified": 1792416273,
+        "narHash": "sha256-35wt/xqqzKYVxpBMzG7zQZVZlTKH2ieU0ciwZGj3/5s=",
         "owner": "IAmRadek",
         "repo": "whoami",
-        "rev": "ced5a9027bd52a053dc9747e3a61063e8f334046",
+        "rev": "d718533928d21d102ad6847c1c48b88ff3dd6c9a",
         "type": "github"
       },
       "original": {

@@ -316,6 +316,7 @@ in
     enable = true;
     upstream = "${config.system.primaryUserHome}/.ssh/proton-pass-ssh-agent.sock";
     socket = "${config.system.primaryUserHome}/.ssh/whoami.sock";
+    log = "/Users/${config.system.primaryUser}/Library/Logs/whoami.log";
   };
 
   security.pam.services.sudo_local.touchIdAuth = true;

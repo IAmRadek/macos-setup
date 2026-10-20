@@ -231,9 +231,9 @@
 
       custom = {
         tm = {
-          command = "tm-current-task";
-          # Only run if the helper exists
-          when = "tm-current-task >/dev/null 2>&1";
+          command = "tm status --short";
+          # Only run while a task is active
+          when = "tm status --short >/dev/null 2>&1";
           format = ''\[[$output]($style)\]'';
           style = "bold green";
           disabled = false;

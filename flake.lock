@@ -97,9 +97,30 @@
         "home-manager": "home-manager",
         "kube-tmux": "kube-tmux",
         "nixpkgs": "nixpkgs",
+        "tm": "tm",
         "tmux-k8s-context-switcher": "tmux-k8s-context-switcher",
         "whoami": "whoami",
         "zsh-autoquoter": "zsh-autoquoter"
+      }
+    },
+    "tm": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792517743,
+        "narHash": "sha256-pWx5yp86M9+sN7ow/ygfTiLrSPfjHbcUSkUfv9KnCt4=",
+        "owner": "IAmRadek",
+        "repo": "tm",
+        "rev": "51ed9967b10b840739cf4d78e513ead0f687c505",
+        "type": "github"
+      },
+      "original": {
+        "owner": "IAmRadek",
+        "repo": "tm",
+        "type": "github"
       }
     },
     "tmux-k8s-context-switcher": {

@@ -30,6 +30,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # time tracker CLI and its menu bar daemon
+    tm = {
+      url = "github:IAmRadek/tm";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # zsh plugins missing from nixpkgs
     zsh-autoquoter = {
       url = "github:ianthehenry/zsh-autoquoter";
@@ -57,6 +63,7 @@
           modules = [
             ./configuration.nix
             inputs.whoami.darwinModules.default
+            inputs.tm.darwinModules.default
             home-manager.darwinModules.home-manager
             {
               home-manager = {

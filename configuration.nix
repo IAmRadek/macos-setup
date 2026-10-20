@@ -319,6 +319,9 @@ in
     log = "/Users/${config.system.primaryUser}/Library/Logs/whoami.log";
   };
 
+  # Menu bar daemon for the tm time tracker (modules/tools.nix installs the CLI)
+  services.tm-daemon.enable = true;
+
   security.pam.services.sudo_local.touchIdAuth = true;
   security.pam.services.sudo_local.reattach = true;
 

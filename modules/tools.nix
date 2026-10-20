@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -29,86 +30,7 @@ let
     };
   };
 
-  tmSrc = pkgs.fetchFromGitHub {
-    owner = "IAmRadek";
-    repo = "tm";
-    rev = "main";
-    hash = "sha256-gmpWo4M7g1j0ikDadkZyPo6DBu0RqkPv2qmkV39WzM8=";
-  };
-
-  tm = pkgs.rustPlatform.buildRustPackage {
-    pname = "tm";
-    version = "0.2.0";
-
-    src = tmSrc;
-    cargoBuildFlags = [
-      "--package"
-      "tm"
-    ];
-    cargoLock.lockFile = "${tmSrc}/Cargo.lock";
-
-    doCheck = false;
-    meta = with lib; {
-      description = "A minimal CLI time tracker for projects and tasks.";
-      homepage = "https://github.com/IAmRadek/tm";
-      license = licenses.mit;
-    };
-  };
-
-  tmDaemon = pkgs.rustPlatform.buildRustPackage {
-    pname = "tm-daemon";
-    version = "0.1.0";
-
-    src = tmSrc;
-    cargoBuildFlags = [
-      "--package"
-      "tm-daemon"
-    ];
-    cargoLock.lockFile = "${tmSrc}/Cargo.lock";
-
-    doCheck = false;
-    meta = with lib; {
-      description = "tm menu bar daemon for macOS";
-      homepage = "https://github.com/IAmRadek/tm";
-      license = licenses.mit;
-    };
-  };
-  tmCurrentTask = pkgs.writeShellScriptBin "tm-current-task" ''
-    #!${pkgs.bash}/bin/bash
-    set -euo pipefail
-
-    # If tm is not available → hide module
-    if ! command -v tm >/dev/null 2>&1; then
-    exit 1
-    fi
-
-    out="$(tm status 2>/dev/null || true)"
-    line="$(printf '%s\n' "$out" | head -n1)"
-
-    case "$line" in
-    "No active time entry."*)
-        exit 1
-        ;;
-    "Tracking:"*)
-        # Example: "Tracking: proj / task (1m 25s)"
-        rest="''${line#Tracking: }"     # "proj / task (1m 25s)"
-
-        project="''${rest%% / *}"       # before " / "
-        tmp="''${rest#* / }"            # "task (1m 25s)"
-        task="''${tmp%% (*}"            # before " ("
-        elapsed="''${tmp#*(}"           # "1m 25s)"
-        elapsed="''${elapsed%)}"        # "1m 25s"
-
-        # ⏱️ = stopwatch emoji
-        printf '%s / %s · %s\n' "''$project" "''$task" "''$elapsed"
-        exit 0
-        ;;
-    *)
-        # Unknown format → better hide
-        exit 1
-        ;;
-    esac
-  '';
+  tm = inputs.tm.packages.${pkgs.stdenv.hostPlatform.system}.tm;
 
   markSrc = pkgs.fetchFromGitHub {
     owner = "IAmRadek";
@@ -140,25 +62,11 @@ in
   home.packages = [
     git-pr
     tm
-    tmDaemon
-    tmCurrentTask
     mark
     pkgs.mani
     (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))
     (pkgs.writeShellScriptBin "ai-commit-msg" (builtins.readFile ../tools/ollama/ai-commit-msg.sh))
   ];
-
-  launchd.agents.tm-daemon = {
-    enable = true;
-    config = {
-      Label = "com.iamradek.tm-daemon";
-      ProgramArguments = [ "${tmDaemon}/bin/tm-daemon" ];
-      RunAtLoad = true;
-      KeepAlive = true;
-      StandardOutPath = "/tmp/tm-daemon.log";
-      StandardErrorPath = "/tmp/tm-daemon.err";
-    };
-  };
 
   home.file.".zsh/completions/_colix".text = ''
     #compdef colix

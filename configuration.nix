@@ -9,6 +9,21 @@ let
   googleCloudSdkWithPubsub = pkgs.google-cloud-sdk.withExtraComponents [
     pkgs.google-cloud-sdk.components."pubsub-emulator"
   ];
+
+  # zsh completion for a Cobra CLI, generated at build time by its `completion zsh` command
+  cobraZshCompletion =
+    pkg: name:
+    pkgs.runCommand "${name}-zsh-completion" { } ''
+      mkdir -p $out/share/zsh/site-functions
+      HOME=$TMPDIR ${lib.getExe' pkg name} completion zsh > $out/share/zsh/site-functions/_${name}
+    '';
+
+  # `git town <Tab>` calls _git-town with words[1]=town, and cobra runs words[1] as the program
+  gitTownZshCompletion = pkgs.runCommand "git-town-zsh-completion" { } ''
+    mkdir -p $out/share/zsh/site-functions
+    substitute ${pkgs.git-town}/share/zsh/site-functions/_git-town $out/share/zsh/site-functions/_git-town \
+      --replace-fail 'requestComp="''${words[1]} __complete' 'requestComp="git-town __complete'
+  '';
 in
 {
   imports = [
@@ -22,11 +37,13 @@ in
     # Version Control
     git
     git-town
+    (lib.hiPrio gitTownZshCompletion)
     gh
     mergiraf
     gitleaks
     difftastic
     github-mcp-server
+    (cobraZshCompletion github-mcp-server "github-mcp-server")
 
     # Core Utilities
     starship
@@ -90,6 +107,7 @@ in
     hcloud
     googleCloudSdkWithPubsub
     google-cloud-sql-proxy
+    (cobraZshCompletion google-cloud-sql-proxy "cloud-sql-proxy")
 
     # Database
     postgresql

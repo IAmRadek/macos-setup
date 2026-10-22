@@ -15,6 +15,7 @@
       "g" = "git";
       "k" = "kubectl";
       "ls" = "eza -l";
+      "lofi" = "mpv --no-video \"https://www.youtube.com/watch?v=3PFJ9SETS4M\"";
     };
 
     initContent =

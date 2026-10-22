@@ -140,6 +140,8 @@ in
 
     # Media
     ffmpeg
+    mpv
+    yt-dlp
     # Terminal Emulators
     ghostty-bin
 

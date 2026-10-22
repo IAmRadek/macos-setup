@@ -37,6 +37,26 @@
         "type": "github"
       }
     },
+    "git-pr": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792691066,
+        "narHash": "sha256-2eOIDkox+hogQujNEY3ECtdYcDkK/03LEIWzFEJfZa4=",
+        "owner": "IAmRadek",
+        "repo": "git-pr",
+        "rev": "61308a65a863a1cebad5b23240c7eaac02c42cc2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "IAmRadek",
+        "repo": "git-pr",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -94,6 +114,7 @@
       "inputs": {
         "darwin": "darwin",
         "fzf-tab-source": "fzf-tab-source",
+        "git-pr": "git-pr",
         "home-manager": "home-manager",
         "kube-tmux": "kube-tmux",
         "nixpkgs": "nixpkgs",

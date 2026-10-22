@@ -36,6 +36,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # opinionated PR creation CLI
+    git-pr = {
+      url = "github:IAmRadek/git-pr";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # zsh plugins missing from nixpkgs
     zsh-autoquoter = {
       url = "github:ianthehenry/zsh-autoquoter";

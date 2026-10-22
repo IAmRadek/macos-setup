@@ -6,29 +6,7 @@
 }:
 
 let
-  git-pr = pkgs.rustPlatform.buildRustPackage {
-    pname = "git-pr";
-    version = "0.1.0";
-
-    src = pkgs.fetchFromGitHub {
-      owner = "IAmRadek";
-      repo = "git-pr";
-      rev = "main";
-      hash = "sha256-77LutfEsuHkMmBN1+Tosl88rHvg2eQ52207KATXeDQ4=";
-    };
-
-    cargoHash = "sha256-dWb1m01PJsAnxj1fA4WnQU8JV9uD9UahZeUr3Go7aLc=";
-
-    nativeBuildInputs = [ pkgs.pkg-config ];
-    buildInputs = [ pkgs.openssl ];
-
-    doCheck = false;
-    meta = with lib; {
-      description = "Highly opinionated tool for PR creation";
-      homepage = "https://github.com/IAmRadek/git-pr";
-      license = licenses.mit;
-    };
-  };
+  git-pr = inputs.git-pr.packages.${pkgs.stdenv.hostPlatform.system}.git-pr;
 
   tm = inputs.tm.packages.${pkgs.stdenv.hostPlatform.system}.tm;
 

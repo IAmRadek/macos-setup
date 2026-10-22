@@ -54,6 +54,8 @@
           # zprof
         '';
         zshConfig = lib.mkOrder 1000 ''
+          [[ -r ~/.nix-darwin/private/env.private ]] && source ~/.nix-darwin/private/env.private
+
           # Set nano as default editor
           export EDITOR="cot"
           export VISUAL="cot"

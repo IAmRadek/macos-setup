@@ -26,6 +26,7 @@
 
     extraConfig = ''
       set -ag terminal-overrides ",xterm-256color:RGB"
+      set -as terminal-features ',xterm-ghostty:hyperlinks'
       setw -g xterm-keys on
       set -g extended-keys on
 

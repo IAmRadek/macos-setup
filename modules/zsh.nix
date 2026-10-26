@@ -70,7 +70,10 @@
           # Essential plugins
           source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-          ZAQ_PREFIXES=('git commit -m' 'g commit -m' 'watch')
+          ZAQ_PREFIXES=(
+          'git commit( [^ ]##)# -[^ -]#m'
+          'g commit( [^ ]##)# -[^ -]#m'
+          )
 
           # History substring search for better history navigation
           source ${pkgs.zsh-history-substring-search}/share/zsh-history-substring-search/zsh-history-substring-search.zsh

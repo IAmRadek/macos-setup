@@ -4,7 +4,8 @@
     "gopls-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "simple-english@simple-english": true,
-    "radek-skills@iamradek-skills": true
+    "radek-skills@iamradek-skills": true,
+    "excalidraw-plugin@anthropic-plugin-directory": true
   },
   "extraKnownMarketplaces": {
     "iamradek-skills": {

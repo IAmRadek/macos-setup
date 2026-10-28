@@ -89,6 +89,9 @@ in
     twiggy
     binaryen
 
+    # Java
+    jdk25
+
     # JavaScript / Python
     nodejs
     pnpm

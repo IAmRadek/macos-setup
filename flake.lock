@@ -78,6 +78,26 @@
         "type": "github"
       }
     },
+    "kartka": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1793264301,
+        "narHash": "sha256-V6oktKI9YhaCB7EgzlX+loIJ6ReB31OBcLUWjH3v2yw=",
+        "owner": "IAmRadek",
+        "repo": "kartka",
+        "rev": "839775a9fe66e3ce80482d33c895c96269fb1bb2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "IAmRadek",
+        "repo": "kartka",
+        "type": "github"
+      }
+    },
     "kube-tmux": {
       "flake": false,
       "locked": {
@@ -116,6 +136,7 @@
         "fzf-tab-source": "fzf-tab-source",
         "git-pr": "git-pr",
         "home-manager": "home-manager",
+        "kartka": "kartka",
         "kube-tmux": "kube-tmux",
         "nixpkgs": "nixpkgs",
         "tm": "tm",

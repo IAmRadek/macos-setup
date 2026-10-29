@@ -42,6 +42,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # minimal plain text editor
+    kartka = {
+      url = "github:IAmRadek/kartka";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # zsh plugins missing from nixpkgs
     zsh-autoquoter = {
       url = "github:ianthehenry/zsh-autoquoter";

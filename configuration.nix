@@ -202,8 +202,6 @@ in
       # Media
       "spotify"
       # "vlc"
-      #
-      "coteditor"
     ];
 
     taps = [

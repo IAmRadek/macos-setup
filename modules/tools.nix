@@ -10,6 +10,8 @@ let
 
   tm = inputs.tm.packages.${pkgs.stdenv.hostPlatform.system}.tm;
 
+  kartka = inputs.kartka.packages.${pkgs.stdenv.hostPlatform.system}.kartka;
+
   markSrc = pkgs.fetchFromGitHub {
     owner = "IAmRadek";
     repo = "mark";
@@ -40,6 +42,7 @@ in
   home.packages = [
     git-pr
     tm
+    kartka
     mark
     pkgs.mani
     (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))

@@ -56,9 +56,8 @@
         zshConfig = lib.mkOrder 1000 ''
           [[ -r ~/.nix-darwin/private/env.private ]] && source ~/.nix-darwin/private/env.private
 
-          # Set nano as default editor
-          export EDITOR="cot"
-          export VISUAL="cot"
+          export EDITOR="kartka"
+          export VISUAL="kartka"
 
           # Fix for testcontainers with colima (https://github.com/testcontainers/testcontainers-go/issues/2952)
           export TESTCONTAINERS_RYUK_DISABLED=true

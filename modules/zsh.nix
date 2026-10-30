@@ -64,6 +64,8 @@
           export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="unix://''${HOME}/.colima/default/docker.sock"
           export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
 
+          export CLAUDE_CODE_CERT_STORE=bundled
+
           export PKG_CONFIG_PATH=${pkgs.openssl.dev}/lib/pkgconfig
 
           # Essential plugins

@@ -78,6 +78,9 @@ in
 
         home.file.".hushlogin".text = "";
 
+        home.file.".zsh/completions/_infisical".source =
+          import ../modules/zsh/generated-completion.nix pkgs pkgs.infisical "infisical" "completion zsh";
+
         programs.ssh.settings.homelab = {
           hostname = "10.10.0.100";
           user = "homelab";

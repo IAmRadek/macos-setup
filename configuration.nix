@@ -352,6 +352,10 @@ in
   programs = {
     zsh = {
       enable = true;
+      # modules/zsh.nix runs compinit once, after fpath is complete
+      enableGlobalCompInit = false;
+      # no completion on fpath uses the bash `complete` builtin
+      enableBashCompletion = false;
     };
   };
 

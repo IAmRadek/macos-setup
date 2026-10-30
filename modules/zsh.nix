@@ -8,6 +8,20 @@
   programs.zsh = {
     enable = true;
     enableCompletion = true;
+    # compinit runs in initContent below, after fpath is complete
+    completionInit = "";
+
+    history = {
+      path = "$HOME/.zsh_history";
+      size = 50000;
+      save = 50000;
+      share = false;
+      extended = true;
+      ignoreDups = true;
+      ignoreSpace = true;
+      findNoDups = true;
+      expireDuplicatesFirst = true;
+    };
 
     shellAliases = {
       system-edit = "zed ~/.nix-darwin";
@@ -89,48 +103,15 @@
           bindkey '^[[B' history-substring-search-down            # Down arrow
           bindkey '^R' history-incremental-search-backward        # Ctrl+R for history search
 
-          # Configure history for better suggestion quality
-          HISTFILE=~/.zsh_history
-          HISTSIZE=50000
-          SAVEHIST=50000
+          # History options without a home-manager setting, the rest are in programs.zsh.history
           setopt INC_APPEND_HISTORY_TIME # append to shared history immediately, but keep per-session navigation
-          setopt EXTENDED_HISTORY        # add timestamps to history
-          setopt HIST_IGNORE_DUPS        # don't record duplicated commands
-          setopt HIST_FIND_NO_DUPS       # don't show duplicates in search
           setopt HIST_REDUCE_BLANKS      # remove superfluous blanks
-          setopt HIST_IGNORE_SPACE       # don't record commands starting with space
-          setopt HIST_EXPIRE_DUPS_FIRST  # expire duplicates first
 
-          # Enhance completion system for history-based suggestions
-          # Basic completion system configuration
-          zstyle ':completion:*' menu select                       # Use menu selection for completion
-          zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # Case insensitive completion
-          zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01' # Colorize completion menu
-
-          fpath=($HOME/.zsh/completions $HOME/.cache/zsh $fpath)
-
-          # Simple completion order
-          zstyle ':completion:*' completer _expand_alias _complete _ignored
-
-          # Basic fzf-tab configuration
-          zstyle ':fzf-tab:*' fzf-command fzf
-          zstyle ':fzf-tab:*' switch-group ',' '.'
-          zstyle ':fzf-tab:*' fzf-preview 'ls -la $realpath'
-
-          # Enable completion caching for better performance
-          zstyle ':completion:*' use-cache on
-          zstyle ':completion:*' cache-path "$ZCACHEDIR/zcompcache"
-
-          # Simple fzf-tab key bindings
-          zstyle ':fzf-tab:*' continuous-trigger 'tab'            # TAB cycles through options
-          zstyle ':fzf-tab:*' fzf-bindings 'tab:down,btab:up'     # TAB/Shift+TAB to navigate
-
-          # Improved fzf-tab defaults for better completion
-          zstyle ':completion:*:descriptions' format '[%d]'
-          zstyle ':completion:*' list-colors 'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01'
-          zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls -1a $realpath'
-
-          compinit -u -d "$ZCACHEDIR/zcompdump-$ZSH_VERSION"
+          source ${
+            pkgs.replaceVars ./zsh/completion.zsh {
+              timeout = "${pkgs.coreutils}/bin/timeout";
+            }
+          }
 
           # Plugins that hook into completion or widgets load after compinit
           source ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.plugin.zsh
@@ -138,105 +119,6 @@
           source ${pkgs.zsh-wd}/share/wd/wd.plugin.zsh
           source ${inputs.zsh-autoquoter}/zsh-autoquoter.zsh
           source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-
-          # _default is the file name fallback for commands without a completion function and
-          # for arguments without a value hint. For Nix and Homebrew binaries it completes the
-          # subcommands and flags listed by `--help` of the longest command prefix on the line
-          # whose `--help` succeeds. Tab runs that `--help`, hence the path limit and timeout.
-          autoload -Uz +X _default
-          functions[_default_files]=$functions[_default]
-          _default() {
-            emulate -L zsh -o extendedglob
-            # _comp_command1 is the command word set by _normal. words loses it when a
-            # completion function shifts it away, as clap's does for subcommands.
-            local cmd=''${_comp_command1:-$words[1]}
-            local bin=''${''${commands[$cmd]:-$cmd}:A}
-            if [[ $bin != (/nix/store|/opt/homebrew)/* ]]; then
-              _default_files "$@"
-              return
-            fi
-
-            local -a chain=(''${''${words[2,CURRENT-1]}:#-*})
-            [[ $words[1] == $cmd ]] || chain=(''${''${words[1,CURRENT-1]}:#-*})
-            local help
-            while true; do
-              help=$(${pkgs.coreutils}/bin/timeout 1 $bin $chain --help 2>&1) && [[ -n $help ]] && break
-              help=
-              (( $#chain )) || break
-              chain[-1]=()
-            done
-            if [[ -z $help ]]; then
-              _default_files "$@"
-              return
-            fi
-
-            local line spec desc section usage
-            local -a parts longs shorts cmds flags
-            local -A seen
-            for line in ''${(f)help}; do
-              # "Usage: cmd …" on one line (clap, commander) or below a "Usage:" header (cobra)
-              if [[ -z $usage && $line == (#i)usage:[[:space:]]#[^[:space:]]* ]]; then
-                usage=$line
-              elif [[ -z $usage && $section == (#i)usage:* && $line == [[:space:]]##[^[:space:]]* ]]; then
-                usage="Usage: ''${line##[[:space:]]#}"
-              fi
-              if [[ $line == [[:alpha:]][[:alpha:][:blank:]]#:[[:space:]]# ]]; then
-                section=$line
-                continue
-              fi
-              # Entries sit at a small indent, wrapped descriptions further right
-              [[ $line == [[:blank:]](#c1,8)[^[:space:]]* ]] || continue
-              line=''${line##[[:space:]]#}
-              spec=''${line%%[[:space:]][[:space:]]*}
-              desc=''${''${line:$#spec}##[[:space:]]#}
-              if [[ $spec == -* ]]; then
-                parts=(''${=spec//,/ })
-                longs=(''${(M)parts:#--[[:alnum:]]*})
-                shorts=(''${(M)parts:#-[[:alnum:]]*})
-                spec=''${''${longs[1]:-$shorts[1]}%%[=\[]*}
-                [[ -n $spec ]] && (( ! $+seen[$spec] )) && seen[$spec]=1 && flags+=("$spec:$desc")
-              elif [[ $section == *ommand* && $spec == [[:alnum:]]* && -n $desc ]]; then
-                spec=''${spec%%[ ,|]*}
-                (( ! $+seen[$spec] )) && seen[$spec]=1 && cmds+=("$spec:$desc")
-              fi
-            done
-            # fzf-tab preview and usage header, set for this exact completion context so they
-            # also apply to candidates that other functions add to the same popup
-            local -a cmdline=(''${(q)bin})
-            (( $#chain )) && cmdline+=(''${(q)chain})
-            typeset -gx ZSH_HELP_COMPLETION_CMD="''${cmdline[*]}"
-            local ctx=":fzf-tab:''${curcontext#:}"
-            zstyle $ctx fzf-preview \
-              'if [[ $group == *subcommand* ]]; then eval "$ZSH_HELP_COMPLETION_CMD ''${(q)word} --help"; else eval "$ZSH_HELP_COMPLETION_CMD --help"; fi 2>&1'
-            if [[ -n $usage ]]; then
-              zstyle $ctx fzf-flags "--header=''${usage//''${(b)bin}/$cmd}"
-            else
-              zstyle -d $ctx fzf-flags
-            fi
-
-            # Commands with their own completion function call this for argument values. Once
-            # the word starts with "-" their function lists the flags. Before that, a
-            # placeholder that names the argument and inserts nothing comes first, next to the
-            # flags, so zsh does not insert the common "--" prefix of the flags.
-            if [[ -n $_comps[$cmd] ]]; then
-              [[ $PREFIX == -* ]] && return 1
-              local arg=''${@[''${@[(i)-X]}+1]:-value}
-              local -a disp=("<''${arg%% -- *}>")
-              [[ $arg == *" -- "* ]] && disp=("$disp[1]  -- ''${arg#* -- }")
-              compadd -U -Q -S "" -J help-argument -X argument -d disp -- ""
-              (( $#flags )) && _describe -t help-flags flag flags
-              return 0
-            fi
-
-            if (( ! $#cmds && ! $#flags )); then
-              _message -r "$help"
-              return 0
-            fi
-            local ret=1
-            (( $#cmds )) && _describe -t help-commands subcommand cmds && ret=0
-            (( $#flags )) && _describe -t help-flags flag flags && ret=0
-            return ret
-          }
 
           _ai-cmd() {
             zle -I
@@ -266,6 +148,19 @@
         zshConfigLateInit
       ];
   };
+
+  # Completions for ~/.zsh/completions, see modules/zsh/completion.zsh for where they rank
+  home.file =
+    let
+      generatedCompletion = import ./zsh/generated-completion.nix pkgs;
+    in
+    {
+      ".zsh/completions/_sops".source = ./zsh/_sops;
+      ".zsh/completions/_pass-cli".source =
+        generatedCompletion pkgs.proton-pass-cli "pass-cli" "completions zsh";
+      ".zsh/completions/_uvx".source =
+        generatedCompletion pkgs.uv "uvx" "--generate-shell-completion zsh";
+    };
 
   programs.starship = {
     enable = true;

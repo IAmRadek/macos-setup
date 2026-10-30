@@ -1,0 +1,14 @@
+#compdef sops
+
+# The urfave/cli completion that sops ships lists files only when sops prints no
+# subcommands or flags. This one lists both.
+local cur=$words[CURRENT]
+local -a opts
+if [[ $cur == -* ]]; then
+  opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[1,CURRENT-1]} $cur --generate-bash-completion 2>/dev/null)}")
+else
+  opts=("${(@f)$(_CLI_ZSH_AUTOCOMPLETE_HACK=1 ${words[1,CURRENT-1]} --generate-bash-completion 2>/dev/null)}")
+fi
+opts=(${opts:#})
+(( $#opts )) && _describe -t sops-values value opts
+_files

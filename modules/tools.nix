@@ -37,31 +37,6 @@ let
       license = licenses.mit;
     };
   };
-
-  # Prebuilt release binary for aarch64-darwin, the only macOS target fabro publishes
-  fabro = pkgs.stdenvNoCC.mkDerivation rec {
-    pname = "fabro";
-    version = "0.254.0";
-
-    src = pkgs.fetchurl {
-      url = "https://github.com/fabro-sh/fabro/releases/download/v${version}/fabro-aarch64-apple-darwin.tar.gz";
-      hash = "sha256-zHf616NM7vtNLuHn9WpPP7Gur5kwaUN+ajCd3Pn1PxA=";
-    };
-
-    nativeBuildInputs = [ pkgs.installShellFiles ];
-
-    installPhase = ''
-      install -Dm755 fabro $out/bin/fabro
-      installShellCompletion --cmd fabro --zsh <($out/bin/fabro completion zsh)
-    '';
-
-    meta = with lib; {
-      description = "Open source dark software factory for expert engineers.";
-      homepage = "https://github.com/fabro-sh/fabro";
-      platforms = [ "aarch64-darwin" ];
-      sourceProvenance = [ sourceTypes.binaryNativeCode ];
-    };
-  };
 in
 {
   home.packages = [
@@ -69,7 +44,6 @@ in
     tm
     kartka
     mark
-    fabro
     pkgs.mani
     (pkgs.writeShellScriptBin "colix" (builtins.readFile ../tools/colima/colix.sh))
     (pkgs.writeShellScriptBin "ai-commit-msg" (builtins.readFile ../tools/ollama/ai-commit-msg.sh))

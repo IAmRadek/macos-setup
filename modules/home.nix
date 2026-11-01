@@ -55,6 +55,7 @@ in
     ./zsh.nix
     ./tmux.nix
     ./nvim.nix
+    ./helix.nix
     ./git.nix
     ./tools.nix
     ./claude.nix

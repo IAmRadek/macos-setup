@@ -18,6 +18,7 @@ in
     .DS_Store
     !*.secret
     CRUSH.md
+    .notes
   '';
 
   xdg.configFile."git/attributes".text = ''
@@ -81,6 +82,8 @@ in
       rebase.updateRefs = true;
 
       rerere.enabled = true;
+
+      git-town.unknown-branch-type = "observed";
 
       color = {
         ui = true;

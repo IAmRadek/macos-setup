@@ -11,6 +11,7 @@ in
   environment.systemPackages = with pkgs; [
     infisical
     hugo
+    transmission_4-mac
   ];
 
   homebrew.casks = [
